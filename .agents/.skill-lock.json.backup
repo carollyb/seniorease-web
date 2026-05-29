@@ -1,0 +1,46 @@
+{
+  "version": 2,
+  "skills": {
+    "coding-guidelines": {
+      "name": "coding-guidelines",
+      "source": "local",
+      "contentHash": "28a414c715d3c41aae28a25e2f109813ec3f246f76b5567c1e7d6a128cd289ff",
+      "installedAt": "2026-05-28T02:44:02.117Z",
+      "updatedAt": "2026-05-28T02:44:02.156Z",
+      "agents": [
+        "cursor",
+        "claude-code",
+        "windsurf"
+      ],
+      "method": "copy",
+      "global": false
+    },
+    "tlc-spec-driven": {
+      "name": "tlc-spec-driven",
+      "source": "local",
+      "contentHash": "69867b0e19be1fb556d2e697f0f18f1de0363d1aa2de9d36754d5b107156357c",
+      "installedAt": "2026-05-28T02:56:37.350Z",
+      "updatedAt": "2026-05-28T02:56:37.416Z",
+      "agents": [
+        "cursor",
+        "claude-code",
+        "windsurf"
+      ],
+      "method": "copy",
+      "global": false
+    },
+    "react-best-practices": {
+      "name": "react-best-practices",
+      "source": "local",
+      "contentHash": "e96f99e13dc2acc75efc1793aee08fe244802a97a4e190af38bd5a871a5c9636",
+      "installedAt": "2026-05-28T03:17:38.230Z",
+      "updatedAt": "2026-05-28T03:17:38.328Z",
+      "agents": [
+        "cursor",
+        "claude-code"
+      ],
+      "method": "copy",
+      "global": false
+    }
+  }
+}
