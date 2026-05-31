@@ -46,6 +46,7 @@
 - Material UI theme based on `DESIGN.md`, adapted for older-adult accessibility and WCAG-friendly contrast.
 - CI workflow at `.github/workflows/ci.yml` with checkout, Node.js 20+ setup, install, lint, tests, and build.
 - Microfrontend recommendation: keep `seniorease-web` as the primary Next.js zone and route to a future Activity Organizer zone with Next.js Multi-Zones.
+- Remote subsection recommendation: when a page from the primary zone must embed a remote activity subsection, use a Web Component widget loaded by script.
 
 **Explicitly out of scope:**
 
@@ -61,6 +62,7 @@
 - Technical: Must use Next.js 16 with Pages Router, not App Router.
 - Technical: Must use Node.js 20 or newer.
 - Technical: Microfrontend integration must use Next.js Multi-Zones with route rewrites and zone-specific asset prefixes, not Module Federation.
+- Technical: Remote subsections embedded inside primary-zone pages must use Web Components; complex input data uses JavaScript properties, simple configuration uses HTML attributes such as `data-mode="simplified"`, and output callbacks use `CustomEvent`.
 - Technical: Must follow Clean Architecture with domain isolated from UI and infrastructure.
 - Technical: Must use Material UI and derive theme tokens from `DESIGN.md`.
 - Technical: Must use Zustand for state management; accessibility preferences must use Zustand `persist`.

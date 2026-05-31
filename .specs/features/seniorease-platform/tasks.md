@@ -362,7 +362,7 @@ T11 -> T12 -> T13
 
 ### T13: Document Multi-Zone Activity Integration Plan
 
-**What**: Document how `seniorease-web` acts as the primary Next.js zone and routes to a future Activity Organizer zone through Multi-Zones.
+**What**: Document how `seniorease-web` acts as the primary Next.js zone, routes to a future Activity Organizer zone through Multi-Zones, and embeds remote activity subsections through Web Components.
 **Where**: `docs/microfrontend-activity-zones.md`
 **Depends on**: T12
 **Reuses**: Activity organizer exports from T8 and design recommendation.
@@ -381,6 +381,8 @@ T11 -> T12 -> T13
 - [ ] Document lists shared contracts for preferences, theme tokens, data access, and accessibility guarantees.
 - [ ] Document explains local fallback mode and zone-routed mode.
 - [ ] Document identifies required future Next.js Multi-Zones configuration.
+- [ ] Document explains Web Component usage for remote subsections inside primary-zone pages.
+- [ ] Document includes examples for JavaScript properties, `data-mode="simplified"` attributes, and `CustomEvent` output.
 - [ ] Gate check passes: `npm run build`.
 
 **Tests**: none

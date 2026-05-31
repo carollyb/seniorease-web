@@ -42,11 +42,13 @@ When React/Next code is involved, check the relevant rule files under `.github/s
 - Keep pages thin: compose presentation modules, providers, stores, and use cases.
 - Activity business data may use local repository adapters for v1; design it so an API adapter can replace it later.
 - Do not introduce Module Federation for the activity split. Use Next.js Multi-Zones: this app is the primary zone, and Activity Organizer is the candidate activity zone.
+- For remote subsections embedded inside primary-zone pages, use Web Components loaded by script. Pass complex input through JavaScript properties, simple config through HTML attributes such as `data-mode="simplified"`, and output through `CustomEvent`.
 
 ## React and Next Rules
 
 - Use Pages Router conventions, not App Router patterns.
 - Use Next.js Multi-Zones for microfrontend routing decisions; avoid bundler-level module loading for this project.
+- Use Web Components, not runtime React component imports, when a remote subsection must render inside a primary-zone page.
 - Avoid barrel imports from large libraries; prefer direct imports or `optimizePackageImports`.
 - Avoid async waterfalls: start independent work early and use `Promise.all` when safe.
 - Keep derived state in render/selectors instead of effects.

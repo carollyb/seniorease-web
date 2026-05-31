@@ -149,6 +149,10 @@
         "Activity Organizer has clear public contracts",
         "Route ownership and rewrite plan",
         "Zone-specific asset prefix plan",
+        "Remote subsection embedding through Web Components",
+        "JavaScript properties for complex widget input data",
+        "HTML attributes for simple widget configuration",
+        "CustomEvent output for callback-like interactions",
         "Local fallback when activity zone is unavailable",
         "Documentation for future Next.js Multi-Zones configuration"
       ]

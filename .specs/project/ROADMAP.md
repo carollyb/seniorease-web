@@ -59,6 +59,12 @@
 - Define zone path ownership, route rewrites, zone-specific `assetPrefix`, fallback strategy, and shared contract strategy.
 - Keep domain and use cases portable.
 
+**Activity Organizer Remote Widget** - PLANNED
+
+- Define a Web Component contract for embedding activity subsections inside primary-zone pages.
+- Pass complex input data through JavaScript properties and simple configuration through HTML attributes.
+- Emit user actions and completion callbacks through `CustomEvent`.
+
 **Accessibility Hardening** - PLANNED
 
 - Add Playwright coverage for keyboard navigation and critical flows.

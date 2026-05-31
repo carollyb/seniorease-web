@@ -13,6 +13,7 @@ SeniorEase will be a Next.js 16 Pages Router app organized by Clean Architecture
 graph TD
     UI[Pages and Material UI Components] --> Hooks[Presentation Hooks and Providers]
     UI --> Stores[Zustand Stores]
+    UI --> RemoteWidget[Remote Activity Web Component]
     Hooks --> UseCases[Application Use Cases]
     Stores --> UseCases
     Stores --> Persist[Zustand Persist Middleware]
@@ -24,6 +25,7 @@ graph TD
     UI --> Theme[Accessible MUI Theme]
     PrimaryZone[SeniorEase Primary Zone] --> Rewrites[Next.js Rewrites]
     Rewrites --> ActivityZone[Future Activity Organizer Zone]
+    RemoteWidget --> WidgetBundle[Activity Widget Script]
 ```
 
 ## Proposed Folder Structure
@@ -99,6 +101,91 @@ Suggested future topology:
 - Local mode: the same organizer must render inside `seniorease-web` while the zone is not yet split.
 
 In this project, SeniorEase is the primary zone. The separate activity organizer app can later run independently and be reached through Multi-Zone rewrites instead of bundler-level Module Federation.
+
+## Remote Subsection Web Components
+
+Multi-Zones are used for full page or route ownership. When a page rendered by `seniorease-web` needs to embed a remote activity subsection inside the primary layout, SeniorEase will use a Web Component widget loaded by script.
+
+Contract rules:
+
+- Complex input data uses JavaScript properties on the custom element.
+- Simple configuration uses HTML attributes, such as `data-mode="simplified"`.
+- Callback-like output uses `CustomEvent` with a typed `detail` payload.
+- The primary page owns layout, headings, landmarks, fallback UI, and event listeners.
+- The remote widget owns only its internal activity subsection behavior.
+- The widget must remain usable with keyboard navigation and must not trap focus outside dialogs.
+
+Primary-zone page example:
+
+```tsx
+import Script from 'next/script'
+import { useEffect, useRef } from 'react'
+
+type ActivityWidgetElement = HTMLElement & {
+  preferences?: UserPreferences
+}
+
+export function DashboardActivitySection({
+  onActivityComplete,
+  preferences,
+}: DashboardActivitySectionProps) {
+  const widgetRef = useRef<ActivityWidgetElement>(null)
+
+  useEffect(() => {
+    const element = widgetRef.current
+    if (!element) return
+
+    element.preferences = preferences
+
+    const handleComplete = (event: Event) => {
+      const { activityId } = (event as CustomEvent<{ activityId: string }>).detail
+      onActivityComplete(activityId)
+    }
+
+    element.addEventListener('activity-complete', handleComplete)
+
+    return () => {
+      element.removeEventListener('activity-complete', handleComplete)
+    }
+  }, [onActivityComplete, preferences])
+
+  return (
+    <section aria-labelledby="activities-title">
+      <h2 id="activities-title">Atividades</h2>
+
+      <Script
+        src="https://activities.seniorease.app/widgets/activity-organizer.js"
+        strategy="afterInteractive"
+      />
+
+      <seniorease-activity-organizer
+        ref={widgetRef}
+        data-mode="simplified"
+      />
+    </section>
+  )
+}
+```
+
+Remote Web Component example:
+
+```typescript
+class SeniorEaseActivityOrganizer extends HTMLElement {
+  preferences?: UserPreferences
+
+  completeActivity(activityId: string) {
+    this.dispatchEvent(
+      new CustomEvent('activity-complete', {
+        detail: { activityId },
+        bubbles: true,
+        composed: true,
+      }),
+    )
+  }
+}
+
+customElements.define('seniorease-activity-organizer', SeniorEaseActivityOrganizer)
+```
 
 ## Components and Interfaces
 
@@ -272,6 +359,7 @@ interface Activity {
 | Critical action with extra confirmation | Require confirmation dialog | User avoids accidental deletion or reset |
 | Largest font causes overflow risk | Use wrapping, responsive grid, and min target sizes | Content remains readable and reachable |
 | Activity organizer zone unavailable | Render local fallback or unavailable-state message | Primary zone remains stable and understandable |
+| Remote activity widget unavailable | Render local fallback subsection or unavailable-state message | Primary page remains understandable and keyboard-accessible |
 
 ## Tech Decisions
 
@@ -286,4 +374,5 @@ interface Activity {
 | Theme | Runtime MUI theme generated from `DESIGN.md` tokens plus user preferences | Enables real font, contrast, and spacing changes. |
 | Accessibility validation | ARIA premises plus keyboard and focus checks | Ensures accessibility is testable, not only visual. |
 | Microfrontend boundary | SeniorEase as primary zone routing to a future Activity Organizer zone with Next.js Multi-Zones | Follows the Next.js documentation recommendation for microfrontends and avoids unsupported Module Federation coupling in Next.js 16. |
+| Remote subsections | Web Component widgets loaded by script, with JavaScript properties for complex input, HTML attributes for simple config, and `CustomEvent` for output | Enables embedded remote subsections inside primary-zone pages without importing runtime React components across Next.js apps. |
 | CI Node version | Node.js 20+ | Required project decision. |

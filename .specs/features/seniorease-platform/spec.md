@@ -122,16 +122,20 @@ Older adults often face academic and professional digital tools with small text,
 
 ### P2: Preparar Microfrontend de Atividades
 
-**User Story**: As a developer, I want `seniorease-web` to be ready to route to the activity organizer as a separate Next.js zone so that the organizer can evolve independently later.
+**User Story**: As a developer, I want `seniorease-web` to be ready to route to the activity organizer as a separate Next.js zone and embed activity subsections as remote Web Components so that the organizer can evolve independently later.
 
-**Why P2**: The project will follow the Next.js microfrontend recommendation using Multi-Zones, with `seniorease-web` as the primary zone.
+**Why P2**: The project will follow the Next.js microfrontend recommendation using Multi-Zones for full pages and Web Components for remote subsections inside primary-zone pages.
 
 **Acceptance Criteria**:
 
 1. WHEN modules are designed THEN the activity organizer SHALL have clear public contracts for page routes, container props, preference context, and use case providers.
 2. WHEN Multi-Zones integration is introduced THEN `seniorease-web` SHALL act as the primary zone and route activity paths to the activity organizer zone.
 3. WHEN zone boundaries are defined THEN the activity organizer zone SHALL own unique paths such as `/atividades` and use a zone-specific `assetPrefix` to avoid Next.js asset conflicts.
-4. WHEN the activity zone is unavailable THEN `seniorease-web` SHALL provide a local fallback route or clear unavailable-state message.
+4. WHEN a primary-zone page needs a remote activity subsection THEN it SHALL embed a Web Component widget instead of importing runtime React components from the activity app.
+5. WHEN the primary zone passes complex input data to the Web Component THEN it SHALL use JavaScript properties on the custom element.
+6. WHEN the primary zone passes simple configuration to the Web Component THEN it SHALL use HTML attributes such as `data-mode="simplified"`.
+7. WHEN the Web Component reports user actions or callback-like outcomes THEN it SHALL dispatch `CustomEvent` events with typed `detail` payloads.
+8. WHEN the activity zone or remote widget is unavailable THEN `seniorease-web` SHALL provide a local fallback route, fallback subsection, or clear unavailable-state message.
 
 **Independent Test**: Review module boundary documentation and verify activity organizer imports do not depend on unrelated modules.
 
@@ -146,6 +150,8 @@ Older adults often face academic and professional digital tools with small text,
 - WHEN persisted Zustand data contains invalid values THEN the system SHALL recover with defaults and avoid crashing.
 - WHEN reduced motion is preferred THEN animations SHALL be disabled or shortened.
 - WHEN dialogs, guided steps, or status feedback are shown THEN the system SHALL provide ARIA-compatible roles, names, focus management, and live-region announcements.
+- WHEN a remote activity Web Component fails to load THEN the primary page SHALL show a clear fallback subsection that remains keyboard-accessible.
+- WHEN a remote activity Web Component emits an event THEN the primary page SHALL handle it through `CustomEvent` listeners and avoid relying on direct React callback imports across applications.
 
 ---
 
