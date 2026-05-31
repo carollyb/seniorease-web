@@ -38,9 +38,9 @@ T11 -> T12 -> T13
 
 ## Task Breakdown
 
-### T1: Scaffold Next.js Pages Router Project
+### T1: Scaffold Next.js 16 Pages Router Project
 
-**What**: Create the project baseline with Next.js Pages Router, TypeScript, Node.js 20+, Material UI, Zustand, testing dependencies, and npm scripts.
+**What**: Create the project baseline with Next.js 16 Pages Router, TypeScript, Node.js 20+, Material UI, Zustand, testing dependencies, and npm scripts.
 **Where**: `package.json`, `.nvmrc`, `tsconfig.json`, `next.config.js`, `src/pages/_app.tsx`
 **Depends on**: None
 **Reuses**: Project requirements from `.specs/project/PROJECT.md`
@@ -53,7 +53,7 @@ T11 -> T12 -> T13
 
 **Done when**:
 
-- [ ] Next.js Pages Router structure exists.
+- [ ] Next.js 16 Pages Router structure exists.
 - [ ] Node.js 20+ is documented in `.nvmrc`, `package.json` engines, and CI expectations.
 - [ ] TypeScript is configured.
 - [ ] Material UI, Emotion, and Zustand dependencies are declared.
@@ -241,7 +241,7 @@ T11 -> T12 -> T13
 - [ ] Activity list shows title, reminder, status, and primary action with meaningful roles and accessible names.
 - [ ] Guided steps render in predictable order and are keyboard-operable.
 - [ ] Completing an activity shows positive feedback, announces it through a live region, and moves it to history.
-- [ ] Public contracts are ready for future remote consumption by the SeniorEase host.
+- [ ] Public contracts are ready for future extraction into an Activity Organizer Multi-Zone app.
 - [ ] Component tests cover create, guided step view, complete, and history.
 - [ ] Gate check passes: `npm test -- --watchAll=false`.
 
@@ -360,10 +360,10 @@ T11 -> T12 -> T13
 
 ---
 
-### T13: Document Module Federation Host Plan
+### T13: Document Multi-Zone Activity Integration Plan
 
-**What**: Document how `seniorease-web` acts as the Module Federation host and consumes a future activity organizer remote.
-**Where**: `docs/microfrontend-activity-host.md`
+**What**: Document how `seniorease-web` acts as the primary Next.js zone and routes to a future Activity Organizer zone through Multi-Zones.
+**Where**: `docs/microfrontend-activity-zones.md`
 **Depends on**: T12
 **Reuses**: Activity organizer exports from T8 and design recommendation.
 **Requirement**: SE-13
@@ -375,11 +375,12 @@ T11 -> T12 -> T13
 
 **Done when**:
 
-- [ ] Document names the SeniorEase host, remote app, and exposed module.
-- [ ] Document explains the host remote mapping.
-- [ ] Document lists shared dependencies.
-- [ ] Document explains local fallback mode and remote consumption mode.
-- [ ] Document identifies required future Next.js Module Federation configuration.
+- [ ] Document names the SeniorEase primary zone and future Activity Organizer zone.
+- [ ] Document explains route ownership for `/atividades` and nested activity paths.
+- [ ] Document explains primary-zone `rewrites()` and activity-zone `assetPrefix`.
+- [ ] Document lists shared contracts for preferences, theme tokens, data access, and accessibility guarantees.
+- [ ] Document explains local fallback mode and zone-routed mode.
+- [ ] Document identifies required future Next.js Multi-Zones configuration.
 - [ ] Gate check passes: `npm run build`.
 
 **Tests**: none

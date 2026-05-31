@@ -47,16 +47,16 @@
 
 ---
 
-## M2 - Integration and Remote Module Readiness
+## M2 - Integration and Multi-Zone Readiness
 
-**Goal:** Prepare `seniorease-web` to act as a host that can consume a future activity organizer remote.
+**Goal:** Prepare `seniorease-web` to act as the primary Next.js zone that can route to a future Activity Organizer zone.
 
 ### Features
 
-**Activity Organizer Microfrontend Remote** - PLANNED
+**Activity Organizer Microfrontend Zone** - PLANNED
 
-- Extract activity organizer boundaries into a separate remote module that can be consumed by this host.
-- Define host remote mapping, remote entry, fallback strategy, and shared dependency strategy.
+- Extract activity organizer boundaries into a separate Next.js app/zone that can be routed from `seniorease-web`.
+- Define zone path ownership, route rewrites, zone-specific `assetPrefix`, fallback strategy, and shared contract strategy.
 - Keep domain and use cases portable.
 
 **Accessibility Hardening** - PLANNED

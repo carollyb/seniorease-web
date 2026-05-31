@@ -7,7 +7,7 @@
 
 ## Architecture Overview
 
-SeniorEase will be a Next.js Pages Router app organized by Clean Architecture. Domain entities and application use cases stay independent from React, Next.js, Material UI, Zustand, and browser storage. Presentation modules call use cases through hooks and Zustand stores. Accessibility preferences are persisted with Zustand `persist`; business data such as activities can use repository adapters in v1 and can be replaced by API repositories later.
+SeniorEase will be a Next.js 16 Pages Router app organized by Clean Architecture. Domain entities and application use cases stay independent from React, Next.js, Material UI, Zustand, and browser storage. Presentation modules call use cases through hooks and Zustand stores. Accessibility preferences are persisted with Zustand `persist`; business data such as activities can use repository adapters in v1 and can be replaced by API repositories later.
 
 ```mermaid
 graph TD
@@ -22,7 +22,8 @@ graph TD
     Adapters --> Storage[Local Activity Storage]
     UseCases --> Domain[Domain Models and Rules]
     UI --> Theme[Accessible MUI Theme]
-    Host[SeniorEase Host App] --> Remote[Future Activity Organizer Remote]
+    PrimaryZone[SeniorEase Primary Zone] --> Rewrites[Next.js Rewrites]
+    Rewrites --> ActivityZone[Future Activity Organizer Zone]
 ```
 
 ## Proposed Folder Structure
@@ -84,19 +85,20 @@ SeniorEase will validate accessibility through ARIA-compatible behavior and nati
 
 ## Microfrontend Recommendation
 
-Keep `seniorease-web` as the Module Federation host. Extract the activity organizer into a future remote module because it has clear boundaries, user-facing value, and limited dependency on profile/settings outside preference context.
+Keep `seniorease-web` as the primary Next.js 16 Pages Router zone. Extract the activity organizer into a future Next.js zone because it has clear route ownership, user-facing value, and limited dependency on profile/settings outside preference context.
 
 Suggested future topology:
 
-- Host app name: `senioreaseWeb`
-- Remote app name: `senioreaseActivities`
-- Exposed module: `./ActivityOrganizer`
-- Host integration surface: `<ActivityOrganizerRemote preferences={...} repositories={...} />`
-- Shared dependencies: React, React DOM, Next.js, Material UI, Emotion, Zustand.
-- Host fallback: render local `ActivityOrganizer` or a clear unavailable-state message if the remote cannot load.
-- Local mode: the same organizer must render inside the SeniorEase host while the remote is not yet split.
+- Primary zone app: `seniorease-web`
+- Activity zone app: `seniorease-activities`
+- Activity zone path ownership: `/atividades` and nested `/atividades/:path*`
+- Activity zone asset prefix: `/atividades-static`
+- Primary zone integration surface: Next.js `rewrites()` routing `/atividades/:path*` and `/atividades-static/:path*` to the activity zone origin.
+- Shared contracts: route contract, preference context shape, theme token package or copied token contract, repository/API boundary, and accessibility guarantees.
+- Primary zone fallback: render local `ActivityOrganizer` during v1 or a clear unavailable-state message if the activity zone cannot be reached.
+- Local mode: the same organizer must render inside `seniorease-web` while the zone is not yet split.
 
-In this project, SeniorEase is the host. The separate activity organizer package/app can later expose a remote entry consumed by this app.
+In this project, SeniorEase is the primary zone. The separate activity organizer app can later run independently and be reached through Multi-Zone rewrites instead of bundler-level Module Federation.
 
 ## Components and Interfaces
 
@@ -269,13 +271,13 @@ interface Activity {
 | Activity creation with empty title | Validate before use case execution | Inline helper text asks for a clear title |
 | Critical action with extra confirmation | Require confirmation dialog | User avoids accidental deletion or reset |
 | Largest font causes overflow risk | Use wrapping, responsive grid, and min target sizes | Content remains readable and reachable |
-| Remote activity organizer unavailable | Render local fallback or unavailable-state message | Host remains stable and understandable |
+| Activity organizer zone unavailable | Render local fallback or unavailable-state message | Primary zone remains stable and understandable |
 
 ## Tech Decisions
 
 | Decision | Choice | Rationale |
 | --- | --- | --- |
-| Router | Next.js Pages Router | Explicit project requirement. |
+| Framework and router | Next.js 16 with Pages Router | Explicit project requirement and compatible with the chosen local-first architecture. |
 | Architecture | Clean Architecture by layer and feature area | Keeps domain/use cases testable and UI-independent. |
 | UI Kit | Material UI | Explicit requirement and strong accessibility primitives. |
 | State management | Zustand | Required project decision; keeps client state small and explicit. |
@@ -283,5 +285,5 @@ interface Activity {
 | Activity persistence | Local activity repository for v1 | Demonstrates business-data persistence without backend scope. |
 | Theme | Runtime MUI theme generated from `DESIGN.md` tokens plus user preferences | Enables real font, contrast, and spacing changes. |
 | Accessibility validation | ARIA premises plus keyboard and focus checks | Ensures accessibility is testable, not only visual. |
-| Microfrontend boundary | SeniorEase as host consuming a future activity organizer remote | Correct host/remote direction and clear module with business value. |
+| Microfrontend boundary | SeniorEase as primary zone routing to a future Activity Organizer zone with Next.js Multi-Zones | Follows the Next.js documentation recommendation for microfrontends and avoids unsupported Module Federation coupling in Next.js 16. |
 | CI Node version | Node.js 20+ | Required project decision. |

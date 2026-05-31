@@ -2,7 +2,7 @@
 
 ## Problem Statement
 
-Older adults often face academic and professional digital tools with small text, dense navigation, unclear feedback, and unpredictable flows. SeniorEase will provide a Next.js web app where the experience can be personalized, activities can be organized in guided steps, and preferences remain stable across sessions.
+Older adults often face academic and professional digital tools with small text, dense navigation, unclear feedback, and unpredictable flows. SeniorEase will provide a Next.js 16 Pages Router web app where the experience can be personalized, activities can be organized in guided steps, and preferences remain stable across sessions.
 
 ## Goals
 
@@ -122,16 +122,16 @@ Older adults often face academic and professional digital tools with small text,
 
 ### P2: Preparar Microfrontend de Atividades
 
-**User Story**: As a developer, I want `seniorease-web` to be ready to consume the activity organizer as a remote microfrontend so that the organizer can evolve independently later.
+**User Story**: As a developer, I want `seniorease-web` to be ready to route to the activity organizer as a separate Next.js zone so that the organizer can evolve independently later.
 
-**Why P2**: The project asks for a module separation suggestion using Module Federation, with this app acting as the host.
+**Why P2**: The project will follow the Next.js microfrontend recommendation using Multi-Zones, with `seniorease-web` as the primary zone.
 
 **Acceptance Criteria**:
 
-1. WHEN modules are designed THEN the activity organizer SHALL have clear public contracts for page, container, and use case providers.
-2. WHEN Module Federation is introduced THEN `seniorease-web` SHALL act as the host and load the activity organizer as a remote module.
-3. WHEN remote boundaries are defined THEN shared dependencies SHALL include React, React DOM, Next.js, Material UI, Emotion, and Zustand as singletons where applicable.
-4. WHEN the remote is unavailable THEN the SeniorEase host SHALL provide a local fallback or clear unavailable-state message.
+1. WHEN modules are designed THEN the activity organizer SHALL have clear public contracts for page routes, container props, preference context, and use case providers.
+2. WHEN Multi-Zones integration is introduced THEN `seniorease-web` SHALL act as the primary zone and route activity paths to the activity organizer zone.
+3. WHEN zone boundaries are defined THEN the activity organizer zone SHALL own unique paths such as `/atividades` and use a zone-specific `assetPrefix` to avoid Next.js asset conflicts.
+4. WHEN the activity zone is unavailable THEN `seniorease-web` SHALL provide a local fallback route or clear unavailable-state message.
 
 **Independent Test**: Review module boundary documentation and verify activity organizer imports do not depend on unrelated modules.
 
@@ -165,7 +165,7 @@ Older adults often face academic and professional digital tools with small text,
 | SE-10 | Material UI e DESIGN.md | Design | Pending |
 | SE-11 | Acessibilidade para Idosos | Design | Pending |
 | SE-12 | CI/CD Basico | Design | Pending |
-| SE-13 | Microfrontend de Atividades | Design | Pending |
+| SE-13 | Microfrontend de Atividades via Multi-Zones | Design | Pending |
 | SE-14 | Estado com Zustand | Design | Pending |
 | SE-15 | Premissas ARIA | Design | Pending |
 | SE-16 | Node.js 20+ | Design | Pending |

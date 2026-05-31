@@ -1,0 +1,157 @@
+{
+  "project": "SeniorEase",
+  "source": ".specs/features",
+  "updatedFromSpec": ".specs/features/seniorease-platform/spec.md",
+  "features": [
+    {
+      "id": "experience-personalization",
+      "name": "Experience Personalization Dashboard",
+      "priority": "P1",
+      "status": "planned",
+      "type": "product",
+      "requirementIds": [
+        "SE-01",
+        "SE-02",
+        "SE-03",
+        "SE-10",
+        "SE-11",
+        "SE-14",
+        "SE-15"
+      ],
+      "summary": "Dashboard for older adults to adjust readability, visual comfort, navigation complexity, feedback, and confirmation behavior.",
+      "capabilities": [
+        "Font size adjustment",
+        "Contrast level adjustment",
+        "Spacing adjustment",
+        "Simplified or standard navigation mode",
+        "Reinforced visual feedback",
+        "Extra confirmation before critical actions",
+        "Accessible labels, names, focus states, and live-region feedback"
+      ]
+    },
+    {
+      "id": "activity-organizer",
+      "name": "Simplified Activity Organizer",
+      "priority": "P1",
+      "status": "planned",
+      "type": "product",
+      "requirementIds": ["SE-04", "SE-05", "SE-11", "SE-13", "SE-15"],
+      "summary": "Clear task organizer for academic and professional activities with guided steps, reminders, completion feedback, and history.",
+      "capabilities": [
+        "Simple activity list",
+        "Activity creation",
+        "Guided step-by-step execution",
+        "Plain-language reminders",
+        "Positive completion feedback",
+        "Completed activity history",
+        "Keyboard-operable controls and ARIA-compatible feedback"
+      ]
+    },
+    {
+      "id": "profile-persistent-settings",
+      "name": "User Profile and Persistent Settings",
+      "priority": "P1",
+      "status": "planned",
+      "type": "product",
+      "requirementIds": ["SE-06", "SE-07", "SE-11", "SE-14", "SE-15"],
+      "summary": "Profile and settings area that stores and restores accessibility and reminder preferences across sessions.",
+      "capabilities": [
+        "Persist preferences with Zustand persist",
+        "Restore preferences on app load",
+        "Use accessible defaults when no preferences exist",
+        "Recover from invalid persisted data",
+        "Display current preference summary",
+        "Configure reminder preferences"
+      ]
+    },
+    {
+      "id": "clean-architecture-foundation",
+      "name": "Clean Architecture Foundation",
+      "priority": "P1",
+      "status": "planned",
+      "type": "technical",
+      "requirementIds": ["SE-08", "SE-09"],
+      "summary": "Layered architecture that keeps domain and application logic independent from UI, storage, Zustand, and framework details.",
+      "capabilities": [
+        "Pure domain models",
+        "UI-independent use cases",
+        "Application ports",
+        "Infrastructure adapters",
+        "Thin Next.js pages",
+        "Testable domain and application layers"
+      ]
+    },
+    {
+      "id": "mui-accessible-theme",
+      "name": "Material UI Accessible Theme",
+      "priority": "P1",
+      "status": "planned",
+      "type": "technical",
+      "requirementIds": ["SE-01", "SE-02", "SE-03", "SE-10", "SE-11", "SE-15"],
+      "summary": "Material UI theme generated from DESIGN.md tokens and runtime accessibility preferences.",
+      "capabilities": [
+        "Theme tokens from DESIGN.md",
+        "Runtime font scale variants",
+        "Runtime contrast variants",
+        "Runtime spacing variants",
+        "Large touch targets",
+        "Visible focus states",
+        "Reduced visual complexity support"
+      ]
+    },
+    {
+      "id": "accessibility-validation",
+      "name": "Accessibility Validation for Older Adults",
+      "priority": "P1",
+      "status": "planned",
+      "type": "quality",
+      "requirementIds": ["SE-11", "SE-15"],
+      "summary": "Validation of accessibility requirements through ARIA premises, keyboard navigation, focus management, contrast, spacing, and reduced motion.",
+      "capabilities": [
+        "Native semantic HTML first",
+        "Accessible names for controls",
+        "Programmatic labels and descriptions",
+        "Dialog focus management",
+        "Live-region announcements",
+        "Keyboard-only operation",
+        "Reduced-motion handling"
+      ]
+    },
+    {
+      "id": "ci-cd-foundation",
+      "name": "CI/CD Foundation",
+      "priority": "P1",
+      "status": "planned",
+      "type": "technical",
+      "requirementIds": ["SE-12", "SE-16"],
+      "summary": "GitHub Actions workflow for Node.js 20+ that installs dependencies, runs lint, tests, and production build.",
+      "capabilities": [
+        "Run on push to main",
+        "Run on pull requests to main",
+        "Checkout code",
+        "Setup Node.js 20+",
+        "Install dependencies",
+        "Run lint",
+        "Run automated tests",
+        "Build production app"
+      ]
+    },
+    {
+      "id": "activity-microfrontend-zone-readiness",
+      "name": "Activity Organizer Multi-Zone Readiness",
+      "priority": "P2",
+      "status": "planned",
+      "type": "architecture",
+      "requirementIds": ["SE-13"],
+      "summary": "Prepare seniorease-web as the primary Next.js zone for a future Activity Organizer zone routed through Multi-Zones.",
+      "capabilities": [
+        "Primary zone remains seniorease-web",
+        "Activity Organizer has clear public contracts",
+        "Route ownership and rewrite plan",
+        "Zone-specific asset prefix plan",
+        "Local fallback when activity zone is unavailable",
+        "Documentation for future Next.js Multi-Zones configuration"
+      ]
+    }
+  ]
+}

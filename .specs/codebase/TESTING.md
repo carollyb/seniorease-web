@@ -1,6 +1,6 @@
 # Testing Strategy
 
-**Project Type:** Greenfield Next.js Pages Router application
+**Project Type:** Greenfield Next.js 16 Pages Router application
 **Status:** Planned
 
 ## Test Coverage Matrix

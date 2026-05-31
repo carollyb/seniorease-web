@@ -16,7 +16,7 @@
 
 **Core:**
 
-- Framework: Next.js with Pages Router
+- Framework: Next.js 16 with Pages Router
 - Runtime: Node.js 20+
 - Language: TypeScript
 - UI: React with Material UI
@@ -45,7 +45,7 @@
 - Clean Architecture folder structure separating domain, application use cases, infrastructure adapters, and presentation modules.
 - Material UI theme based on `DESIGN.md`, adapted for older-adult accessibility and WCAG-friendly contrast.
 - CI workflow at `.github/workflows/ci.yml` with checkout, Node.js 20+ setup, install, lint, tests, and build.
-- Microfrontend recommendation: keep `seniorease-web` as the Module Federation host and consume a future activity organizer remote.
+- Microfrontend recommendation: keep `seniorease-web` as the primary Next.js zone and route to a future Activity Organizer zone with Next.js Multi-Zones.
 
 **Explicitly out of scope:**
 
@@ -58,8 +58,9 @@
 
 ## Constraints
 
-- Technical: Must use Next.js Pages Router, not App Router.
+- Technical: Must use Next.js 16 with Pages Router, not App Router.
 - Technical: Must use Node.js 20 or newer.
+- Technical: Microfrontend integration must use Next.js Multi-Zones with route rewrites and zone-specific asset prefixes, not Module Federation.
 - Technical: Must follow Clean Architecture with domain isolated from UI and infrastructure.
 - Technical: Must use Material UI and derive theme tokens from `DESIGN.md`.
 - Technical: Must use Zustand for state management; accessibility preferences must use Zustand `persist`.
