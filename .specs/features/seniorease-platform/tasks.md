@@ -53,12 +53,12 @@ T11 -> T12 -> T13
 
 **Done when**:
 
-- [ ] Next.js 16 Pages Router structure exists.
-- [ ] Node.js 20+ is documented in `.nvmrc`, `package.json` engines, and CI expectations.
-- [ ] TypeScript is configured.
-- [ ] Material UI, Emotion, and Zustand dependencies are declared.
-- [ ] Scripts exist for `lint`, `test`, `test:e2e`, and `build`.
-- [ ] Gate check passes: `npm run build`.
+- [x] Next.js 16 Pages Router structure exists.
+- [x] Node.js 20+ is documented in `.nvmrc`, `package.json` engines, and CI expectations.
+- [x] TypeScript is configured.
+- [x] Material UI, Emotion, and Zustand dependencies are declared.
+- [x] Scripts exist for `lint`, `test`, `test:e2e`, and `build`.
+- [x] Gate check passes: `npm run build`.
 
 **Tests**: none
 **Gate**: build
