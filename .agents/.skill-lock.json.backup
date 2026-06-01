@@ -34,7 +34,21 @@
       "source": "local",
       "contentHash": "e96f99e13dc2acc75efc1793aee08fe244802a97a4e190af38bd5a871a5c9636",
       "installedAt": "2026-05-28T03:17:38.230Z",
-      "updatedAt": "2026-05-28T03:17:38.328Z",
+      "updatedAt": "2026-05-28T03:17:38.435Z",
+      "agents": [
+        "cursor",
+        "claude-code",
+        "windsurf"
+      ],
+      "method": "copy",
+      "global": false
+    },
+    "skill-architect": {
+      "name": "skill-architect",
+      "source": "local",
+      "contentHash": "349b256153447631c3ed356996c3a62fec52493d07ba75e37b12c458f9fbf6bb",
+      "installedAt": "2026-05-31T16:29:44.311Z",
+      "updatedAt": "2026-05-31T16:29:44.343Z",
       "agents": [
         "cursor",
         "claude-code"

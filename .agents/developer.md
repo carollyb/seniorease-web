@@ -48,7 +48,7 @@ You can be invoked with the task brief develivered in **one of two** forms. The 
 
 The caller provides a task identifier such as "001", "001-setup.md", or "plan/tasks/001-steup.md", or the literal word `"next"`.
 
-- Run the standard Phase 1 below, which uses **dev-workflow/analyze-task** to locate and read the file from `.specs/features/**/tasks.md`.
+- Run the standard Phase 1 below, which uses `.github/skills/dev-workflow/analyze-task` to locate and read the file from `.specs/features/**/tasks.md`.
 - Acceptance-crteria updates, completion timestamps, and so on are written **back to the file** in Phase 4.
 
 ### Mode B - Inline brief (`/quick-task` flow)
@@ -88,11 +88,14 @@ If the prompt contains a `TASK_BRIEF_INLINE` block, use Mode B. Otherwise, use M
 
 ### Workflow Skills (phases)
 
+Workflow skills live under `.github/skills/dev-workflow/`.
+
 | Skill                        | Phase | Purpose                                  |
 | ---------------------------- | ----- | ---------------------------------------- |
 | `dev-workflow/analyze-task`  | 1     | Load task, detect stack, gather context  |
+| `dev-workflow/check-task-progress` | 1.5   | Suggest task progress from code changes   |
 | `dev-workflow/verify-code`   | 3     | Run linter, build, tests, check criteria |
-| `dev-workflow/complete-task` | 4     | Update status, signal completion.        |
+| `dev-workflow/complete-task` | 4     | Mark verified tasks complete and signal hooks |
 
 ### Domain Skills (implementation)
 
@@ -106,8 +109,9 @@ If the prompt contains a `TASK_BRIEF_INLINE` block, use Mode B. Otherwise, use M
 
 Branch on input mode first.
 
-- If Mode A, invoke `dev-workflow/analyze-task` with the provided identifier to load the task brief from the file system.
+- If Mode A, invoke `.github/skills/dev-workflow/analyze-task` with the provided identifier to load the task brief from the file system.
 - If Mode B, parse the inline brief content directly from the prompt.
+- For Mode A, use `.github/skills/dev-workflow/check-task-progress` after analysis or after source changes when dependency status, current progress, or satisfied done criteria are not already clear from the analysis brief.
 
 **Decision Point**: If the task brief cannot be found (Mode A) or parsed (Mode B), either:
 
@@ -133,7 +137,7 @@ For each instruction in the task brief:
 
 ### Phase 4: Complete Task
 
-- If all tests pass and criteria are met, invoke `dev-workflow/complete-task` to update the task status to "completed" and signal that the task is done. In Mode A, this will involve writing back to the original file. In Mode B, you may simply confirm completion in the response.
+- If all tests pass and criteria are met, invoke `.github/skills/dev-workflow/complete-task` to update task progress and emit the workflow completion signal. In Mode A, this writes back to `.specs/features/seniorease-platform/tasks.md`. In Mode B, confirm completion in the response without editing the task ledger.
 
 ## Quality Standards
 

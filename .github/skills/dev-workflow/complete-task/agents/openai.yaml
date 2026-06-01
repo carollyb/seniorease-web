@@ -1,0 +1,4 @@
+interface:
+  display_name: "Complete Task"
+  short_description: "Finalize verified SeniorEase tasks"
+  default_prompt: "Use $complete-task to mark a verified SeniorEase task complete and emit the workflow completion signal."

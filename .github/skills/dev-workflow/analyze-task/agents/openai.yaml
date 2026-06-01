@@ -1,0 +1,4 @@
+interface:
+  display_name: "Analyze Task"
+  short_description: "Analyze SeniorEase task context"
+  default_prompt: "Use $analyze-task to inspect a SeniorEase task and produce an implementation-ready analysis."

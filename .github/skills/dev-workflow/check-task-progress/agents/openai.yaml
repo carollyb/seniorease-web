@@ -1,0 +1,4 @@
+interface:
+  display_name: "Check Task Progress"
+  short_description: "Suggest task progress from code changes"
+  default_prompt: "Use $check-task-progress to inspect changed files and suggest SeniorEase task progress updates."

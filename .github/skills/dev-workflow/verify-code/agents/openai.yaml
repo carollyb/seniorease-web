@@ -1,0 +1,4 @@
+interface:
+  display_name: "Verify Code"
+  short_description: "Run gates and check criteria"
+  default_prompt: "Use $verify-code to run SeniorEase task gates and verify acceptance criteria before completion."

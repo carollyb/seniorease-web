@@ -8,6 +8,7 @@
       "installedAt": "2026-05-28T02:44:02.117Z",
       "updatedAt": "2026-05-28T02:44:02.156Z",
       "agents": [
+        "codex",
         "cursor",
         "claude-code",
         "windsurf"
@@ -22,6 +23,7 @@
       "installedAt": "2026-05-28T02:56:37.350Z",
       "updatedAt": "2026-05-28T02:56:37.416Z",
       "agents": [
+        "codex",
         "cursor",
         "claude-code",
         "windsurf"
@@ -36,6 +38,37 @@
       "installedAt": "2026-05-28T03:17:38.230Z",
       "updatedAt": "2026-05-28T03:17:38.435Z",
       "agents": [
+        "codex",
+        "cursor",
+        "claude-code",
+        "windsurf"
+      ],
+      "method": "copy",
+      "global": false
+    },
+    "skill-architect": {
+      "name": "skill-architect",
+      "source": "local",
+      "contentHash": "349b256153447631c3ed356996c3a62fec52493d07ba75e37b12c458f9fbf6bb",
+      "installedAt": "2026-05-31T16:29:44.311Z",
+      "updatedAt": "2026-05-31T16:29:44.373Z",
+      "agents": [
+        "codex",
+        "cursor",
+        "claude-code",
+        "windsurf"
+      ],
+      "method": "copy",
+      "global": false
+    },
+    "dev-workflow": {
+      "name": "dev-workflow",
+      "source": "local",
+      "contentHash": "9f2fedb25fa0239d97a5984acf1cbc7a8de11163bff6cb368d0c60fa2db79c2d",
+      "installedAt": "2026-06-01T00:57:46.929Z",
+      "updatedAt": "2026-06-01T01:21:14.739Z",
+      "agents": [
+        "codex",
         "cursor",
         "claude-code",
         "windsurf"
