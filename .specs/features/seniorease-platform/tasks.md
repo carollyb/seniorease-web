@@ -132,10 +132,10 @@ T11 -> T12 -> T13
 
 **Done when**:
 
-- [ ] Application ports are defined for preference state and activity repositories.
-- [ ] Use cases depend on ports or plain input/output contracts, not infrastructure, Zustand stores, or UI.
-- [ ] Unit tests mock repository ports.
-- [ ] Gate check passes: `npm test -- --watchAll=false`.
+- [x] Application ports are defined for preference state and activity repositories.
+- [x] Use cases depend on ports or plain input/output contracts, not infrastructure, Zustand stores, or UI.
+- [x] Unit tests mock repository ports.
+- [x] Gate check passes: `npm test -- --watchAll=false`.
 
 **Tests**: unit
 **Gate**: unit
