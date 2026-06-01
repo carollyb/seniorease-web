@@ -106,11 +106,11 @@ T11 -> T12 -> T13
 
 **Done when**:
 
-- [ ] Preference defaults are accessible and valid.
-- [ ] Activity creation and completion rules are implemented.
-- [ ] Domain files do not import React, Next.js, Material UI, Zustand, or browser APIs.
-- [ ] Unit tests cover defaults, validation, and completion transitions.
-- [ ] Gate check passes: `npm test -- --watchAll=false`.
+- [x] Preference defaults are accessible and valid.
+- [x] Activity creation and completion rules are implemented.
+- [x] Domain files do not import React, Next.js, Material UI, Zustand, or browser APIs.
+- [x] Unit tests cover defaults, validation, and completion transitions.
+- [x] Gate check passes: `npm test -- --watchAll=false`.
 
 **Tests**: unit
 **Gate**: unit
