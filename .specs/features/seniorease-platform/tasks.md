@@ -80,11 +80,11 @@ T11 -> T12 -> T13
 
 **Done when**:
 
-- [ ] Layer folders exist.
-- [ ] Domain folders have no UI imports.
-- [ ] Application ports folder exists.
-- [ ] Store folders exist outside domain and application layers.
-- [ ] Gate check passes: `npm run build`.
+- [x] Layer folders exist.
+- [x] Domain folders have no UI imports.
+- [x] Application ports folder exists.
+- [x] Store folders exist outside domain and application layers.
+- [x] Gate check passes: `npm run build`.
 
 **Tests**: none
 **Gate**: build
