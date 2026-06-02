@@ -157,12 +157,12 @@ T11 -> T12 -> T13
 
 **Done when**:
 
-- [ ] Preference store uses Zustand `persist`.
-- [ ] Store hydration is handled safely for SSR/client rendering.
-- [ ] Invalid persisted preference data recovers to defaults.
-- [ ] Activity store coordinates use cases without embedding business rules.
-- [ ] Unit tests cover save, load, hydration, invalid data, and unavailable persistence.
-- [ ] Gate check passes: `npm test -- --watchAll=false`.
+- [x] Preference store uses Zustand `persist`.
+- [x] Store hydration is handled safely for SSR/client rendering.
+- [x] Invalid persisted preference data recovers to defaults.
+- [x] Activity store coordinates use cases without embedding business rules.
+- [x] Unit tests cover save, load, hydration, invalid data, and unavailable persistence.
+- [x] Gate check passes: `npm test -- --watchAll=false`.
 
 **Tests**: unit
 **Gate**: unit
