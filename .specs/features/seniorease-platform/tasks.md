@@ -210,12 +210,12 @@ T11 -> T12 -> T13
 
 **Done when**:
 
-- [ ] Controls exist for font size, contrast, spacing, navigation mode, reinforced feedback, and extra confirmation.
-- [ ] Changes update the Zustand preference store and remain validated by domain helpers.
-- [ ] Controls have accessible names, labels, and helper/error descriptions.
-- [ ] Reinforced feedback is visible and announced through a polite live region.
-- [ ] Component tests cover preference changes and feedback.
-- [ ] Gate check passes: `npm test -- --watchAll=false`.
+- [x] Controls exist for font size, contrast, spacing, navigation mode, reinforced feedback, and extra confirmation.
+- [x] Changes update the Zustand preference store and remain validated by domain helpers.
+- [x] Controls have accessible names, labels, and helper/error descriptions.
+- [x] Reinforced feedback is visible and announced through a polite live region.
+- [x] Component tests cover preference changes and feedback.
+- [x] Gate check passes: `npm test -- --watchAll=false`.
 
 **Tests**: integration
 **Gate**: unit
