@@ -237,13 +237,13 @@ T11 -> T12 -> T13
 
 **Done when**:
 
-- [ ] Empty state has one clear primary action.
-- [ ] Activity list shows title, reminder, status, and primary action with meaningful roles and accessible names.
-- [ ] Guided steps render in predictable order and are keyboard-operable.
-- [ ] Completing an activity shows positive feedback, announces it through a live region, and moves it to history.
-- [ ] Public contracts are ready for future extraction into an Activity Organizer Multi-Zone app.
-- [ ] Component tests cover create, guided step view, complete, and history.
-- [ ] Gate check passes: `npm test -- --watchAll=false`.
+- [x] Empty state has one clear primary action.
+- [x] Activity list shows title, reminder, status, and primary action with meaningful roles and accessible names.
+- [x] Guided steps render in predictable order and are keyboard-operable.
+- [x] Completing an activity shows positive feedback, announces it through a live region, and moves it to history.
+- [x] Public contracts are ready for future extraction into an Activity Organizer Multi-Zone app.
+- [x] Component tests cover create, guided step view, complete, and history.
+- [x] Gate check passes: `npm test -- --watchAll=false`.
 
 **Tests**: integration
 **Gate**: unit
