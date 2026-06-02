@@ -11,6 +11,7 @@ Older adults often face academic and professional digital tools with small text,
 - [ ] Persist user profile settings locally with Zustand `persist` and restore them on app load.
 - [ ] Implement Clean Architecture with isolated domain, UI-independent use cases, repository interfaces, and infrastructure adapters.
 - [ ] Use Material UI with a theme derived from `DESIGN.md` and adapted for older-adult accessibility.
+- [ ] Implement the dashboard, activities, guided steps, profile, and settings screens from the supplied Figma frames as the visual source of truth.
 - [ ] Validate accessibility through ARIA semantics, labels, focus behavior, keyboard navigation, and live-region feedback.
 - [ ] Add CI workflow for Node.js 20+, install, lint, tests, and build.
 
@@ -26,7 +27,47 @@ Older adults often face academic and professional digital tools with small text,
 
 ---
 
+## Figma Layout References
+
+The following Figma frames are the source of truth for page layout, spacing, colors, typography, component composition, and responsive behavior. Implementation must inspect the frames during execution and reconcile `DESIGN.md`/theme tokens before hardcoding any visual value.
+
+| Page | Viewport | Figma Node | Route / Surface |
+| --- | --- | --- | --- |
+| Profile | Desktop | [703:200](https://www.figma.com/design/wm7yHBbvhkLHokzUXbuwa8/NATGEO?node-id=703-200&t=O7eRkgm2PxxJEFSL-4) | `/perfil` |
+| Settings | Desktop | [703:250](https://www.figma.com/design/wm7yHBbvhkLHokzUXbuwa8/NATGEO?node-id=703-250&t=O7eRkgm2PxxJEFSL-4) | `/configuracoes` |
+| Dashboard | Desktop | [703:5](https://www.figma.com/design/wm7yHBbvhkLHokzUXbuwa8/NATGEO?node-id=703-5&t=O7eRkgm2PxxJEFSL-4) | `/` |
+| Dashboard | Tablet | [703:305](https://www.figma.com/design/wm7yHBbvhkLHokzUXbuwa8/NATGEO?node-id=703-305&t=O7eRkgm2PxxJEFSL-4) | `/` |
+| Dashboard | Mobile | [703:407](https://www.figma.com/design/wm7yHBbvhkLHokzUXbuwa8/NATGEO?node-id=703-407&t=O7eRkgm2PxxJEFSL-4) | `/` |
+| Activities | Desktop | [703:78](https://www.figma.com/design/wm7yHBbvhkLHokzUXbuwa8/NATGEO?node-id=703-78&t=O7eRkgm2PxxJEFSL-4) | `/atividades` |
+| Activities | Tablet | [703:361](https://www.figma.com/design/wm7yHBbvhkLHokzUXbuwa8/NATGEO?node-id=703-361&t=O7eRkgm2PxxJEFSL-4) | `/atividades` |
+| Activities | Mobile | [703:463](https://www.figma.com/design/wm7yHBbvhkLHokzUXbuwa8/NATGEO?node-id=703-463&t=O7eRkgm2PxxJEFSL-4) | `/atividades` |
+| Guided steps | Desktop | [703:141](https://www.figma.com/design/wm7yHBbvhkLHokzUXbuwa8/NATGEO?node-id=703-141&t=O7eRkgm2PxxJEFSL-4) | guided activity step view |
+| Guided steps | Tablet | [703:509](https://www.figma.com/design/wm7yHBbvhkLHokzUXbuwa8/NATGEO?node-id=703-509&t=O7eRkgm2PxxJEFSL-4) | guided activity step view |
+
+---
+
 ## User Stories
+
+### P1: Implementar Layouts do Figma - MVP
+
+**User Story**: As an older adult, I want the implemented screens to match the designed SeniorEase layouts so that the product feels predictable, readable, and consistent across devices.
+
+**Why P1**: The Figma frames define the user-facing experience and must guide the remaining implementation work.
+
+**Acceptance Criteria**:
+
+1. WHEN a listed page is implemented THEN the system SHALL match the corresponding Figma frame for layout, spacing, colors, typography, visual hierarchy, and component placement.
+2. WHEN the dashboard or activities page is viewed across desktop, tablet, and mobile THEN the system SHALL follow the matching Figma frame for that viewport.
+3. WHEN the guided steps page is viewed on desktop or tablet THEN the system SHALL follow the matching Figma frame for that viewport.
+4. WHEN profile and settings are implemented THEN the system SHALL follow the supplied desktop Figma frames and use responsive behavior consistent with the shared shell and dashboard/activity patterns.
+5. WHEN reusable UI is needed THEN the system SHALL create and reuse `AppShell`, `SideNavigation`, `ActivityList`, `ActivityCard`, `StatusPill`, `PrimaryButton`, and `EmptyState`.
+6. WHEN a visual value exists in theme tokens THEN the system SHALL use MUI `sx`/theme tokens instead of duplicated hardcoded values.
+7. WHEN `DESIGN.md` tokens diverge from the Figma frames THEN the system SHALL update/reconcile the tokens or document the intentional exception before implementation.
+8. WHEN Figma-aligned screens are implemented THEN the system SHALL preserve semantic HTML, labels, keyboard navigation, visible focus states, and polite ARIA live-region completion feedback.
+
+**Independent Test**: Compare the local desktop, tablet, and mobile routes against the linked Figma frames and verify keyboard-only operation, labels, focus visibility, and completion feedback.
+
+---
 
 ### P1: Personalizar Experiencia - MVP
 
@@ -175,8 +216,10 @@ Older adults often face academic and professional digital tools with small text,
 | SE-14 | Estado com Zustand | Design | Pending |
 | SE-15 | Premissas ARIA | Design | Pending |
 | SE-16 | Node.js 20+ | Design | Pending |
+| SE-17 | Fidelidade visual aos layouts do Figma | Design | Pending |
+| SE-18 | Componentes reutilizaveis MUI para layout SeniorEase | Design | Pending |
 
-**Coverage:** 16 total, 16 mapped to design, 16 mapped to tasks.
+**Coverage:** 18 total, 18 mapped to design, 18 mapped to tasks.
 
 ---
 
@@ -186,6 +229,8 @@ Older adults often face academic and professional digital tools with small text,
 - [ ] User can create, follow, complete, and review an activity.
 - [ ] Preferences survive browser reload.
 - [ ] Preferences are persisted through Zustand `persist`.
+- [ ] Implemented pages match the linked Figma frames across the provided desktop, tablet, and mobile variants.
+- [ ] Shared UI uses the required reusable MUI components instead of one-off duplicated page markup.
 - [ ] Domain and application tests run without UI dependencies.
 - [ ] CI workflow validates lint, tests, and build.
 - [ ] Main flows remain usable at large font size, high contrast, increased spacing, simplified mode, keyboard-only navigation, and ARIA validation.

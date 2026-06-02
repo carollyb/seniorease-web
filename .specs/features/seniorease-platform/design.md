@@ -49,8 +49,17 @@ src/
     activities/
   presentation/
     shared/
+      components/
+        AppShell.tsx
+        SideNavigation.tsx
+        PrimaryButton.tsx
+        StatusPill.tsx
+        EmptyState.tsx
     personalization/
     activities/
+      components/
+        ActivityList.tsx
+        ActivityCard.tsx
     profile/
   pages/
     index.tsx
@@ -62,16 +71,44 @@ src/
     createSeniorEaseTheme.ts
 ```
 
-## Material UI Theme From DESIGN.md
+## Figma Source of Truth
 
-The theme will translate `DESIGN.md` tokens into Material UI configuration:
+The implementation must treat the linked Figma frames in `spec.md` as the authoritative source for user-facing layout and visual behavior:
 
-- Palette: `primary #1c1c1e`, `secondary #4262ff`, success `#00b473`, background `#ffffff` and `#f7f8fa`, text `#1c1c1e`.
-- Accessible accents: yellow, teal, coral, and rose are reserved for tags, status panels, and supportive visual grouping.
-- Typography: use `Roobert PRO` when available, with fallback to `Noto Sans`, system UI, and sans-serif.
-- Shape: pill buttons use full radius, inputs use 8px radius, repeated cards and panels use 8px or local MUI defaults unless the design token explicitly calls for larger feature panels.
-- Spacing: base spacing uses 4px/8px increments from `DESIGN.md`, expanded by user spacing preference.
+- Dashboard: desktop, tablet, and mobile frames define the primary landing route.
+- Activities: desktop, tablet, and mobile frames define activity list behavior.
+- Guided steps: desktop and tablet frames define the step-by-step activity flow.
+- Profile and settings: desktop frames define the profile/settings composition and must be adapted responsively through the shared shell patterns.
+
+Before implementation, the executing task must inspect the relevant Figma frame and extract the concrete spacing, colors, typography, dimensions, states, and responsive changes needed for that page. If the extracted values differ from the current `DESIGN.md` token set, update/reconcile the token source first or document a deliberate exception in the task handoff.
+
+## Material UI Theme From DESIGN.md and Figma
+
+The theme will translate reconciled `DESIGN.md` and Figma values into Material UI configuration:
+
+- Palette: use the colors extracted from the Figma frames and represented as theme tokens; avoid page-local color literals when a token exists.
+- Accessible accents: status, progress, and supportive grouping colors must pass contrast requirements and remain distinguishable in high-contrast preference variants.
+- Typography: use the Figma-specified family, size, weight, and line-height through theme variants; fallback to `Noto Sans`, system UI, and sans-serif when the brand font is unavailable.
+- Shape: buttons, cards, panels, inputs, and navigation affordances use the radii from the Figma frames through theme/component tokens.
+- Spacing: base spacing uses theme tokens from `DESIGN.md` and Figma, expanded by user spacing preference.
 - Accessibility adaptations: contrast and font-size preferences produce theme variants at runtime.
+
+Implementation rules:
+
+- Prefer MUI components and `sx` values that read from `theme.palette`, `theme.typography`, `theme.spacing`, `theme.shape`, and component variants.
+- Do not duplicate hardcoded visual values across pages; promote repeated values into theme tokens or shared component props.
+- Keep the runtime preference system compatible with the Figma layout at the largest font size and widest spacing mode.
+- Keep visible focus states aligned with the visual language while meeting accessibility contrast requirements.
+
+## Responsive Layout Contract
+
+Figma defines explicit responsive variants for the dashboard and activities pages, plus desktop/tablet guided steps variants. The implementation should map these into MUI breakpoints and CSS layout behavior:
+
+- Desktop pages use the full `AppShell` with persistent `SideNavigation`.
+- Tablet pages preserve the primary information architecture while allowing navigation/content density to adapt to the Figma tablet frames.
+- Mobile pages prioritize the primary workflow, avoid horizontal overflow, and expose navigation through the Figma-approved mobile pattern.
+- Profile and settings only have desktop frames in the current source set; mobile/tablet behavior should reuse the shared shell and content stacking rules from dashboard/activities unless new Figma frames are supplied.
+- All breakpoints must support the largest font scale, increased spacing, keyboard focus order, and reduced motion preferences without clipped text or overlapping controls.
 
 ## ARIA Accessibility Premises
 
@@ -188,6 +225,80 @@ customElements.define('seniorease-activity-organizer', SeniorEaseActivityOrganiz
 ```
 
 ## Components and Interfaces
+
+### AppShell
+
+- **Purpose**: Provide the responsive page frame shared by dashboard, activities, guided steps, profile, and settings.
+- **Location**: `src/presentation/shared/components/AppShell.tsx`
+- **Interfaces**:
+  - `AppShellProps`
+  - `children: ReactNode`
+  - `activeRoute: SeniorEaseRoute`
+- **Dependencies**: Material UI layout primitives, `SideNavigation`, theme preferences.
+- **Accessibility**: Exposes skip link, `header`, `nav`, and `main` landmarks with predictable focus order.
+
+### SideNavigation
+
+- **Purpose**: Render the Figma-aligned navigation for desktop/tablet/mobile shell variants.
+- **Location**: `src/presentation/shared/components/SideNavigation.tsx`
+- **Interfaces**:
+  - `SideNavigationProps`
+  - `items: NavigationItem[]`
+  - `activeRoute: SeniorEaseRoute`
+- **Dependencies**: Material UI navigation/list primitives and route metadata.
+- **Accessibility**: Current route uses accessible current-state semantics; every item has an accessible name and keyboard-operable focus state.
+
+### PrimaryButton
+
+- **Purpose**: Standardize the primary action treatment from Figma while preserving MUI button semantics.
+- **Location**: `src/presentation/shared/components/PrimaryButton.tsx`
+- **Interfaces**:
+  - Reuses MUI `ButtonProps` with a constrained visual variant.
+- **Dependencies**: Material UI `Button`, theme tokens.
+- **Accessibility**: Keeps native button semantics, disabled state, visible focus, and sufficient target size.
+
+### StatusPill
+
+- **Purpose**: Show activity/status labels consistently across activity cards, lists, guided steps, and dashboard summaries.
+- **Location**: `src/presentation/shared/components/StatusPill.tsx`
+- **Interfaces**:
+  - `status: ActivityStatus | PreferenceStatus | string`
+  - `label: string`
+- **Dependencies**: Material UI chip-like primitives, semantic color tokens.
+- **Accessibility**: Status text is readable without relying on color alone.
+
+### EmptyState
+
+- **Purpose**: Render a clear empty state with one primary action for activities and any future empty dashboard/profile sections.
+- **Location**: `src/presentation/shared/components/EmptyState.tsx`
+- **Interfaces**:
+  - `title: string`
+  - `description?: string`
+  - `action?: ReactNode`
+- **Dependencies**: Material UI stack/typography primitives, `PrimaryButton`.
+- **Accessibility**: Uses semantic headings and does not trap focus when actions are absent.
+
+### ActivityList
+
+- **Purpose**: Render the Figma-aligned activity collection and delegate each item to `ActivityCard`.
+- **Location**: `src/presentation/activities/components/ActivityList.tsx`
+- **Interfaces**:
+  - `activities: Activity[]`
+  - `onOpenActivity(activityId: string): void`
+  - `onCompleteActivity(activityId: string): void`
+- **Dependencies**: `ActivityCard`, activity domain types, Material UI list/grid primitives.
+- **Accessibility**: List semantics expose each activity with clear title, reminder/status text, and keyboard-operable actions.
+
+### ActivityCard
+
+- **Purpose**: Render one activity summary using Figma spacing, typography, status, and primary action placement.
+- **Location**: `src/presentation/activities/components/ActivityCard.tsx`
+- **Interfaces**:
+  - `activity: Activity`
+  - `onOpen(): void`
+  - `onComplete(): void`
+- **Dependencies**: `StatusPill`, `PrimaryButton`, activity domain types.
+- **Accessibility**: Action labels include the activity name when needed, and completion does not rely on color alone.
 
 ### Preference
 
@@ -371,7 +482,8 @@ interface Activity {
 | State management | Zustand | Required project decision; keeps client state small and explicit. |
 | Preference persistence | Zustand `persist` | Required project decision for accessibility preferences. |
 | Activity persistence | Local activity repository for v1 | Demonstrates business-data persistence without backend scope. |
-| Theme | Runtime MUI theme generated from `DESIGN.md` tokens plus user preferences | Enables real font, contrast, and spacing changes. |
+| Theme | Runtime MUI theme generated from Figma-reconciled `DESIGN.md` tokens plus user preferences | Enables real font, contrast, and spacing changes while preserving visual fidelity to the supplied layouts. |
+| Visual source of truth | Supplied Figma frames in the NATGEO file | Keeps implementation aligned to the created desktop, tablet, and mobile layouts rather than ad hoc page composition. |
 | Accessibility validation | ARIA premises plus keyboard and focus checks | Ensures accessibility is testable, not only visual. |
 | Microfrontend boundary | SeniorEase as primary zone routing to a future Activity Organizer zone with Next.js Multi-Zones | Follows the Next.js documentation recommendation for microfrontends and avoids unsupported Module Federation coupling in Next.js 16. |
 | Remote subsections | Web Component widgets loaded by script, with JavaScript properties for complex input, HTML attributes for simple config, and `CustomEvent` for output | Enables embedded remote subsections inside primary-zone pages without importing runtime React components across Next.js apps. |

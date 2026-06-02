@@ -436,6 +436,10 @@ components:
     padding: "{spacing.sm} {spacing.md}"
 ---
 
+## SeniorEase Figma Alignment Notice
+
+The SeniorEase implementation must treat the Figma frames listed in `.specs/features/seniorease-platform/spec.md` as the current visual source of truth. The token analysis below predates those supplied screen layouts and must be reconciled before final page implementation. If any color, typography, spacing, radius, component state, or responsive behavior below conflicts with the Figma frames, update this file and the MUI theme token source to match the Figma layout before coding the affected screen.
+
 ## Overview
 
 Miro positions itself as the AI-powered visual workspace through a confident, slightly playful brand voice. The homepage opens with a stark white canvas anchored by a small canary-yellow Miro wordmark in the top-left, a black-pill primary CTA "Get started free" and a secondary "Book a demo" outline pill — then dramatic real-Miro-board mockup imagery (sticky notes, kanban, mind maps) carries the visual weight. Across deeper surfaces, the system breaks open: pastel feature cards (rose, teal, coral, yellow) echo the actual sticky-note color palette of the live whiteboard product, and customer story cards reuse those tints to differentiate brand vignettes.
