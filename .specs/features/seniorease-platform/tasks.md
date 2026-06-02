@@ -184,11 +184,11 @@ T11 -> T12 -> T13
 
 **Done when**:
 
-- [ ] Theme supports font scale, contrast level, spacing level, and reduced complexity.
-- [ ] Buttons and controls use enlarged accessible touch targets.
-- [ ] Theme supports visible focus states and ARIA-compatible component states.
-- [ ] Unit tests verify theme changes for font, contrast, and spacing inputs.
-- [ ] Gate check passes: `npm test -- --watchAll=false`.
+- [x] Theme supports font scale, contrast level, spacing level, and reduced complexity.
+- [x] Buttons and controls use enlarged accessible touch targets.
+- [x] Theme supports visible focus states and ARIA-compatible component states.
+- [x] Unit tests verify theme changes for font, contrast, and spacing inputs.
+- [x] Gate check passes: `npm test -- --watchAll=false`.
 
 **Tests**: unit
 **Gate**: unit
