@@ -14,6 +14,7 @@
 | Presentation Components | React components, Material UI composition | unit/integration | Yes |
 | Pages and Routing | Next pages, layout composition | integration | Yes |
 | Accessibility Critical Flows | personalization, guided tasks, profile settings, ARIA roles/names, keyboard navigation, focus management | e2e | No |
+| Responsive Figma Layouts | dashboard, activities, guided steps, profile, settings across supplied desktop/tablet/mobile frames | e2e/browser verification | No |
 | CI Configuration | GitHub Actions workflow | none | Yes |
 
 ## Gate Check Commands
@@ -42,4 +43,5 @@
 - Tests must be co-located with the task that creates or changes the tested layer.
 - E2E tests are sequential because they exercise shared browser state and persisted preferences.
 - Accessibility validation must check ARIA premises: semantic roles, accessible names, labels, focus order, keyboard operability, dialog semantics, and live-region announcements for feedback.
+- Figma layout validation must compare local desktop/tablet/mobile renderings against the linked frames and check for nonblank rendering, horizontal overflow, clipped text, overlapping controls, and visible focus states.
 - CI may omit `test:e2e` in the first pipeline if Playwright browsers are not installed in the runner, but the test script should exist for local validation.
