@@ -47,30 +47,32 @@ describe('SeniorEase route integration', () => {
     renderPage(<HomePage />)
 
     expect(
-      screen.getByRole('heading', { name: 'Painel SeniorEase' }),
+      screen.getByRole('heading', {
+        name: 'Make SeniorEase comfortable for you',
+      }),
     ).not.toBeNull()
     expect(
-      screen.getByRole('heading', { name: 'Personalizacao da experiencia' }),
+      screen.getByRole('heading', { name: 'Interface mode' }),
     ).not.toBeNull()
 
     const navigation = screen.getByRole('navigation', { name: 'SeniorEase' })
 
     expect(
       within(navigation)
-        .getByRole('link', { name: 'Painel' })
+        .getByRole('link', { name: 'Dashboard' })
         .getAttribute('aria-current'),
     ).toBe('page')
     expect(
       within(navigation)
-        .getByRole('link', { name: 'Atividades' })
+        .getByRole('link', { name: 'Activities' })
         .getAttribute('href'),
     ).toBe('/atividades')
     expect(
-      within(navigation).getByRole('link', { name: 'Perfil' }).getAttribute('href'),
+      within(navigation).getByRole('link', { name: 'Profile' }).getAttribute('href'),
     ).toBe('/perfil')
     expect(
       within(navigation)
-        .getByRole('link', { name: 'Configuracoes' })
+        .getByRole('link', { name: 'Settings' })
         .getAttribute('href'),
     ).toBe('/configuracoes')
   })
@@ -79,13 +81,13 @@ describe('SeniorEase route integration', () => {
     renderPage(<ProfilePage />)
 
     expect(
-      screen.getByRole('heading', { name: 'Resumo do perfil' }),
+      screen.getByRole('heading', { name: 'Profile summary' }),
     ).not.toBeNull()
     expect(screen.getAllByRole('navigation', { name: 'SeniorEase' })).toHaveLength(1)
 
     renderPage(<SettingsPage />)
 
-    expect(screen.getByRole('heading', { name: 'Configuracoes' })).not.toBeNull()
+    expect(screen.getByRole('heading', { name: 'Settings' })).not.toBeNull()
     expect(screen.getAllByRole('navigation', { name: 'SeniorEase' })).toHaveLength(2)
   })
 

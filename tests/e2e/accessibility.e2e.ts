@@ -13,6 +13,8 @@ const guidedStepViewports = [
   { label: 'tablet', size: { width: 834, height: 1194 } },
 ]
 
+const dashboardTitle = 'Make SeniorEase comfortable for you'
+
 async function expectNoHorizontalOverflow(page: Page) {
   const overflow = await page.evaluate(
     () => document.documentElement.scrollWidth - document.documentElement.clientWidth,
@@ -81,18 +83,20 @@ test('changes font size and persists Zustand preferences after reload', async ({
 
   const heading = page.getByRole('heading', {
     level: 1,
-    name: 'Painel SeniorEase',
+    name: dashboardTitle,
   })
   await expect(heading).toBeVisible()
   const initialFontSize = await heading.evaluate((element) =>
     Number.parseFloat(window.getComputedStyle(element).fontSize),
   )
 
-  await page.getByLabel('Muito grande').check()
+  await page.getByLabel('Extra large').check()
   await expect(page.getByRole('status')).toContainText(
-    'Preferencia salva: tamanho do texto Muito grande.',
+    'Preference saved: text size Extra large.',
   )
-  await expect(page.getByText('Texto: Extra Grande')).toBeVisible()
+  await expect(
+    page.getByTestId('preference-pill-fontScale-extraLarge'),
+  ).toHaveAttribute('data-state', 'selected')
 
   const updatedFontSize = await heading.evaluate((element) =>
     Number.parseFloat(window.getComputedStyle(element).fontSize),
@@ -109,8 +113,10 @@ test('changes font size and persists Zustand preferences after reload', async ({
 
   await page.reload()
 
-  await expect(page.getByLabel('Muito grande')).toBeChecked()
-  await expect(page.getByText('Texto: Extra Grande')).toBeVisible()
+  await expect(page.getByLabel('Extra large')).toBeChecked()
+  await expect(
+    page.getByTestId('preference-pill-fontScale-extraLarge'),
+  ).toHaveAttribute('data-state', 'selected')
 })
 
 test('creates and completes an activity with guided steps and live feedback', async ({
@@ -150,7 +156,7 @@ test('supports keyboard access, skip link focus, and dialog focus return', async
 
   await page.goto('/atividades')
 
-  const skipLink = page.getByRole('link', { name: 'Pular para o conteudo' })
+  const skipLink = page.getByRole('link', { name: 'Skip to content' })
   await tabTo(page, skipLink, 4)
   await expect(skipLink).toBeFocused()
 
@@ -203,19 +209,19 @@ test('exposes ARIA landmarks, labels, helper text, and reduced-motion behavior',
   await page.goto('/')
 
   await expect(page.getByRole('navigation', { name: 'SeniorEase' })).toBeVisible()
-  await expect(page.getByRole('main', { name: 'Painel SeniorEase' })).toBeVisible()
+  await expect(page.getByRole('main', { name: dashboardTitle })).toBeVisible()
   await expect(
-    page.getByRole('link', { name: 'Painel' }),
+    page.getByRole('link', { name: 'Dashboard' }),
   ).toHaveAttribute('aria-current', 'page')
 
   await expect(
-    page.getByRole('radiogroup', { name: 'Tamanho do texto' }),
+    page.getByRole('radiogroup', { name: 'Font size' }),
   ).toHaveAttribute('aria-describedby', /.+/)
   await expect(
-    page.getByRole('checkbox', { name: 'Feedback visual reforcado' }),
+    page.getByRole('switch', { name: 'Reinforced feedback' }),
   ).toHaveAttribute('aria-describedby', /.+/)
   await expect(page.getByRole('status')).toContainText(
-    'Preferencias prontas para ajustar.',
+    'Your SeniorEase layout will stay this way the next time you return.',
   )
 
   await page.goto('/configuracoes')
@@ -236,15 +242,15 @@ for (const viewport of dashboardViewports) {
     await page.goto('/')
 
     await expect(
-      page.getByRole('heading', { level: 1, name: 'Painel SeniorEase' }),
+      page.getByRole('heading', { level: 1, name: dashboardTitle }),
     ).toBeVisible()
     await expect(
-      page.getByRole('main', { name: 'Painel SeniorEase' }),
+      page.getByRole('main', { name: dashboardTitle }),
     ).toBeVisible()
     await expect(
       page.getByRole('navigation', { name: 'SeniorEase' }),
     ).toBeVisible()
-    await expect(page.getByRole('radiogroup', { name: 'Tamanho do texto' })).toBeVisible()
+    await expect(page.getByRole('radiogroup', { name: 'Font size' })).toBeVisible()
     await expectNoHorizontalOverflow(page)
   })
 

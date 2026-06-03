@@ -59,7 +59,7 @@ export function AppShell({
           },
         }}
       >
-        Pular para o conteudo
+        Skip to content
       </Box>
 
       <Box

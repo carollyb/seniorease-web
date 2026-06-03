@@ -19,10 +19,10 @@ export interface NavigationItem {
 }
 
 export const seniorEaseNavigationItems: NavigationItem[] = [
-  { href: '/', label: 'Painel', group: 'primary' },
-  { href: '/atividades', label: 'Atividades', group: 'primary' },
-  { href: '/perfil', label: 'Perfil', group: 'secondary' },
-  { href: '/configuracoes', label: 'Configuracoes', group: 'secondary' },
+  { href: '/', label: 'Dashboard', group: 'primary' },
+  { href: '/atividades', label: 'Activities', group: 'primary' },
+  { href: '/perfil', label: 'Profile', group: 'secondary' },
+  { href: '/configuracoes', label: 'Settings', group: 'secondary' },
 ];
 
 export interface SideNavigationProps {
@@ -141,15 +141,6 @@ export function SideNavigation({
   items = seniorEaseNavigationItems,
   navigationMode = 'standard',
 }: SideNavigationProps) {
-  const primaryItems =
-    navigationMode === 'simplified'
-      ? items.filter((item) => item.group === 'primary')
-      : items;
-  const secondaryItems =
-    navigationMode === 'simplified'
-      ? items.filter((item) => item.group === 'secondary')
-      : [];
-
   return (
     <Box
       aria-label='SeniorEase'
@@ -230,22 +221,9 @@ export function SideNavigation({
 
       <NavigationList
         activeRoute={activeRoute}
-        items={primaryItems}
-        label='Navegacao principal'
+        items={items}
+        label='Primary navigation'
       />
-
-      {secondaryItems.length > 0 ? (
-        <Stack spacing={1} width='100%'>
-          <Typography component='p' fontSize={14} fontWeight={600}>
-            Outras areas
-          </Typography>
-          <NavigationList
-            activeRoute={activeRoute}
-            items={secondaryItems}
-            label='Outras areas'
-          />
-        </Stack>
-      ) : null}
 
       <Box
         sx={{
@@ -258,7 +236,7 @@ export function SideNavigation({
         }}
       >
         <Typography fontSize={15} lineHeight={1.4}>
-          Passos claros. Preferências estéveis. Feedback gentil.
+          Clear steps. Stable preferences. Gentle feedback.
         </Typography>
       </Box>
     </Box>
