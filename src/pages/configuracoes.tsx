@@ -1,19 +1,23 @@
-import Box from '@mui/material/Box'
-import Container from '@mui/material/Container'
 import type { NextPage } from 'next'
 
+import { AppShell } from '../presentation/shared'
 import { ProfileSettings } from '../presentation/profile'
+import { usePreferenceStore } from '../stores/preferences/usePreferenceStore'
 
 const SettingsPage: NextPage = () => {
+  const navigationMode = usePreferenceStore(
+    (state) => state.preferences.navigationMode,
+  )
+
   return (
-    <Box
-      component="main"
-      sx={{ bgcolor: 'background.default', minHeight: '100vh' }}
+    <AppShell
+      activeRoute="/configuracoes"
+      navigationMode={navigationMode}
+      subtitle="Atualize lembretes e confirmacoes para manter a rotina previsivel."
+      title="Configuracoes"
     >
-      <Container maxWidth="lg" sx={{ py: { xs: 4, md: 8 } }}>
-        <ProfileSettings mode="settings" />
-      </Container>
-    </Box>
+      <ProfileSettings mode="settings" withShellNavigation={false} />
+    </AppShell>
   )
 }
 

@@ -35,6 +35,11 @@ export function GuidedSteps({
 
   const handleCompleteActivity = async () => {
     const completedActivity = await onCompleteActivity(activity.id);
+
+    if (!completedActivity) {
+      return;
+    }
+
     const title = completedActivity?.title ?? activity.title;
     const detail = {
       activityId: activity.id,

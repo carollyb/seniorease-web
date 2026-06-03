@@ -210,6 +210,31 @@ describe('ActivityOrganizer', () => {
     ).not.toBeNull()
   })
 
+  it('does not announce completion when the completion action is cancelled', async () => {
+    const onCompleteActivity = jest.fn().mockResolvedValue(undefined)
+    const onActivityComplete = jest.fn()
+
+    renderOrganizer({
+      onActivityComplete,
+      onCompleteActivity,
+      selectedActivityId: 'activity-1',
+    })
+
+    fireEvent.click(
+      screen.getByRole('button', {
+        name: 'Concluir atividade Enviar trabalho',
+      }),
+    )
+
+    await waitFor(() => {
+      expect(onCompleteActivity).toHaveBeenCalledWith('activity-1')
+    })
+    expect(screen.getByRole('status').textContent).not.toContain(
+      'Atividade concluida',
+    )
+    expect(onActivityComplete).not.toHaveBeenCalled()
+  })
+
   it('exports future widget contract names for Multi-Zone extraction', () => {
     expect(activityOrganizerWidgetContract).toEqual({
       elementName: 'seniorease-activity-organizer',

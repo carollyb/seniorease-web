@@ -306,15 +306,15 @@ F3,F4 -> F5
 
 **Done when**:
 
-- [ ] `_app.tsx` loads providers, theme, and Zustand hydration handling.
-- [ ] `AppShell` composes shared page structure and main landmark behavior.
-- [ ] `SideNavigation` renders the Figma-aligned navigation pattern with active-route semantics.
-- [ ] `PrimaryButton`, `StatusPill`, and `EmptyState` centralize repeated visual treatments through MUI/theme tokens.
-- [ ] Main navigation supports simplified and standard modes.
-- [ ] Pages are reachable through predictable labels.
-- [ ] Critical actions honor extra confirmation.
-- [ ] Navigation uses semantic landmarks, accessible names, and stable focus order.
-- [ ] Gate check passes: `npm run build`.
+- [x] `_app.tsx` loads providers, theme, and Zustand hydration handling.
+- [x] `AppShell` composes shared page structure and main landmark behavior.
+- [x] `SideNavigation` renders the Figma-aligned navigation pattern with active-route semantics.
+- [x] `PrimaryButton`, `StatusPill`, and `EmptyState` centralize repeated visual treatments through MUI/theme tokens.
+- [x] Main navigation supports simplified and standard modes.
+- [x] Pages are reachable through predictable labels.
+- [x] Critical actions honor extra confirmation.
+- [x] Navigation uses semantic landmarks, accessible names, and stable focus order.
+- [x] Gate check passes: `npm run build`.
 
 **Tests**: integration
 **Gate**: build
@@ -444,11 +444,11 @@ These tasks were added after the Figma screen layouts were supplied. They should
 
 **Done when**:
 
-- [ ] `AppShell` renders responsive landmarks, skip link, and page content slots.
-- [ ] `SideNavigation` supports active route, accessible names, keyboard focus, and responsive behavior from Figma.
-- [ ] `PrimaryButton`, `StatusPill`, and `EmptyState` centralize repeated visual treatments and avoid duplicated hardcoded values.
-- [ ] Component tests cover rendering, accessible names, active states, and disabled/focus states where applicable.
-- [ ] Gate check passes: `npm test -- --watchAll=false src/presentation/shared`.
+- [x] `AppShell` renders responsive landmarks, skip link, and page content slots.
+- [x] `SideNavigation` supports active route, accessible names, keyboard focus, and responsive behavior from Figma.
+- [x] `PrimaryButton`, `StatusPill`, and `EmptyState` centralize repeated visual treatments and avoid duplicated hardcoded values.
+- [x] Component tests cover rendering, accessible names, active states, and disabled/focus states where applicable.
+- [x] Gate check passes: `npm test -- --watchAll=false src/presentation/shared`.
 
 **Tests**: integration
 **Gate**: unit

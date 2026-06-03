@@ -1,30 +1,55 @@
 import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
-import Container from '@mui/material/Container';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import type { NextPage } from 'next';
 
+import { PersonalizationDashboard } from '../presentation/personalization';
+import { AppShell, StatusPill } from '../presentation/shared';
+import { usePreferenceStore } from '../stores/preferences/usePreferenceStore';
+import mapPreferences from '@/presentation/shared/utils/preferencesMapper';
+
 const HomePage: NextPage = () => {
+  const preferences = usePreferenceStore((state) => state.preferences);
+
   return (
-    <Box
-      component='main'
-      sx={{ bgcolor: 'background.default', minHeight: '100vh' }}
+    <AppShell
+      activeRoute='/'
+      navigationMode={preferences.navigationMode}
+      subtitle='Ajuste leitura, contraste e seguranca para usar o app com conforto.'
+      title='Painel SeniorEase'
     >
-      <Container maxWidth='md' sx={{ py: { xs: 6, md: 10 } }}>
-        <Stack spacing={3} alignItems='flex-start'>
-          <Typography component='h1' variant='h3'>
-            SeniorEase
-          </Typography>
-          <Typography color='text.secondary' variant='h6'>
-            Gerencie suas tarefas com simplicidade.
-          </Typography>
-          <Button variant='contained' size='large'>
-            Comecar
-          </Button>
-        </Stack>
-      </Container>
-    </Box>
+      <Stack spacing={3}>
+        <Box
+          component='section'
+          sx={{
+            bgcolor: 'background.paper',
+            border: 1,
+            borderColor: 'divider',
+            borderRadius: 3,
+            p: { xs: 2, md: 3 },
+          }}
+        >
+          <Stack spacing={2}>
+            <Typography component='h2' variant='h4'>
+              Preferencias ativas
+            </Typography>
+            <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1}>
+              <StatusPill
+                label={`Texto: ${mapPreferences(preferences.fontScale)}`}
+              />
+              <StatusPill
+                label={`Contraste: ${mapPreferences(preferences.contrastLevel)}`}
+              />
+              <StatusPill
+                label={`Espaco: ${mapPreferences(preferences.spacingLevel)}`}
+              />
+            </Stack>
+          </Stack>
+        </Box>
+
+        <PersonalizationDashboard />
+      </Stack>
+    </AppShell>
   );
 };
 

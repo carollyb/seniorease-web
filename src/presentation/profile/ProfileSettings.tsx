@@ -593,11 +593,13 @@ function CriticalActionConcept() {
 export interface ProfileSettingsProps {
   mode: ProfileSettingsMode;
   onPreferenceChange?(preferences: UserPreferences): void;
+  withShellNavigation?: boolean;
 }
 
 export function ProfileSettings({
   mode,
   onPreferenceChange,
+  withShellNavigation = true,
 }: ProfileSettingsProps) {
   const preferences = usePreferenceStore((state) => state.preferences);
   const hasHydrated = usePreferenceStore((state) => state.hasHydrated);
@@ -636,6 +638,14 @@ export function ProfileSettings({
   };
 
   const handleReset = () => {
+    if (
+      preferences.extraConfirmation &&
+      typeof window !== 'undefined' &&
+      !window.confirm('Restaurar preferencias para os padroes confortaveis?')
+    ) {
+      return;
+    }
+
     const savedPreferences = resetPreferences();
 
     setFeedbackMessage('Configurações restauradas para os padrões confortáveis.');
@@ -659,10 +669,11 @@ export function ProfileSettings({
         width: '100%',
       }}
     >
-      <SideNavigation />
+      {withShellNavigation ? <SideNavigation /> : null}
 
       <Stack
-        component='main'
+        aria-labelledby='profile-settings-title'
+        component={withShellNavigation ? 'main' : 'section'}
         spacing={3}
         sx={{
           flex: 1,
@@ -673,7 +684,7 @@ export function ProfileSettings({
       >
         <Box>
           <Typography
-            component='h1'
+            component={withShellNavigation ? 'h1' : 'h2'}
             fontSize={36}
             fontWeight={600}
             id='profile-settings-title'
