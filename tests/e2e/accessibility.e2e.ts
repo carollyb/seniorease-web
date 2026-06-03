@@ -13,7 +13,7 @@ const guidedStepViewports = [
   { label: 'tablet', size: { width: 834, height: 1194 } },
 ]
 
-const dashboardTitle = 'Make SeniorEase comfortable for you'
+const dashboardTitle = 'Deixe o SeniorEase confortável para você'
 
 async function expectNoHorizontalOverflow(page: Page) {
   const overflow = await page.evaluate(
@@ -90,9 +90,9 @@ test('changes font size and persists Zustand preferences after reload', async ({
     Number.parseFloat(window.getComputedStyle(element).fontSize),
   )
 
-  await page.getByLabel('Extra large').check()
+  await page.getByLabel('Muito grande').check()
   await expect(page.getByRole('status')).toContainText(
-    'Preference saved: text size Extra large.',
+    'Preferência salva: tamanho do texto Muito grande.',
   )
   await expect(
     page.getByTestId('preference-pill-fontScale-extraLarge'),
@@ -113,7 +113,7 @@ test('changes font size and persists Zustand preferences after reload', async ({
 
   await page.reload()
 
-  await expect(page.getByLabel('Extra large')).toBeChecked()
+  await expect(page.getByLabel('Muito grande')).toBeChecked()
   await expect(
     page.getByTestId('preference-pill-fontScale-extraLarge'),
   ).toHaveAttribute('data-state', 'selected')
@@ -156,7 +156,7 @@ test('supports keyboard access, skip link focus, and dialog focus return', async
 
   await page.goto('/atividades')
 
-  const skipLink = page.getByRole('link', { name: 'Skip to content' })
+  const skipLink = page.getByRole('link', { name: 'Pular para o conteúdo' })
   await tabTo(page, skipLink, 4)
   await expect(skipLink).toBeFocused()
 
@@ -211,17 +211,17 @@ test('exposes ARIA landmarks, labels, helper text, and reduced-motion behavior',
   await expect(page.getByRole('navigation', { name: 'SeniorEase' })).toBeVisible()
   await expect(page.getByRole('main', { name: dashboardTitle })).toBeVisible()
   await expect(
-    page.getByRole('link', { name: 'Dashboard' }),
+    page.getByRole('link', { name: 'Painel' }),
   ).toHaveAttribute('aria-current', 'page')
 
   await expect(
-    page.getByRole('radiogroup', { name: 'Font size' }),
+    page.getByRole('radiogroup', { name: 'Tamanho do texto' }),
   ).toHaveAttribute('aria-describedby', /.+/)
   await expect(
-    page.getByRole('switch', { name: 'Reinforced feedback' }),
+    page.getByRole('switch', { name: 'Feedback reforçado' }),
   ).toHaveAttribute('aria-describedby', /.+/)
   await expect(page.getByRole('status')).toContainText(
-    'Your SeniorEase layout will stay this way the next time you return.',
+    'Seu layout do SeniorEase continuará assim na próxima vez que você voltar.',
   )
 
   await page.goto('/configuracoes')
@@ -250,7 +250,9 @@ for (const viewport of dashboardViewports) {
     await expect(
       page.getByRole('navigation', { name: 'SeniorEase' }),
     ).toBeVisible()
-    await expect(page.getByRole('radiogroup', { name: 'Font size' })).toBeVisible()
+    await expect(
+      page.getByRole('radiogroup', { name: 'Tamanho do texto' }),
+    ).toBeVisible()
     await expectNoHorizontalOverflow(page)
   })
 

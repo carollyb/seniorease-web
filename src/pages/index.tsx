@@ -11,8 +11,8 @@ const HomePage: NextPage = () => {
     <AppShell
       activeRoute="/"
       navigationMode={preferences.navigationMode}
-      subtitle="Adjust readability, contrast, spacing, navigation complexity, feedback, and confirmations."
-      title="Make SeniorEase comfortable for you"
+      subtitle="Ajuste legibilidade, contraste, espaçamento, complexidade da navegação, feedback e confirmações."
+      title="Deixe o SeniorEase confortável para você"
     >
       <PersonalizationDashboard />
     </AppShell>

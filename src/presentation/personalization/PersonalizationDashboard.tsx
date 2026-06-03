@@ -29,25 +29,25 @@ interface PreferenceOption<TValue extends string> {
 }
 
 const FONT_SCALE_OPTIONS = [
-  { value: 'small', label: 'Small', compact: true },
-  { value: 'medium', label: 'Medium' },
-  { value: 'large', label: 'Large', emphasized: true },
-  { value: 'extraLarge', label: 'Extra large' },
+  { value: 'small', label: 'Pequeno', compact: true },
+  { value: 'medium', label: 'Médio' },
+  { value: 'large', label: 'Grande', emphasized: true },
+  { value: 'extraLarge', label: 'Muito grande' },
 ] satisfies readonly PreferenceOption<FontScale>[]
 
 const CONTRAST_OPTIONS = [
-  { value: 'standard', label: 'Small' },
-  { value: 'high', label: 'Comfort' },
-  { value: 'maximum', label: 'Maximum', accessibleLabel: 'Maximum' },
+  { value: 'standard', label: 'Padrão' },
+  { value: 'high', label: 'Conforto' },
+  { value: 'maximum', label: 'Máximo', accessibleLabel: 'Máximo' },
 ] satisfies readonly PreferenceOption<ContrastLevel>[]
 
 const SPACING_OPTIONS = [
-  { value: 'comfortable', label: 'Small' },
-  { value: 'wide', label: 'Comfort' },
+  { value: 'comfortable', label: 'Confortável' },
+  { value: 'wide', label: 'Amplo' },
   {
     value: 'extraWide',
-    label: 'Large',
-    accessibleLabel: 'Large spacing',
+    label: 'Extra amplo',
+    accessibleLabel: 'Extra amplo',
   },
 ] satisfies readonly PreferenceOption<SpacingLevel>[]
 
@@ -272,7 +272,7 @@ export function PersonalizationDashboard({
   )
   const setPreferences = usePreferenceStore((state) => state.setPreferences)
   const [feedbackMessage, setFeedbackMessage] = useState(
-    'Your SeniorEase layout will stay this way the next time you return.',
+    'Seu layout do SeniorEase continuará assim na próxima vez que você voltar.',
   )
 
   const savePreferences = (
@@ -288,7 +288,7 @@ export function PersonalizationDashboard({
   const handleFontScaleChange = (fontScale: FontScale) => {
     savePreferences(
       { ...preferences, fontScale },
-      `Preference saved: text size ${getOptionLabel(
+      `Preferência salva: tamanho do texto ${getOptionLabel(
         FONT_SCALE_OPTIONS,
         fontScale,
       )}.`,
@@ -298,7 +298,7 @@ export function PersonalizationDashboard({
   const handleContrastChange = (contrastLevel: ContrastLevel) => {
     savePreferences(
       { ...preferences, contrastLevel },
-      `Preference saved: contrast ${getOptionLabel(
+      `Preferência salva: contraste ${getOptionLabel(
         CONTRAST_OPTIONS,
         contrastLevel,
       )}.`,
@@ -308,7 +308,7 @@ export function PersonalizationDashboard({
   const handleSpacingChange = (spacingLevel: SpacingLevel) => {
     savePreferences(
       { ...preferences, spacingLevel },
-      `Preference saved: spacing ${getOptionLabel(
+      `Preferência salva: espaçamento ${getOptionLabel(
         SPACING_OPTIONS,
         spacingLevel,
       )}.`,
@@ -318,8 +318,8 @@ export function PersonalizationDashboard({
   const handleNavigationChange = (navigationMode: NavigationMode) => {
     savePreferences(
       { ...preferences, navigationMode },
-      `Preference saved: simplified navigation ${
-        navigationMode === 'simplified' ? 'on' : 'off'
+      `Preferência salva: navegação simplificada ${
+        navigationMode === 'simplified' ? 'ativada' : 'desativada'
       }.`,
     )
   }
@@ -327,8 +327,8 @@ export function PersonalizationDashboard({
   const handleReinforcedFeedbackChange = (reinforcedFeedback: boolean) => {
     savePreferences(
       { ...preferences, reinforcedFeedback },
-      `Preference saved: reinforced feedback ${
-        reinforcedFeedback ? 'on' : 'off'
+      `Preferência salva: feedback reforçado ${
+        reinforcedFeedback ? 'ativado' : 'desativado'
       }.`,
     )
   }
@@ -336,8 +336,8 @@ export function PersonalizationDashboard({
   const handleExtraConfirmationChange = (extraConfirmation: boolean) => {
     savePreferences(
       { ...preferences, extraConfirmation },
-      `Preference saved: extra confirmation ${
-        extraConfirmation ? 'on' : 'off'
+      `Preferência salva: confirmação extra ${
+        extraConfirmation ? 'ativada' : 'desativada'
       }.`,
     )
   }
@@ -366,16 +366,16 @@ export function PersonalizationDashboard({
         >
           <Stack spacing={2} sx={{ minWidth: 0 }}>
             <PreferencePillGroup
-              helperText="Adjusts text size across headings, buttons, and body copy."
-              legend="Font size"
+              helperText="Ajusta o tamanho do texto em títulos, botões e conteúdo."
+              legend="Tamanho do texto"
               name="fontScale"
               onChange={handleFontScaleChange}
               options={FONT_SCALE_OPTIONS}
               value={preferences.fontScale}
             />
             <PreferencePillGroup
-              helperText="Changes the comfort between page blocks and touch controls."
-              legend="Spacing comfort"
+              helperText="Altera o conforto entre blocos da página e controles de toque."
+              legend="Conforto do espaçamento"
               name="spacingLevel"
               onChange={handleSpacingChange}
               options={SPACING_OPTIONS}
@@ -385,8 +385,8 @@ export function PersonalizationDashboard({
 
           <Stack spacing={2} sx={{ minWidth: 0 }}>
             <PreferencePillGroup
-              helperText="Adjusts contrast between text, surfaces, and interface states."
-              legend="Contrast level"
+              helperText="Ajusta o contraste entre texto, superfícies e estados da interface."
+              legend="Nível de contraste"
               name="contrastLevel"
               onChange={handleContrastChange}
               options={CONTRAST_OPTIONS}
@@ -415,18 +415,18 @@ export function PersonalizationDashboard({
                   lineHeight={1.4}
                   sx={{ color: colors.ink }}
                 >
-                  Interface mode
+                  Modo da interface
                 </Typography>
                 <Typography color="text.secondary" variant="body1">
-                  Simplified mode keeps only essential choices visible and makes
-                  primary actions easier to find.
+                  O modo simplificado mantém apenas as escolhas essenciais
+                  visíveis e facilita encontrar as ações principais.
                 </Typography>
 
                 <Box>
                   <SwitchSettingRow
                     checked={preferences.navigationMode === 'simplified'}
-                    helperText="Keeps the interface focused on essential choices."
-                    label="Simplified navigation"
+                    helperText="Mantém a interface focada nas escolhas essenciais."
+                    label="Navegação simplificada"
                     name="navigationMode"
                     onChange={(checked) =>
                       handleNavigationChange(checked ? 'simplified' : 'standard')
@@ -434,15 +434,15 @@ export function PersonalizationDashboard({
                   />
                   <SwitchSettingRow
                     checked={preferences.reinforcedFeedback}
-                    helperText="Shows clearer confirmation after saves and completions."
-                    label="Reinforced feedback"
+                    helperText="Mostra confirmações mais claras após salvamentos e conclusões."
+                    label="Feedback reforçado"
                     name="reinforcedFeedback"
                     onChange={handleReinforcedFeedbackChange}
                   />
                   <SwitchSettingRow
                     checked={preferences.extraConfirmation}
-                    helperText="Asks before important actions are completed."
-                    label="Extra confirmation for critical actions"
+                    helperText="Pergunta antes de concluir ações importantes."
+                    label="Confirmação extra para ações críticas"
                     name="extraConfirmation"
                     onChange={handleExtraConfirmationChange}
                   />
@@ -484,7 +484,7 @@ export function PersonalizationDashboard({
         >
           <Stack spacing={2}>
             <Typography component="h2" fontSize={24} fontWeight={600}>
-              Preferences saved
+              Preferências salvas
             </Typography>
             <Typography fontSize={18} lineHeight={1.4}>
               {feedbackMessage}

@@ -53,51 +53,51 @@ describe('ProfileSettings', () => {
     renderProfileSettings()
 
     const summary = screen.getByRole('region', {
-      name: 'Profile preferences summary',
+      name: 'Resumo das preferências do perfil',
     })
 
     expect(summary.getAttribute('data-node-id')).toBe('703:225')
     expect(screen.queryByRole('navigation', { name: 'SeniorEase' })).toBeNull()
-    expect(within(summary).getByText('Font size')).not.toBeNull()
-    expect(within(summary).getByText('Extra large')).not.toBeNull()
-    expect(within(summary).getByText('Contrast')).not.toBeNull()
-    expect(within(summary).getByText('Maximum')).not.toBeNull()
-    expect(within(summary).getByText('Spacing')).not.toBeNull()
-    expect(within(summary).getByText('Large spacing')).not.toBeNull()
-    expect(within(summary).getByText('Navigation')).not.toBeNull()
-    expect(within(summary).getByText('Standard')).not.toBeNull()
-    expect(within(summary).getByText('Reinforced feedback')).not.toBeNull()
-    expect(within(summary).getByText('Extra confirmations')).not.toBeNull()
-    expect(within(summary).getByText('Off')).not.toBeNull()
-    expect(within(summary).getByText('On')).not.toBeNull()
+    expect(within(summary).getByText('Tamanho do texto')).not.toBeNull()
+    expect(within(summary).getByText('Muito grande')).not.toBeNull()
+    expect(within(summary).getByText('Contraste')).not.toBeNull()
+    expect(within(summary).getByText('Máximo')).not.toBeNull()
+    expect(within(summary).getByText('Espaçamento')).not.toBeNull()
+    expect(within(summary).getByText('Extra amplo')).not.toBeNull()
+    expect(within(summary).getByText('Navegação')).not.toBeNull()
+    expect(within(summary).getByText('Padrão')).not.toBeNull()
+    expect(within(summary).getByText('Feedback reforçado')).not.toBeNull()
+    expect(within(summary).getByText('Confirmações extras')).not.toBeNull()
+    expect(within(summary).getByText('Inativo')).not.toBeNull()
+    expect(within(summary).getByText('Ativo')).not.toBeNull()
   })
 
   it('updates persisted settings through accessible Figma switches', () => {
     renderProfileSettings({ mode: 'settings' })
 
     const settings = screen.getByRole('region', {
-      name: 'Reminder preferences',
+      name: 'Preferências de lembrete',
     })
 
     expect(settings.getAttribute('data-node-id')).toBe('703:275')
     expect(
       within(settings).getByRole('switch', {
-        name: 'Use plain-language reminders',
+        name: 'Usar lembretes em linguagem simples',
       }),
     ).not.toBeNull()
     expect(
       within(settings).getByRole('switch', {
-        name: 'Show reminders on dashboard',
+        name: 'Mostrar lembretes no painel',
       }),
     ).not.toBeNull()
     expect(
       within(settings).getByRole('switch', {
-        name: 'Ask before deleting activities',
+        name: 'Perguntar antes de excluir atividades',
       }),
     ).not.toBeNull()
     expect(
       within(settings).getByRole('switch', {
-        name: 'Keep completed history visible',
+        name: 'Manter histórico concluído visível',
       }),
     ).not.toBeNull()
     expect(
@@ -111,22 +111,22 @@ describe('ProfileSettings', () => {
         .getAttribute('data-state'),
     ).toBe('on')
     expect(
-      within(settings).getByRole('button', { name: 'Save settings' }),
+      within(settings).getByRole('button', { name: 'Salvar configurações' }),
     ).not.toBeNull()
     expect(
       within(settings).getByRole('button', {
-        name: 'Reset to comfortable defaults',
+        name: 'Restaurar padrões confortáveis',
       }),
     ).not.toBeNull()
 
     fireEvent.click(
       screen.getByRole('switch', {
-        name: 'Use plain-language reminders',
+        name: 'Usar lembretes em linguagem simples',
       }),
     )
     fireEvent.click(
       screen.getByRole('switch', {
-        name: 'Ask before deleting activities',
+        name: 'Perguntar antes de excluir atividades',
       }),
     )
 
@@ -144,7 +144,7 @@ describe('ProfileSettings', () => {
 
     expect(status.getAttribute('aria-live')).toBe('polite')
     expect(status.textContent).toContain(
-      'Setting saved: delete confirmation off.',
+      'Configuração salva: confirmação de exclusão desativada.',
     )
   })
 
@@ -168,10 +168,10 @@ describe('ProfileSettings', () => {
     renderProfileSettings({ mode: 'settings' })
 
     const remindersSwitch = screen.getByRole('switch', {
-      name: 'Use plain-language reminders',
+      name: 'Usar lembretes em linguagem simples',
     }) as HTMLInputElement
     const deleteConfirmationSwitch = screen.getByRole('switch', {
-      name: 'Ask before deleting activities',
+      name: 'Perguntar antes de excluir atividades',
     }) as HTMLInputElement
 
     expect(remindersSwitch.checked).toBe(false)
@@ -183,31 +183,31 @@ describe('ProfileSettings', () => {
 
     await waitFor(() => {
       expect(
-        screen.getByRole('heading', { name: 'Profile summary' }),
+        screen.getByRole('heading', { name: 'Resumo do perfil' }),
       ).not.toBeNull()
     })
     expect(
       screen.getByText(
-        'Current persisted accessibility and preference state in readable language.',
+        'Estado atual das preferências de acessibilidade em linguagem clara.',
       ),
     ).not.toBeNull()
     expect(screen.getAllByRole('navigation', { name: 'SeniorEase' })).toHaveLength(1)
     expect(
       within(screen.getByRole('navigation', { name: 'SeniorEase' }))
-        .getByRole('link', { name: 'Profile' })
+        .getByRole('link', { name: 'Perfil' })
         .getAttribute('aria-current'),
     ).toBe('page')
 
     profileRender.unmount()
     renderWithTheme(<SettingsPage />)
 
-    expect(screen.getByRole('heading', { name: 'Settings' })).not.toBeNull()
+    expect(screen.getByRole('heading', { name: 'Configurações' })).not.toBeNull()
     expect(screen.getAllByRole('navigation', { name: 'SeniorEase' })).toHaveLength(1)
     expect(
-      screen.getByRole('heading', { name: 'Confirm before deleting' }),
+      screen.getByRole('heading', { name: 'Confirmar antes de excluir' }),
     ).not.toBeNull()
     expect(
-      screen.getByRole('button', { name: 'Save settings' }),
+      screen.getByRole('button', { name: 'Salvar configurações' }),
     ).not.toBeNull()
   })
 })

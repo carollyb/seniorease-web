@@ -21,27 +21,27 @@ type ProfileSettingsMode = 'profile' | 'settings'
 const { colors, components, rounded, spacing, typography } = designTokens
 
 const FONT_SCALE_LABELS: Record<FontScale, string> = {
-  small: 'Small',
-  medium: 'Medium',
-  large: 'Large',
-  extraLarge: 'Extra large',
+  small: 'Pequeno',
+  medium: 'Médio',
+  large: 'Grande',
+  extraLarge: 'Muito grande',
 }
 
 const CONTRAST_LABELS: Record<ContrastLevel, string> = {
-  standard: 'Standard',
-  high: 'High comfort',
-  maximum: 'Maximum',
+  standard: 'Padrão',
+  high: 'Alto conforto',
+  maximum: 'Máximo',
 }
 
 const SPACING_LABELS: Record<SpacingLevel, string> = {
-  comfortable: 'Comfortable',
-  wide: 'Comfortable',
-  extraWide: 'Large spacing',
+  comfortable: 'Confortável',
+  wide: 'Amplo',
+  extraWide: 'Extra amplo',
 }
 
 const NAVIGATION_LABELS: Record<NavigationMode, string> = {
-  simplified: 'Simplified',
-  standard: 'Standard',
+  simplified: 'Simplificada',
+  standard: 'Padrão',
 }
 
 const hiddenVisually: SxProps<Theme> = {
@@ -56,7 +56,7 @@ const hiddenVisually: SxProps<Theme> = {
 }
 
 function booleanPreferenceLabel(isActive: boolean) {
-  return isActive ? 'On' : 'Off'
+  return isActive ? 'Ativo' : 'Inativo'
 }
 
 interface PreferenceSummaryRowProps {
@@ -99,27 +99,27 @@ interface PreferenceSummaryProps {
 function PreferenceSummary({ preferences }: PreferenceSummaryProps) {
   const summaryItems = [
     {
-      label: 'Font size',
+      label: 'Tamanho do texto',
       value: FONT_SCALE_LABELS[preferences.fontScale],
     },
     {
-      label: 'Contrast',
+      label: 'Contraste',
       value: CONTRAST_LABELS[preferences.contrastLevel],
     },
     {
-      label: 'Spacing',
+      label: 'Espaçamento',
       value: SPACING_LABELS[preferences.spacingLevel],
     },
     {
-      label: 'Navigation',
+      label: 'Navegação',
       value: NAVIGATION_LABELS[preferences.navigationMode],
     },
     {
-      label: 'Reinforced feedback',
+      label: 'Feedback reforçado',
       value: booleanPreferenceLabel(preferences.reinforcedFeedback),
     },
     {
-      label: 'Extra confirmations',
+      label: 'Confirmações extras',
       value: booleanPreferenceLabel(preferences.extraConfirmation),
     },
   ]
@@ -139,7 +139,7 @@ function PreferenceSummary({ preferences }: PreferenceSummaryProps) {
       }}
     >
       <Typography component="h2" id="profile-preferences-title" sx={hiddenVisually}>
-        Profile preferences summary
+        Resumo das preferências do perfil
       </Typography>
       <Box component="dl" sx={{ m: 0 }}>
         {summaryItems.map((item) => (
@@ -323,57 +323,63 @@ function ReminderSettings({
           lineHeight={typography.h3.lineHeight}
           sx={{ color: colors.ink }}
         >
-          Reminder preferences
+          Preferências de lembrete
         </Typography>
 
         <Box>
           <SwitchSettingRow
             checked={preferences.remindersEnabled}
-            helperText="Activities show reminders in simple language."
-            label="Use plain-language reminders"
+            helperText="As atividades mostram lembretes em linguagem simples."
+            label="Usar lembretes em linguagem simples"
             name="remindersEnabled"
             onChange={(enabled) =>
               onSave(
                 { remindersEnabled: enabled },
-                `Setting saved: plain-language reminders ${
-                  enabled ? 'on' : 'off'
+                `Configuração salva: lembretes em linguagem simples ${
+                  enabled ? 'ativados' : 'desativados'
                 }.`,
               )
             }
           />
           <SwitchSettingRow
             checked={showDashboardReminders}
-            helperText="Controls whether reminders appear on the dashboard."
-            label="Show reminders on dashboard"
+            helperText="Controla se os lembretes aparecem no painel."
+            label="Mostrar lembretes no painel"
             name="showDashboardReminders"
             onChange={(enabled) => {
               setShowDashboardReminders(enabled)
               onLocalFeedback(
-                `Setting saved: dashboard reminders ${enabled ? 'on' : 'off'}.`,
+                `Configuração salva: lembretes no painel ${
+                  enabled ? 'ativados' : 'desativados'
+                }.`,
               )
             }}
           />
           <SwitchSettingRow
             checked={preferences.extraConfirmation}
-            helperText="SeniorEase asks before deleting activities."
-            label="Ask before deleting activities"
+            helperText="O SeniorEase pergunta antes de excluir atividades."
+            label="Perguntar antes de excluir atividades"
             name="extraConfirmation"
             onChange={(enabled) =>
               onSave(
                 { extraConfirmation: enabled },
-                `Setting saved: delete confirmation ${enabled ? 'on' : 'off'}.`,
+                `Configuração salva: confirmação de exclusão ${
+                  enabled ? 'ativada' : 'desativada'
+                }.`,
               )
             }
           />
           <SwitchSettingRow
             checked={keepCompletedHistoryVisible}
-            helperText="Keeps completed activity history visible."
-            label="Keep completed history visible"
+            helperText="Mantém o histórico de atividades concluídas visível."
+            label="Manter histórico concluído visível"
             name="keepCompletedHistoryVisible"
             onChange={(enabled) => {
               setKeepCompletedHistoryVisible(enabled)
               onLocalFeedback(
-                `Setting saved: completed history ${enabled ? 'visible' : 'hidden'}.`,
+                `Configuração salva: histórico concluído ${
+                  enabled ? 'visível' : 'oculto'
+                }.`,
               )
             }}
           />
@@ -382,13 +388,13 @@ function ReminderSettings({
         <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1.5}>
           <PrimaryButton
             onClick={() => {
-              onSave({}, 'Settings saved.')
+              onSave({}, 'Configurações salvas.')
             }}
           >
-            Save settings
+            Salvar configurações
           </PrimaryButton>
           <PrimaryButton onClick={onReset} tone="secondary">
-            Reset to comfortable defaults
+            Restaurar padrões confortáveis
           </PrimaryButton>
         </Stack>
       </Stack>
@@ -420,13 +426,13 @@ function CriticalActionConcept() {
           id="critical-action-title"
           lineHeight={typography.h3.lineHeight}
         >
-          Confirm before deleting
+          Confirmar antes de excluir
         </Typography>
         <Typography fontSize={17} lineHeight={1.4}>
-          This is a critical action. SeniorEase asks clearly before it removes
-          an activity.
+          Esta é uma ação crítica. O SeniorEase pergunta de forma clara antes
+          de remover uma atividade.
         </Typography>
-        <PrimaryButton>Keep activity</PrimaryButton>
+        <PrimaryButton>Manter atividade</PrimaryButton>
         <PrimaryButton
           sx={{
             bgcolor: colors.brandRed,
@@ -440,7 +446,7 @@ function CriticalActionConcept() {
           tone="secondary"
           variant="text"
         >
-          Delete activity
+          Excluir atividade
         </PrimaryButton>
       </Stack>
     </Box>
@@ -469,7 +475,7 @@ export function ProfileSettings({
   )
   const setPreferences = usePreferenceStore((state) => state.setPreferences)
   const [feedbackMessage, setFeedbackMessage] = useState(
-    'Settings ready for adjustment.',
+    'Configurações prontas para ajuste.',
   )
   const isSettingsMode = mode === 'settings'
 
@@ -496,14 +502,14 @@ export function ProfileSettings({
     if (
       preferences.extraConfirmation &&
       typeof window !== 'undefined' &&
-      !window.confirm('Reset preferences to comfortable defaults?')
+      !window.confirm('Restaurar preferências para os padrões confortáveis?')
     ) {
       return
     }
 
     const savedPreferences = resetPreferences()
 
-    setFeedbackMessage('Settings restored to comfortable defaults.')
+    setFeedbackMessage('Configurações restauradas para os padrões confortáveis.')
     onPreferenceChange?.(savedPreferences)
   }
 

@@ -19,10 +19,10 @@ export interface NavigationItem {
 }
 
 export const seniorEaseNavigationItems: NavigationItem[] = [
-  { href: '/', label: 'Dashboard', group: 'primary' },
-  { href: '/atividades', label: 'Activities', group: 'primary' },
-  { href: '/perfil', label: 'Profile', group: 'secondary' },
-  { href: '/configuracoes', label: 'Settings', group: 'secondary' },
+  { href: '/', label: 'Painel', group: 'primary' },
+  { href: '/atividades', label: 'Atividades', group: 'primary' },
+  { href: '/perfil', label: 'Perfil', group: 'secondary' },
+  { href: '/configuracoes', label: 'Configurações', group: 'secondary' },
 ];
 
 export interface SideNavigationProps {
@@ -222,7 +222,7 @@ export function SideNavigation({
       <NavigationList
         activeRoute={activeRoute}
         items={items}
-        label='Primary navigation'
+        label='Navegação principal'
       />
 
       <Box
@@ -236,7 +236,7 @@ export function SideNavigation({
         }}
       >
         <Typography fontSize={15} lineHeight={1.4}>
-          Clear steps. Stable preferences. Gentle feedback.
+          Passos claros. Preferências estáveis. Feedback gentil.
         </Typography>
       </Box>
     </Box>

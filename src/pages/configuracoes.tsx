@@ -13,8 +13,8 @@ const SettingsPage: NextPage = () => {
     <AppShell
       activeRoute="/configuracoes"
       navigationMode={navigationMode}
-      subtitle="Update reminders and persisted app settings beyond the main personalization panel."
-      title="Settings"
+      subtitle="Atualize lembretes e configurações salvas além do painel principal de personalização."
+      title="Configurações"
     >
       <ProfileSettings mode="settings" />
     </AppShell>

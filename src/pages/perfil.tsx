@@ -13,8 +13,8 @@ const ProfilePage: NextPage = () => {
     <AppShell
       activeRoute="/perfil"
       navigationMode={navigationMode}
-      subtitle="Current persisted accessibility and preference state in readable language."
-      title="Profile summary"
+      subtitle="Estado atual das preferências de acessibilidade em linguagem clara."
+      title="Resumo do perfil"
     >
       <ProfileSettings mode="profile" />
     </AppShell>

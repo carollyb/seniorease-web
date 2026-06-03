@@ -17,40 +17,40 @@ describe('shared app shell components', () => {
       <AppShell
         activeRoute="/atividades"
         navigationMode="standard"
-        subtitle="Organize tasks with clear steps."
-        title="Activities"
+        subtitle="Organize tarefas com passos claros."
+        title="Atividades"
       >
-        <p>Main activities content.</p>
+        <p>Conteúdo principal das atividades.</p>
       </AppShell>,
     )
 
     expect(
       screen
-        .getByRole('link', { name: 'Skip to content' })
+        .getByRole('link', { name: 'Pular para o conteúdo' })
         .getAttribute('href'),
     ).toBe('#conteudo-principal')
 
     const navigation = screen.getByRole('navigation', { name: 'SeniorEase' })
     expect(within(navigation).getByTestId('senior-ease-logo-mark')).not.toBeNull()
     expect(
-      within(navigation).getByRole('link', { name: 'Dashboard' }).getAttribute('href'),
+      within(navigation).getByRole('link', { name: 'Painel' }).getAttribute('href'),
     ).toBe('/')
     expect(
       within(navigation)
-        .getByRole('link', { name: 'Activities' })
+        .getByRole('link', { name: 'Atividades' })
         .getAttribute('aria-current'),
     ).toBe('page')
     expect(
-      within(navigation).getByRole('link', { name: 'Profile' }).getAttribute('href'),
+      within(navigation).getByRole('link', { name: 'Perfil' }).getAttribute('href'),
     ).toBe('/perfil')
     expect(
       within(navigation)
-        .getByRole('link', { name: 'Settings' })
+        .getByRole('link', { name: 'Configurações' })
         .getAttribute('href'),
     ).toBe('/configuracoes')
 
-    const main = screen.getByRole('main', { name: 'Activities' })
-    expect(within(main).getByText('Main activities content.')).not.toBeNull()
+    const main = screen.getByRole('main', { name: 'Atividades' })
+    expect(within(main).getByText('Conteúdo principal das atividades.')).not.toBeNull()
   })
 
   it('keeps every route reachable in simplified navigation mode', () => {
@@ -58,10 +58,10 @@ describe('shared app shell components', () => {
       <AppShell
         activeRoute="/"
         navigationMode="simplified"
-        subtitle="Essential settings first."
-        title="Make SeniorEase comfortable for you"
+        subtitle="Ajustes essenciais em primeiro lugar."
+        title="Deixe o SeniorEase confortável para você"
       >
-        <p>Main preferences.</p>
+        <p>Preferências principais.</p>
       </AppShell>,
     )
 
@@ -70,19 +70,19 @@ describe('shared app shell components', () => {
     expect(navigation.getAttribute('data-navigation-mode')).toBe('simplified')
     expect(
       within(navigation)
-        .getByRole('link', { name: 'Dashboard' })
+        .getByRole('link', { name: 'Painel' })
         .getAttribute('aria-current'),
     ).toBe('page')
     expect(
-      within(navigation).getByRole('link', { name: 'Activities' }),
+      within(navigation).getByRole('link', { name: 'Atividades' }),
     ).not.toBeNull()
-    expect(within(navigation).getByRole('link', { name: 'Profile' })).not.toBeNull()
+    expect(within(navigation).getByRole('link', { name: 'Perfil' })).not.toBeNull()
     expect(
-      within(navigation).getByRole('link', { name: 'Settings' }),
+      within(navigation).getByRole('link', { name: 'Configurações' }),
     ).not.toBeNull()
     expect(
       within(navigation).getByText(
-        'Clear steps. Stable preferences. Gentle feedback.',
+        'Passos claros. Preferências estáveis. Feedback gentil.',
       ),
     ).not.toBeNull()
   })
@@ -92,10 +92,10 @@ describe('shared app shell components', () => {
       <AppShell
         activeRoute="/perfil"
         navigationMode="standard"
-        subtitle="Review saved settings."
-        title="Profile summary"
+        subtitle="Confira os ajustes salvos."
+        title="Resumo do perfil"
       >
-        <p>Profile summary content.</p>
+        <p>Conteúdo do resumo do perfil.</p>
       </AppShell>,
     )
 
@@ -104,11 +104,11 @@ describe('shared app shell components', () => {
     expect(within(navigation).getByText('Menu')).not.toBeNull()
     expect(
       within(navigation)
-        .getByRole('link', { name: 'Profile' })
+        .getByRole('link', { name: 'Perfil' })
         .getAttribute('aria-current'),
     ).toBe('page')
     expect(
-      within(navigation).getByRole('link', { name: 'Settings' }),
+      within(navigation).getByRole('link', { name: 'Configurações' }),
     ).not.toBeNull()
   })
 
