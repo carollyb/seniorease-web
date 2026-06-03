@@ -33,9 +33,9 @@ describe('createSeniorEaseTheme', () => {
 
     expect(smallTheme.typography.body1.fontSize).toBe('16px')
     expect(extraLargeTheme.typography.body1.fontSize).toBe('22px')
-    expect(extraLargeTheme.typography.h2.fontSize).toBe('50px')
+    expect(extraLargeTheme.typography.h2.fontSize).toBe('36px')
     expect(getRootStyles(extraLargeTheme, 'MuiButton').fontSize).toBe(
-      '19px',
+      '22px',
     )
   })
 
@@ -51,6 +51,12 @@ describe('createSeniorEaseTheme', () => {
     )
 
     expect(standardTheme.palette.text.primary).toBe(designTokens.colors.ink)
+    expect(standardTheme.palette.background.default).toBe(
+      designTokens.colors.surface,
+    )
+    expect(standardTheme.palette.background.paper).toBe(
+      designTokens.colors.canvas,
+    )
     expect(highTheme.palette.secondary.main).toBe(
       designTokens.colors.bluePressed,
     )
@@ -68,7 +74,7 @@ describe('createSeniorEaseTheme', () => {
 
     expect(comfortableTheme.spacing(2)).toBe('16px')
     expect(extraWideTheme.spacing(2)).toBe('24px')
-    expect(getRootStyles(comfortableTheme, 'MuiButton').minHeight).toBe(48)
+    expect(getRootStyles(comfortableTheme, 'MuiButton').minHeight).toBe(52)
     expect(getRootStyles(extraWideTheme, 'MuiButton').minHeight).toBe(64)
     expect(getRootStyles(extraWideTheme, 'MuiIconButton')).toMatchObject({
       height: 64,
@@ -114,6 +120,40 @@ describe('createSeniorEaseTheme', () => {
     expect(getRootStyles(simplifiedTheme, 'MuiCard').boxShadow).toBe('none')
     expect(standardTheme.components?.MuiCard?.defaultProps).toEqual({
       elevation: 1,
+    })
+  })
+
+  it('exposes repeated Figma values as reusable SeniorEase tokens', () => {
+    expect(designTokens.components.appShell).toMatchObject({
+      gapDesktop: 28,
+      gapTablet: 22,
+      gapMobile: 18,
+      paddingDesktop: 32,
+      paddingTablet: 28,
+      paddingMobile: 18,
+      radius: 32,
+    })
+    expect(designTokens.components.button).toMatchObject({
+      minHeight: 52,
+      paddingX: 20,
+      paddingY: 14,
+    })
+    expect(designTokens.components.switch).toMatchObject({
+      height: 36,
+      thumbSize: 28,
+      width: 64,
+    })
+
+    const theme = createSeniorEaseTheme()
+
+    expect(theme.typography.fontFamily).toBe(designTokens.typography.fontFamily)
+    expect(getRootStyles(theme, 'MuiCard').borderRadius).toBe(
+      designTokens.rounded.xl,
+    )
+    expect(getRootStyles(theme, 'MuiChip')).toMatchObject({
+      backgroundColor: designTokens.colors.yellowLight,
+      borderRadius: designTokens.rounded.full,
+      minHeight: 36,
     })
   })
 })

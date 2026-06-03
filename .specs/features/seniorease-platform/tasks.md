@@ -275,14 +275,16 @@ F3,F4 -> F5
 
 **Done when**:
 
-- [ ] Profile page displays current preferences.
-- [ ] Settings page lets users update reminder preferences.
-- [ ] Profile desktop layout matches Figma node `703:200`.
-- [ ] Settings desktop layout matches Figma node `703:250`.
-- [ ] Saved settings are restored after reload.
-- [ ] Profile and settings controls expose accessible labels and descriptions.
-- [ ] Integration tests cover profile/settings render with saved preferences.
-- [ ] Gate check passes: `npm test -- --watchAll=false`.
+- [x] Profile page displays current preferences.
+- [x] Settings page lets users update reminder preferences.
+- [x] Profile desktop layout matches Figma node `703:200`.
+- [x] Settings desktop layout matches Figma node `703:250`.
+- [x] Saved settings are restored after reload.
+- [x] Profile and settings controls expose accessible labels and descriptions.
+- [x] Integration tests cover profile/settings render with saved preferences.
+- [x] Gate check passes: `npm test -- --watchAll=false`.
+
+**Verification note**: Figma MCP access succeeded through the duplicated NATGEO file `LJkhB7ZgDaJuxVi6CVP22Q` for nodes `703:200` and `703:250`.
 
 **Tests**: integration
 **Gate**: unit
@@ -421,11 +423,11 @@ These tasks were added after the Figma screen layouts were supplied. They should
 
 **Done when**:
 
-- [ ] `DESIGN.md` reflects the SeniorEase Figma frames instead of unrelated or stale visual analysis.
-- [ ] Repeated Figma values are represented as theme tokens or component variants.
-- [ ] Theme tokens still respond to font size, contrast, spacing, and simplified-mode preferences.
-- [ ] Any intentional Figma/theme mismatch is documented with rationale.
-- [ ] Gate check passes: `npm test -- --watchAll=false src/theme`.
+- [x] `DESIGN.md` reflects the SeniorEase Figma frames instead of unrelated or stale visual analysis.
+- [x] Repeated Figma values are represented as theme tokens or component variants.
+- [x] Theme tokens still respond to font size, contrast, spacing, and simplified-mode preferences.
+- [x] Any intentional Figma/theme mismatch is documented with rationale.
+- [x] Gate check passes: `npm test -- --watchAll=false src/theme`.
 
 **Tests**: unit
 **Gate**: unit

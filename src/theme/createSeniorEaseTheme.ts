@@ -56,7 +56,7 @@ const spacingBaseByLevel: Record<SpacingLevel, number> = {
 }
 
 const touchTargetBySpacing: Record<SpacingLevel, number> = {
-  comfortable: 48,
+  comfortable: designTokens.components.button.minHeight,
   wide: 56,
   extraWide: 64,
 }
@@ -205,7 +205,7 @@ function createPaletteOptions(contrastLevel: ContrastLevel): SeniorEasePalette {
         contrastText: colors.onPrimary,
       },
       background: {
-        default: colors.canvas,
+        default: colors.surface,
         paper: colors.canvas,
       },
       divider: colors.hairlineStrong,
@@ -239,8 +239,8 @@ function createPaletteOptions(contrastLevel: ContrastLevel): SeniorEasePalette {
       contrastText: colors.primary,
     },
     background: {
-      default: colors.canvas,
-      paper: colors.surface,
+      default: colors.surface,
+      paper: colors.canvas,
     },
     divider: colors.hairline,
     text: {
@@ -255,6 +255,7 @@ function createComponentOptions(
   palette: SeniorEasePalette,
 ): ThemeOptions['components'] {
   const { colors, rounded, spacing } = designTokens
+  const componentTokens = designTokens.components
   const touchTarget = touchTargetBySpacing[preferences.spacingLevel]
   const spacingBase = spacingBaseByLevel[preferences.spacingLevel]
   const focusColor =
@@ -265,9 +266,11 @@ function createComponentOptions(
     outline: `3px solid ${focusColor}`,
     outlineOffset: 3,
   }
-  const buttonPadding = `${Math.max(spacing.sm, spacingBase + 4)}px ${Math.max(
-    spacing.xl,
-    spacingBase * 3,
+  const buttonPadding = `${Math.max(
+    componentTokens.button.paddingY,
+    spacingBase + 6,
+  )}px ${Math.round(
+    Math.max(componentTokens.button.paddingX, spacingBase * 2.5),
   )}px`
   const fieldPadding = `${Math.max(spacing.sm, spacingBase)}px ${Math.max(
     spacing.md,
@@ -423,14 +426,26 @@ function createComponentOptions(
     MuiSwitch: {
       styleOverrides: {
         root: {
-          minHeight: touchTarget,
-          minWidth: touchTarget,
+          minHeight: Math.max(touchTarget, componentTokens.switch.height),
+          minWidth: Math.max(touchTarget, componentTokens.switch.width),
+          padding: 0,
+          width: componentTokens.switch.width,
+        },
+        thumb: {
+          height: componentTokens.switch.thumbSize,
+          width: componentTokens.switch.thumbSize,
         },
         switchBase: {
+          padding: componentTokens.switch.thumbInset,
           '&.Mui-focusVisible + .MuiSwitch-track': {
             outline: `3px solid ${focusColor}`,
             outlineOffset: 3,
           },
+        },
+        track: {
+          borderRadius: rounded.full,
+          height: componentTokens.switch.height,
+          opacity: 1,
         },
       },
     },
@@ -442,8 +457,28 @@ function createComponentOptions(
         root: {
           backgroundImage: 'none',
           border: `1px solid ${palette.divider}`,
-          borderRadius: rounded.md,
+          borderRadius: rounded.xl,
           boxShadow: isSimplified ? 'none' : undefined,
+        },
+      },
+    },
+    MuiChip: {
+      styleOverrides: {
+        root: {
+          backgroundColor: colors.yellowLight,
+          borderRadius: rounded.full,
+          color: colors.ink,
+          fontSize: toScaledPx(
+            designTokens.typography.caption.fontSize,
+            preferences.fontScale,
+          ),
+          fontWeight: designTokens.typography.caption.fontWeight,
+          lineHeight: designTokens.typography.caption.lineHeight,
+          minHeight: 36,
+        },
+        label: {
+          paddingLeft: componentTokens.pill.paddingX,
+          paddingRight: componentTokens.pill.paddingX,
         },
       },
     },
@@ -454,6 +489,7 @@ function createComponentOptions(
       styleOverrides: {
         root: {
           backgroundImage: 'none',
+          borderRadius: rounded.xl,
         },
       },
     },
