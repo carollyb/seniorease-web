@@ -3,6 +3,12 @@ import type { SxProps, Theme } from '@mui/material/styles'
 
 import { designTokens } from '../../../theme/designTokens'
 
+export type PrimaryButtonTone = 'primary' | 'secondary' | 'completion'
+
+export interface PrimaryButtonProps extends ButtonProps {
+  tone?: PrimaryButtonTone
+}
+
 const baseSx: SxProps<Theme> = {
   borderRadius: `${designTokens.components.button.borderRadius}px`,
   minHeight: designTokens.components.button.minHeight,
@@ -10,12 +16,48 @@ const baseSx: SxProps<Theme> = {
   py: `${designTokens.components.button.paddingY}px`,
 }
 
+const toneSx: Record<PrimaryButtonTone, SxProps<Theme>> = {
+  primary: {
+    bgcolor: 'primary.main',
+    color: 'primary.contrastText',
+    '&:hover': {
+      bgcolor: designTokens.colors.charcoal,
+    },
+  },
+  secondary: {
+    bgcolor: 'background.paper',
+    border: `1px solid ${designTokens.colors.hairlineStrong}`,
+    boxShadow: 'none',
+    color: 'text.primary',
+    '&:hover': {
+      bgcolor: designTokens.colors.surface,
+      borderColor: designTokens.colors.hairlineStrong,
+      boxShadow: 'none',
+    },
+  },
+  completion: {
+    bgcolor: 'warning.main',
+    color: 'warning.contrastText',
+    '&:hover': {
+      bgcolor: designTokens.colors.yellowBorder,
+    },
+  },
+}
+
+function mergeSx(base: SxProps<Theme>[], sx?: SxProps<Theme>): SxProps<Theme> {
+  return [
+    ...base,
+    ...(Array.isArray(sx) ? sx : sx ? [sx] : []),
+  ] as SxProps<Theme>
+}
+
 export function PrimaryButton({
   sx,
+  tone = 'primary',
   variant = 'contained',
   ...props
-}: ButtonProps) {
-  const sxValue = Array.isArray(sx) ? [baseSx, ...sx] : [baseSx, sx]
+}: PrimaryButtonProps) {
+  const sxValue = mergeSx([baseSx, toneSx[tone]], sx)
 
   return <Button sx={sxValue} variant={variant} {...props} />
 }

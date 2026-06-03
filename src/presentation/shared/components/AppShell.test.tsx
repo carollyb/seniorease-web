@@ -31,6 +31,7 @@ describe('shared app shell components', () => {
     ).toBe('#conteudo-principal')
 
     const navigation = screen.getByRole('navigation', { name: 'SeniorEase' })
+    expect(within(navigation).getByTestId('senior-ease-logo-mark')).not.toBeNull()
     expect(
       within(navigation).getByRole('link', { name: 'Painel' }).getAttribute('href'),
     ).toBe('/')
@@ -82,6 +83,31 @@ describe('shared app shell components', () => {
     expect(within(navigation).getByText('Outras areas')).not.toBeNull()
   })
 
+  it('renders the Figma mobile menu affordance while keeping routes keyboard reachable', () => {
+    renderWithTheme(
+      <AppShell
+        activeRoute="/perfil"
+        navigationMode="standard"
+        subtitle="Confira os ajustes salvos."
+        title="Perfil"
+      >
+        <p>Resumo do perfil.</p>
+      </AppShell>,
+    )
+
+    const navigation = screen.getByRole('navigation', { name: 'SeniorEase' })
+
+    expect(within(navigation).getByText('Menu')).not.toBeNull()
+    expect(
+      within(navigation)
+        .getByRole('link', { name: 'Perfil' })
+        .getAttribute('aria-current'),
+    ).toBe('page')
+    expect(
+      within(navigation).getByRole('link', { name: 'Configuracoes' }),
+    ).not.toBeNull()
+  })
+
   it('centralizes primary actions, status pills, and empty states', () => {
     renderWithTheme(
       <EmptyState
@@ -95,8 +121,26 @@ describe('shared app shell components', () => {
     expect(screen.getByRole('button', { name: 'Nova atividade' })).not.toBeNull()
   })
 
+  it('preserves native disabled semantics for shared button treatments', () => {
+    renderWithTheme(
+      <>
+        <PrimaryButton tone="completion">Concluir atividade</PrimaryButton>
+        <PrimaryButton disabled tone="secondary">
+          Voltar
+        </PrimaryButton>
+      </>,
+    )
+
+    expect(
+      screen.getByRole('button', { name: 'Concluir atividade' }),
+    ).not.toBeNull()
+    expect(screen.getByRole('button', { name: 'Voltar' }).hasAttribute('disabled')).toBe(
+      true,
+    )
+  })
+
   it('renders status text without relying on color alone', () => {
-    renderWithTheme(<StatusPill label="Pendente" tone="warning" />)
+    renderWithTheme(<StatusPill compact label="Pendente" tone="warning" />)
 
     expect(screen.getByText('Pendente')).not.toBeNull()
   })

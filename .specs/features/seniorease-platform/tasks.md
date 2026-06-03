@@ -444,11 +444,11 @@ These tasks were added after the Figma screen layouts were supplied. They should
 
 **Done when**:
 
-- [ ] `AppShell` renders responsive landmarks, skip link, and page content slots.
-- [ ] `SideNavigation` supports active route, accessible names, keyboard focus, and responsive behavior from Figma.
-- [ ] `PrimaryButton`, `StatusPill`, and `EmptyState` centralize repeated visual treatments and avoid duplicated hardcoded values.
-- [ ] Component tests cover rendering, accessible names, active states, and disabled/focus states where applicable.
-- [ ] Gate check passes: `npm test -- --watchAll=false src/presentation/shared`.
+- [x] `AppShell` renders responsive landmarks, skip link, and page content slots.
+- [x] `SideNavigation` supports active route, accessible names, keyboard focus, and responsive behavior from Figma.
+- [x] `PrimaryButton`, `StatusPill`, and `EmptyState` centralize repeated visual treatments and avoid duplicated hardcoded values.
+- [x] Component tests cover rendering, accessible names, active states, and disabled/focus states where applicable.
+- [x] Gate check passes: `npm test -- --watchAll=false src/presentation/shared`.
 
 **Tests**: integration
 **Gate**: unit

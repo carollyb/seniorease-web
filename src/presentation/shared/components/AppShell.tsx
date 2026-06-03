@@ -1,22 +1,22 @@
-import { useId, type ReactNode } from 'react'
-import Box from '@mui/material/Box'
-import Stack from '@mui/material/Stack'
-import Typography from '@mui/material/Typography'
+import { useId, type ReactNode } from 'react';
+import Box from '@mui/material/Box';
+import Stack from '@mui/material/Stack';
+import Typography from '@mui/material/Typography';
 
-import type { NavigationMode } from '../../../domain/preferences'
-import { designTokens } from '../../../theme/designTokens'
-import { SideNavigation, type SeniorEaseRoute } from './SideNavigation'
+import type { NavigationMode } from '../../../domain/preferences';
+import { designTokens } from '../../../theme/designTokens';
+import { SideNavigation, type SeniorEaseRoute } from './SideNavigation';
 
 export interface AppShellProps {
-  activeRoute: SeniorEaseRoute
-  children: ReactNode
-  navigationMode?: NavigationMode
-  subtitle?: string
-  title: string
+  activeRoute: SeniorEaseRoute;
+  children: ReactNode;
+  navigationMode?: NavigationMode;
+  subtitle?: string;
+  title: string;
 }
 
-const { colors, components } = designTokens
-const mainContentId = 'conteudo-principal'
+const { colors, components } = designTokens;
+const mainContentId = 'conteudo-principal';
 
 export function AppShell({
   activeRoute,
@@ -25,7 +25,7 @@ export function AppShell({
   subtitle,
   title,
 }: AppShellProps) {
-  const titleId = useId()
+  const titleId = useId();
 
   return (
     <Box
@@ -41,7 +41,7 @@ export function AppShell({
       }}
     >
       <Box
-        component="a"
+        component='a'
         href={`#${mainContentId}`}
         sx={{
           bgcolor: colors.brandYellow,
@@ -98,20 +98,20 @@ export function AppShell({
             py: { xs: 0, md: 1 },
           }}
         >
-          <Box component="header">
+          <Box component='header'>
             <Typography
-              component="h1"
+              component='h1'
               id={titleId}
               sx={{ color: 'text.primary' }}
-              variant="h1"
+              variant='h1'
             >
               {title}
             </Typography>
             {subtitle ? (
               <Typography
-                color="text.secondary"
+                color='text.secondary'
                 sx={{ mt: 1 }}
-                variant="subtitle1"
+                variant='subtitle1'
               >
                 {subtitle}
               </Typography>
@@ -120,7 +120,7 @@ export function AppShell({
 
           <Box
             aria-labelledby={titleId}
-            component="main"
+            component='main'
             id={mainContentId}
             sx={{ minWidth: 0 }}
           >
@@ -129,5 +129,5 @@ export function AppShell({
         </Stack>
       </Box>
     </Box>
-  )
+  );
 }
