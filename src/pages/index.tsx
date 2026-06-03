@@ -1,31 +1,49 @@
-import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
-import Container from '@mui/material/Container';
-import Stack from '@mui/material/Stack';
-import Typography from '@mui/material/Typography';
-import type { NextPage } from 'next';
+import Box from '@mui/material/Box'
+import Stack from '@mui/material/Stack'
+import Typography from '@mui/material/Typography'
+import type { NextPage } from 'next'
+
+import { PersonalizationDashboard } from '../presentation/personalization'
+import { AppShell, StatusPill } from '../presentation/shared'
+import { usePreferenceStore } from '../stores/preferences/usePreferenceStore'
 
 const HomePage: NextPage = () => {
-  return (
-    <Box
-      component='main'
-      sx={{ bgcolor: 'background.default', minHeight: '100vh' }}
-    >
-      <Container maxWidth='md' sx={{ py: { xs: 6, md: 10 } }}>
-        <Stack spacing={3} alignItems='flex-start'>
-          <Typography component='h1' variant='h3'>
-            SeniorEase
-          </Typography>
-          <Typography color='text.secondary' variant='h6'>
-            Gerencie suas tarefas com simplicidade.
-          </Typography>
-          <Button variant='contained' size='large'>
-            Comecar
-          </Button>
-        </Stack>
-      </Container>
-    </Box>
-  );
-};
+  const preferences = usePreferenceStore((state) => state.preferences)
 
-export default HomePage;
+  return (
+    <AppShell
+      activeRoute="/"
+      navigationMode={preferences.navigationMode}
+      subtitle="Ajuste leitura, contraste e seguranca para usar o app com conforto."
+      title="Painel SeniorEase"
+    >
+      <Stack spacing={3}>
+        <Box
+          component="section"
+          sx={{
+            bgcolor: 'background.paper',
+            border: 1,
+            borderColor: 'divider',
+            borderRadius: 3,
+            p: { xs: 2, md: 3 },
+          }}
+        >
+          <Stack spacing={2}>
+            <Typography component="h2" variant="h4">
+              Preferencias ativas
+            </Typography>
+            <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1}>
+              <StatusPill label={`Texto: ${preferences.fontScale}`} />
+              <StatusPill label={`Contraste: ${preferences.contrastLevel}`} />
+              <StatusPill label={`Espaco: ${preferences.spacingLevel}`} />
+            </Stack>
+          </Stack>
+        </Box>
+
+        <PersonalizationDashboard />
+      </Stack>
+    </AppShell>
+  )
+}
+
+export default HomePage

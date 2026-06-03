@@ -306,15 +306,15 @@ F3,F4 -> F5
 
 **Done when**:
 
-- [ ] `_app.tsx` loads providers, theme, and Zustand hydration handling.
-- [ ] `AppShell` composes shared page structure and main landmark behavior.
-- [ ] `SideNavigation` renders the Figma-aligned navigation pattern with active-route semantics.
-- [ ] `PrimaryButton`, `StatusPill`, and `EmptyState` centralize repeated visual treatments through MUI/theme tokens.
-- [ ] Main navigation supports simplified and standard modes.
-- [ ] Pages are reachable through predictable labels.
-- [ ] Critical actions honor extra confirmation.
-- [ ] Navigation uses semantic landmarks, accessible names, and stable focus order.
-- [ ] Gate check passes: `npm run build`.
+- [x] `_app.tsx` loads providers, theme, and Zustand hydration handling.
+- [x] `AppShell` composes shared page structure and main landmark behavior.
+- [x] `SideNavigation` renders the Figma-aligned navigation pattern with active-route semantics.
+- [x] `PrimaryButton`, `StatusPill`, and `EmptyState` centralize repeated visual treatments through MUI/theme tokens.
+- [x] Main navigation supports simplified and standard modes.
+- [x] Pages are reachable through predictable labels.
+- [x] Critical actions honor extra confirmation.
+- [x] Navigation uses semantic landmarks, accessible names, and stable focus order.
+- [x] Gate check passes: `npm run build`.
 
 **Tests**: integration
 **Gate**: build
