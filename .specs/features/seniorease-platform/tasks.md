@@ -336,14 +336,14 @@ F3,F4 -> F5
 
 **Done when**:
 
-- [ ] E2E test changes font size and verifies visible application.
-- [ ] E2E test creates and completes an activity.
-- [ ] E2E test reloads and verifies Zustand-persisted preferences.
-- [ ] E2E test checks keyboard access to primary flows.
-- [ ] E2E test checks ARIA roles/names, labels, dialog focus behavior, and live-region feedback.
-- [ ] E2E or browser verification covers desktop/tablet/mobile dashboard and activities layouts against the linked Figma frames.
-- [ ] E2E or browser verification covers guided steps desktop/tablet layouts against the linked Figma frames.
-- [ ] Gate check passes: `npm run test:e2e`.
+- [x] E2E test changes font size and verifies visible application.
+- [x] E2E test creates and completes an activity.
+- [x] E2E test reloads and verifies Zustand-persisted preferences.
+- [x] E2E test checks keyboard access to primary flows.
+- [x] E2E test checks ARIA roles/names, labels, dialog focus behavior, and live-region feedback.
+- [x] E2E or browser verification covers desktop/tablet/mobile dashboard and activities layouts against the linked Figma frames.
+- [x] E2E or browser verification covers guided steps desktop/tablet layouts against the linked Figma frames.
+- [x] Gate check passes: `npm run test:e2e`.
 
 **Tests**: e2e
 **Gate**: e2e
