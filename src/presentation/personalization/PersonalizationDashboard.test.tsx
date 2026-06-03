@@ -61,6 +61,16 @@ describe('PersonalizationDashboard', () => {
         name: 'Confirmação extra para ações críticas',
       }),
     ).not.toBeNull()
+    expect(
+      screen
+        .getByTestId('figma-pill-switch-navigationMode')
+        .getAttribute('data-size'),
+    ).toBe('64x36')
+    expect(
+      screen
+        .getByTestId('figma-pill-switch-navigationMode')
+        .getAttribute('data-state'),
+    ).toBe('on')
   })
 
   it('updates the validated preference store from pill and switch controls', () => {
@@ -83,6 +93,11 @@ describe('PersonalizationDashboard', () => {
       navigationMode: 'standard',
       extraConfirmation: false,
     })
+    expect(
+      screen
+        .getByTestId('figma-pill-switch-navigationMode')
+        .getAttribute('data-state'),
+    ).toBe('off')
     expect(onPreferenceChange).toHaveBeenLastCalledWith(
       expect.objectContaining({
         extraConfirmation: false,

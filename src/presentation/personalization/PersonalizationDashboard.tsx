@@ -6,7 +6,6 @@ import Radio from '@mui/material/Radio'
 import RadioGroup from '@mui/material/RadioGroup'
 import FormControlLabel from '@mui/material/FormControlLabel'
 import Stack from '@mui/material/Stack'
-import Switch from '@mui/material/Switch'
 import Typography from '@mui/material/Typography'
 import type { SxProps, Theme } from '@mui/material/styles'
 
@@ -210,6 +209,91 @@ interface SwitchSettingRowProps {
   onChange(checked: boolean): void
 }
 
+interface FigmaPillSwitchProps {
+  checked: boolean
+  describedBy: string
+  id: string
+  name: string
+  onChange(checked: boolean): void
+}
+
+function FigmaPillSwitch({
+  checked,
+  describedBy,
+  id,
+  name,
+  onChange,
+}: FigmaPillSwitchProps) {
+  return (
+    <Box
+      component="span"
+      data-size="64x36"
+      data-state={checked ? 'on' : 'off'}
+      data-testid={`figma-pill-switch-${name}`}
+      sx={{
+        display: 'inline-flex',
+        flex: '0 0 64px',
+        height: components.switch.height,
+        position: 'relative',
+        width: components.switch.width,
+        '& input:focus-visible + span': {
+          outline: `3px solid ${colors.brandBlue}`,
+          outlineOffset: 3,
+        },
+      }}
+    >
+      <Box
+        aria-describedby={describedBy}
+        checked={checked}
+        component="input"
+        id={id}
+        name={name}
+        onChange={(event) => onChange(event.target.checked)}
+        role="switch"
+        sx={{
+          cursor: 'pointer',
+          height: '100%',
+          inset: 0,
+          m: 0,
+          opacity: 0,
+          position: 'absolute',
+          width: '100%',
+          zIndex: 1,
+        }}
+        type="checkbox"
+      />
+      <Box
+        aria-hidden="true"
+        component="span"
+        sx={{
+          bgcolor: checked ? colors.successAccent : colors.hairlineStrong,
+          borderRadius: `${rounded.full}px`,
+          display: 'block',
+          height: components.switch.height,
+          position: 'relative',
+          transition: 'background-color 120ms ease',
+          width: components.switch.width,
+          '&::after': {
+            bgcolor: colors.canvas,
+            borderRadius: `${rounded.full}px`,
+            content: '""',
+            height: components.switch.thumbSize,
+            left: checked
+              ? components.switch.width -
+                components.switch.thumbSize -
+                components.switch.thumbInset
+              : components.switch.thumbInset,
+            position: 'absolute',
+            top: components.switch.thumbInset,
+            transition: 'left 120ms ease',
+            width: components.switch.thumbSize,
+          },
+        }}
+      />
+    </Box>
+  )
+}
+
 function SwitchSettingRow({
   checked,
   helperText,
@@ -241,16 +325,12 @@ function SwitchSettingRow({
       >
         {label}
       </Typography>
-      <Switch
+      <FigmaPillSwitch
         checked={checked}
+        describedBy={helperId}
+        id={switchId}
         name={name}
-        onChange={(event) => onChange(event.target.checked)}
-        slotProps={{
-          input: {
-            'aria-describedby': helperId,
-            id: switchId,
-          },
-        }}
+        onChange={onChange}
       />
       <Typography id={helperId} sx={hiddenVisually}>
         {helperText}
