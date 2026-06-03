@@ -423,11 +423,11 @@ These tasks were added after the Figma screen layouts were supplied. They should
 
 **Done when**:
 
-- [ ] `DESIGN.md` reflects the SeniorEase Figma frames instead of unrelated or stale visual analysis.
-- [ ] Repeated Figma values are represented as theme tokens or component variants.
-- [ ] Theme tokens still respond to font size, contrast, spacing, and simplified-mode preferences.
-- [ ] Any intentional Figma/theme mismatch is documented with rationale.
-- [ ] Gate check passes: `npm test -- --watchAll=false src/theme`.
+- [x] `DESIGN.md` reflects the SeniorEase Figma frames instead of unrelated or stale visual analysis.
+- [x] Repeated Figma values are represented as theme tokens or component variants.
+- [x] Theme tokens still respond to font size, contrast, spacing, and simplified-mode preferences.
+- [x] Any intentional Figma/theme mismatch is documented with rationale.
+- [x] Gate check passes: `npm test -- --watchAll=false src/theme`.
 
 **Tests**: unit
 **Gate**: unit
