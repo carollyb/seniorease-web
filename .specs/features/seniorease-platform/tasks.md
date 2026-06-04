@@ -489,12 +489,14 @@ These tasks were added after the Figma screen layouts were supplied. They should
 
 **Done when**:
 
-- [ ] Activities page matches Figma nodes `703:78`, `703:361`, and `703:463` for desktop, tablet, and mobile.
-- [ ] Guided steps match Figma nodes `703:141` and `703:509` for desktop and tablet.
-- [ ] `ActivityList` and `ActivityCard` expose clear list semantics, accessible action names, reminder text, and status text.
-- [ ] Completing an activity announces polite live-region feedback and moves it to completed history.
-- [ ] Component tests cover empty state, card status, guided-step progress, keyboard operation, and completion feedback.
-- [ ] Gate check passes: `npm test -- --watchAll=false`.
+- [x] Activities page matches Figma nodes `703:78`, `703:361`, and `703:463` for desktop, tablet, and mobile.
+- [x] Guided steps match Figma nodes `703:141` and `703:509` for desktop and tablet.
+- [x] `ActivityList` and `ActivityCard` expose clear list semantics, accessible action names, reminder text, and status text.
+- [x] Completing an activity announces polite live-region feedback and moves it to completed history.
+- [x] Component tests cover empty state, card status, guided-step progress, keyboard operation, and completion feedback.
+- [x] Gate check passes: `npm test -- --watchAll=false`.
+
+**Verification note**: Figma MCP inspection used duplicated NATGEO file `LJkhB7ZgDaJuxVi6CVP22Q` for nodes `703:78`, `703:361`, `703:463`, `703:141`, and `703:509`. Activity components were extracted into `ActivityList` and `ActivityCard`, guided steps were reconciled with Figma progress/current-step/live-region patterns, and `npm test -- --watchAll=false` passed with 15 suites and 60 tests.
 
 **Tests**: integration
 **Gate**: unit
