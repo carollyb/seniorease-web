@@ -1,8 +1,8 @@
-import { useEffect, useId, useState } from 'react';
-import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
-import Stack from '@mui/material/Stack';
-import Typography from '@mui/material/Typography';
+import { useEffect, useId, useState } from 'react'
+import Box from '@mui/material/Box'
+import Stack from '@mui/material/Stack'
+import Typography from '@mui/material/Typography'
+import type { SxProps, Theme } from '@mui/material/styles'
 
 import type {
   ContrastLevel,
@@ -10,214 +10,90 @@ import type {
   NavigationMode,
   SpacingLevel,
   UserPreferences,
-} from '../../domain/preferences/Preference';
-import { usePreferenceStore } from '../../stores/preferences/usePreferenceStore';
-import { designTokens } from '../../theme/designTokens';
+} from '../../domain/preferences/Preference'
+import { usePreferenceStore } from '../../stores/preferences/usePreferenceStore'
+import { designTokens } from '../../theme/designTokens'
+import { PrimaryButton } from '../shared/components/PrimaryButton'
+import { StatusPill } from '../shared/components/StatusPill'
 
-type ProfileSettingsMode = 'profile' | 'settings';
+type ProfileSettingsMode = 'profile' | 'settings'
 
-const { colors, rounded, spacing } = designTokens;
+const { colors, components, rounded, spacing, typography } = designTokens
 
 const FONT_SCALE_LABELS: Record<FontScale, string> = {
   small: 'Pequeno',
   medium: 'Médio',
   large: 'Grande',
   extraLarge: 'Muito grande',
-};
+}
 
 const CONTRAST_LABELS: Record<ContrastLevel, string> = {
   standard: 'Padrão',
   high: 'Alto conforto',
   maximum: 'Máximo',
-};
+}
 
 const SPACING_LABELS: Record<SpacingLevel, string> = {
   comfortable: 'Confortável',
   wide: 'Amplo',
   extraWide: 'Extra amplo',
-};
+}
 
 const NAVIGATION_LABELS: Record<NavigationMode, string> = {
   simplified: 'Simplificada',
   standard: 'Padrão',
-};
+}
 
-const navItems = [
-  { href: '/', label: 'Painel' },
-  { href: '/atividades', label: 'Atividades' },
-  { href: '/perfil', label: 'Perfil' },
-  { href: '/configuracoes', label: 'Configurações' },
-];
+const hiddenVisually: SxProps<Theme> = {
+  border: 0,
+  clip: 'rect(0 0 0 0)',
+  height: '1px',
+  m: '-1px',
+  overflow: 'hidden',
+  p: 0,
+  position: 'absolute',
+  width: '1px',
+}
 
 function booleanPreferenceLabel(isActive: boolean) {
-  return isActive ? 'Ativo' : 'Inativo';
-}
-
-function LogoMark() {
-  return (
-    <Box
-      aria-hidden='true'
-      component='svg'
-      data-testid='senior-ease-logo-mark'
-      focusable='false'
-      height='44'
-      preserveAspectRatio='xMidYMid meet'
-      sx={{
-        display: 'block',
-        flex: '0 0 44px',
-        height: 44,
-        minHeight: 44,
-        minWidth: 44,
-        width: 44,
-      }}
-      viewBox='0 0 160 160'
-      width='44'
-    >
-      <rect fill={colors.brandYellow} height='160' rx='52' width='160' />
-      <circle cx='72' cy='88' fill={colors.brandBlue} r='37' />
-      <circle cx='124' cy='60' fill={colors.brandTeal} r='19' />
-    </Box>
-  );
-}
-
-function SideNavigation() {
-  return (
-    <Box
-      aria-label='SeniorEase'
-      component='nav'
-      sx={{
-        bgcolor: colors.primary,
-        borderRadius: `${rounded.xxxl}px`,
-        color: colors.onPrimary,
-        display: 'flex',
-        flexDirection: 'column',
-        gap: `${spacing.xl}px`,
-        minHeight: { md: 355 },
-        px: `${spacing.lg}px`,
-        py: `${spacing.xxxl - 12}px`,
-        width: { xs: '100%', md: 248 },
-      }}
-    >
-      <Stack alignItems='center' direction='row' minWidth={0} spacing={1.5}>
-        <LogoMark />
-        <Typography
-          component='p'
-          fontSize={22}
-          fontWeight={600}
-          sx={{ whiteSpace: 'nowrap' }}
-        >
-          SeniorEase
-        </Typography>
-      </Stack>
-
-      <Stack
-        component='ul'
-        spacing='10px'
-        sx={{ listStyle: 'none', m: 0, p: 0 }}
-      >
-        {navItems.map((item, index) => {
-          const isHighlighted = index === 0;
-
-          return (
-            <Box component='li' key={item.href}>
-              <Box
-                component='a'
-                href={item.href}
-                sx={{
-                  alignItems: 'center',
-                  bgcolor: isHighlighted ? colors.yellowLight : colors.charcoal,
-                  borderRadius: `${rounded.xl}px`,
-                  color: isHighlighted ? colors.ink : colors.onPrimary,
-                  display: 'inline-flex',
-                  fontSize: 16,
-                  fontWeight: isHighlighted ? 600 : 500,
-                  gap: `${spacing.sm}px`,
-                  justifyContent: 'center',
-                  lineHeight: 1.4,
-                  px: `${spacing.md}px`,
-                  py: `${spacing.sm}px`,
-                  textDecoration: 'none',
-                }}
-              >
-                <Box
-                  aria-hidden='true'
-                  sx={{
-                    bgcolor: isHighlighted ? colors.brandYellow : colors.muted,
-                    borderRadius: `${rounded.full}px`,
-                    height: 12,
-                    width: 12,
-                  }}
-                />
-                {item.label}
-              </Box>
-            </Box>
-          );
-        })}
-      </Stack>
-
-      <Box
-        sx={{
-          bgcolor: colors.charcoal,
-          borderRadius: `${spacing.xl}px`,
-          mt: 'auto',
-          p: `${spacing.xl}px`,
-          width: '100%',
-        }}
-      >
-        <Typography fontSize={15} lineHeight={1.4}>
-          Passos claros. Preferências estáveis. Feedback gentil.
-        </Typography>
-      </Box>
-    </Box>
-  );
+  return isActive ? 'Ativo' : 'Inativo'
 }
 
 interface PreferenceSummaryRowProps {
-  label: string;
-  value: string;
+  label: string
+  value: string
 }
 
 function PreferenceSummaryRow({ label, value }: PreferenceSummaryRowProps) {
   return (
     <Box
       sx={{
-        alignItems: 'center',
+        alignItems: { xs: 'flex-start', sm: 'center' },
         display: 'flex',
-        gap: { xs: 2, md: '56px' },
+        flexDirection: { xs: 'column', sm: 'row' },
+        gap: { xs: 1, sm: 3, md: '56px' },
         minHeight: 64,
         py: `${spacing.sm}px`,
       }}
     >
       <Typography
-        component='dt'
+        component="dt"
         fontSize={18}
         fontWeight={500}
         lineHeight={1.4}
-        sx={{ color: colors.ink, flex: '0 0 260px' }}
+        sx={{ color: colors.ink, flex: { sm: '0 0 260px' } }}
       >
         {label}
       </Typography>
-      <Box
-        component='dd'
-        sx={{
-          bgcolor: colors.yellowLight,
-          borderRadius: `${rounded.full}px`,
-          color: colors.ink,
-          m: 0,
-          px: `${spacing.md}px`,
-          py: '9px',
-        }}
-      >
-        <Typography fontSize={14} fontWeight={500} lineHeight={1.4}>
-          {value}
-        </Typography>
+      <Box component="dd" sx={{ m: 0 }}>
+        <StatusPill compact label={value} />
       </Box>
     </Box>
-  );
+  )
 }
 
 interface PreferenceSummaryProps {
-  preferences: UserPreferences;
+  preferences: UserPreferences
 }
 
 function PreferenceSummary({ preferences }: PreferenceSummaryProps) {
@@ -246,39 +122,26 @@ function PreferenceSummary({ preferences }: PreferenceSummaryProps) {
       label: 'Confirmações extras',
       value: booleanPreferenceLabel(preferences.extraConfirmation),
     },
-  ];
+  ]
 
   return (
     <Box
-      aria-labelledby='profile-preferences-title'
-      component='section'
+      aria-labelledby="profile-preferences-title"
+      component="section"
+      data-node-id="703:225"
       sx={{
         bgcolor: colors.canvas,
-        border: 1,
-        borderColor: colors.hairline,
-        borderRadius: `${spacing.xl}px`,
+        border: `1px solid ${colors.hairline}`,
+        borderRadius: `${components.card.radius}px`,
         overflow: 'hidden',
-        p: { xs: `${spacing.lg}px`, md: `${spacing.xxxl - 4}px` },
+        p: { xs: `${spacing.lg}px`, md: '28px' },
         width: '100%',
       }}
     >
-      <Typography
-        component='h2'
-        id='profile-preferences-title'
-        sx={{
-          border: 0,
-          clip: 'rect(0 0 0 0)',
-          height: 1,
-          m: -1,
-          overflow: 'hidden',
-          p: 0,
-          position: 'absolute',
-          width: 1,
-        }}
-      >
+      <Typography component="h2" id="profile-preferences-title" sx={hiddenVisually}>
         Resumo das preferências do perfil
       </Typography>
-      <Box component='dl' sx={{ m: 0 }}>
+      <Box component="dl" sx={{ m: 0 }}>
         {summaryItems.map((item) => (
           <PreferenceSummaryRow
             key={item.label}
@@ -288,22 +151,22 @@ function PreferenceSummary({ preferences }: PreferenceSummaryProps) {
         ))}
       </Box>
     </Box>
-  );
+  )
 }
 
 interface SwitchSettingRowProps {
-  checked: boolean;
-  helperText: string;
-  label: string;
-  name: string;
-  onChange(checked: boolean): void;
+  checked: boolean
+  helperText: string
+  label: string
+  name: string
+  onChange(checked: boolean): void
 }
 
 interface FigmaPillSwitchProps {
-  checked: boolean;
-  describedBy: string;
-  name: string;
-  onChange(checked: boolean): void;
+  checked: boolean
+  describedBy: string
+  name: string
+  onChange(checked: boolean): void
 }
 
 function FigmaPillSwitch({
@@ -314,26 +177,26 @@ function FigmaPillSwitch({
 }: FigmaPillSwitchProps) {
   return (
     <Box
-      component='span'
-      data-size='64x36'
+      component="span"
+      data-size="64x36"
       data-state={checked ? 'on' : 'off'}
       data-testid={`figma-pill-switch-${name}`}
       sx={{
         display: 'inline-flex',
         flex: '0 0 64px',
-        height: 36,
+        height: components.switch.height,
         position: 'relative',
-        width: 64,
+        width: components.switch.width,
       }}
     >
       <Box
         aria-describedby={describedBy}
         checked={checked}
-        component='input'
+        component="input"
         id={name}
         name={name}
         onChange={(event) => onChange(event.target.checked)}
-        role='switch'
+        role="switch"
         sx={{
           cursor: 'pointer',
           height: '100%',
@@ -344,34 +207,38 @@ function FigmaPillSwitch({
           width: '100%',
           zIndex: 1,
         }}
-        type='checkbox'
+        type="checkbox"
       />
       <Box
-        aria-hidden='true'
-        component='span'
+        aria-hidden="true"
+        component="span"
         sx={{
           bgcolor: checked ? colors.successAccent : colors.hairlineStrong,
           borderRadius: `${rounded.full}px`,
           display: 'block',
-          height: 36,
+          height: components.switch.height,
           position: 'relative',
           transition: 'background-color 120ms ease',
-          width: 64,
+          width: components.switch.width,
           '&::after': {
             bgcolor: colors.canvas,
             borderRadius: `${rounded.full}px`,
             content: '""',
-            height: 28,
-            left: checked ? 32 : 4,
+            height: components.switch.thumbSize,
+            left: checked
+              ? components.switch.width -
+                components.switch.thumbSize -
+                components.switch.thumbInset
+              : components.switch.thumbInset,
             position: 'absolute',
-            top: 4,
+            top: components.switch.thumbInset,
             transition: 'left 120ms ease',
-            width: 28,
+            width: components.switch.thumbSize,
           },
         }}
       />
     </Box>
-  );
+  )
 }
 
 function SwitchSettingRow({
@@ -381,7 +248,7 @@ function SwitchSettingRow({
   name,
   onChange,
 }: SwitchSettingRowProps) {
-  const helperId = useId();
+  const helperId = useId()
 
   return (
     <Box
@@ -390,16 +257,16 @@ function SwitchSettingRow({
         display: 'flex',
         gap: 2,
         justifyContent: 'space-between',
-        py: '14px',
+        py: `${spacing.controlY}px`,
       }}
     >
       <Typography
-        component='label'
+        component="label"
         fontSize={18}
         fontWeight={500}
         htmlFor={name}
         lineHeight={1.4}
-        sx={{ color: colors.ink, maxWidth: 360 }}
+        sx={{ color: colors.ink, maxWidth: 280 }}
       >
         {label}
       </Typography>
@@ -409,162 +276,155 @@ function SwitchSettingRow({
         name={name}
         onChange={onChange}
       />
-      <Typography
-        id={helperId}
-        sx={{
-          border: 0,
-          clip: 'rect(0 0 0 0)',
-          height: 1,
-          m: -1,
-          overflow: 'hidden',
-          p: 0,
-          position: 'absolute',
-          width: 1,
-        }}
-      >
+      <Typography id={helperId} sx={hiddenVisually}>
         {helperText}
       </Typography>
     </Box>
-  );
+  )
 }
 
 interface ReminderSettingsProps {
-  preferences: UserPreferences;
-  onSave(preferences: Partial<UserPreferences>, feedbackMessage: string): void;
-  onReset(): void;
+  preferences: UserPreferences
+  onLocalFeedback(feedbackMessage: string): void
+  onReset(): void
+  onSave(preferences: Partial<UserPreferences>, feedbackMessage: string): void
 }
 
 function ReminderSettings({
   preferences,
+  onLocalFeedback,
   onReset,
   onSave,
 }: ReminderSettingsProps) {
-  const [showDashboardReminders, setShowDashboardReminders] = useState(true);
+  const [showDashboardReminders, setShowDashboardReminders] = useState(true)
   const [keepCompletedHistoryVisible, setKeepCompletedHistoryVisible] =
-    useState(true);
+    useState(true)
 
   return (
     <Box
-      aria-labelledby='reminder-settings-title'
-      component='section'
+      aria-labelledby="reminder-settings-title"
+      component="section"
+      data-node-id="703:275"
       sx={{
         bgcolor: colors.canvas,
-        border: 1,
-        borderColor: colors.hairline,
-        borderRadius: `${spacing.xl}px`,
+        border: `1px solid ${colors.hairline}`,
+        borderRadius: `${components.card.radius}px`,
         overflow: 'hidden',
-        p: `${spacing.xl}px`,
+        p: `${components.card.padding}px`,
         width: '100%',
       }}
     >
-      <Stack spacing={1}>
+      <Stack spacing={2}>
         <Typography
-          component='h2'
-          fontSize={24}
-          fontWeight={600}
-          id='reminder-settings-title'
-          lineHeight={1.4}
+          component="h2"
+          fontSize={typography.h3.fontSize}
+          fontWeight={typography.h3.fontWeight}
+          id="reminder-settings-title"
+          lineHeight={typography.h3.lineHeight}
           sx={{ color: colors.ink }}
         >
           Preferências de lembrete
         </Typography>
 
-        <SwitchSettingRow
-          checked={preferences.remindersEnabled}
-          helperText='As atividades mostram lembretes em linguagem simples.'
-          label='Usar lembretes em linguagem simples'
-          name='remindersEnabled'
-          onChange={(enabled) =>
-            onSave(
-              { remindersEnabled: enabled },
-              `Configuração salva: lembretes em linguagem simples ${
-                enabled ? 'ativados' : 'desativados'
-              }.`,
-            )
-          }
-        />
-        <SwitchSettingRow
-          checked={showDashboardReminders}
-          helperText='Controla a visibilidade dos lembretes no painel.'
-          label='Mostrar lembretes no painel'
-          name='showDashboardReminders'
-          onChange={setShowDashboardReminders}
-        />
-        <SwitchSettingRow
-          checked={preferences.extraConfirmation}
-          helperText='O SeniorEase pergunta antes de excluir atividades.'
-          label='Perguntar antes de excluir atividades'
-          name='extraConfirmation'
-          onChange={(enabled) =>
-            onSave(
-              { extraConfirmation: enabled },
-              `Configuração salva: confirmação de exclusão ${
-                enabled ? 'ativada' : 'desativada'
-              }.`,
-            )
-          }
-        />
-        <SwitchSettingRow
-          checked={keepCompletedHistoryVisible}
-          helperText='Mantém o histórico de atividades concluídas visível.'
-          label='Manter histórico concluído visível'
-          name='keepCompletedHistoryVisible'
-          onChange={setKeepCompletedHistoryVisible}
-        />
+        <Box>
+          <SwitchSettingRow
+            checked={preferences.remindersEnabled}
+            helperText="As atividades mostram lembretes em linguagem simples."
+            label="Usar lembretes em linguagem simples"
+            name="remindersEnabled"
+            onChange={(enabled) =>
+              onSave(
+                { remindersEnabled: enabled },
+                `Configuração salva: lembretes em linguagem simples ${
+                  enabled ? 'ativados' : 'desativados'
+                }.`,
+              )
+            }
+          />
+          <SwitchSettingRow
+            checked={showDashboardReminders}
+            helperText="Controla se os lembretes aparecem no painel."
+            label="Mostrar lembretes no painel"
+            name="showDashboardReminders"
+            onChange={(enabled) => {
+              setShowDashboardReminders(enabled)
+              onLocalFeedback(
+                `Configuração salva: lembretes no painel ${
+                  enabled ? 'ativados' : 'desativados'
+                }.`,
+              )
+            }}
+          />
+          <SwitchSettingRow
+            checked={preferences.extraConfirmation}
+            helperText="O SeniorEase pergunta antes de excluir atividades."
+            label="Perguntar antes de excluir atividades"
+            name="extraConfirmation"
+            onChange={(enabled) =>
+              onSave(
+                { extraConfirmation: enabled },
+                `Configuração salva: confirmação de exclusão ${
+                  enabled ? 'ativada' : 'desativada'
+                }.`,
+              )
+            }
+          />
+          <SwitchSettingRow
+            checked={keepCompletedHistoryVisible}
+            helperText="Mantém o histórico de atividades concluídas visível."
+            label="Manter histórico concluído visível"
+            name="keepCompletedHistoryVisible"
+            onChange={(enabled) => {
+              setKeepCompletedHistoryVisible(enabled)
+              onLocalFeedback(
+                `Configuração salva: histórico concluído ${
+                  enabled ? 'visível' : 'oculto'
+                }.`,
+              )
+            }}
+          />
+        </Box>
 
         <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1.5}>
-          <Button
+          <PrimaryButton
             onClick={() => {
-              onSave({}, 'Configurações salvas.');
+              onSave({}, 'Configurações salvas.')
             }}
-            sx={{
-              bgcolor: colors.primary,
-              color: colors.onPrimary,
-              '&:hover': { bgcolor: colors.charcoal },
-            }}
-            variant='contained'
           >
             Salvar configurações
-          </Button>
-          <Button
-            onClick={onReset}
-            sx={{
-              borderColor: colors.hairlineStrong,
-              color: colors.ink,
-            }}
-            variant='outlined'
-          >
+          </PrimaryButton>
+          <PrimaryButton onClick={onReset} tone="secondary">
             Restaurar padrões confortáveis
-          </Button>
+          </PrimaryButton>
         </Stack>
       </Stack>
     </Box>
-  );
+  )
 }
 
 function CriticalActionConcept() {
   return (
     <Box
-      aria-labelledby='critical-action-title'
-      component='section'
+      aria-labelledby="critical-action-title"
+      component="section"
+      data-node-id="703:298"
       sx={{
         bgcolor: colors.brandRed,
-        border: 1,
-        borderColor: colors.hairline,
-        borderRadius: `${spacing.xl}px`,
+        border: `1px solid ${colors.hairline}`,
+        borderRadius: `${components.card.radius}px`,
         color: colors.ink,
         overflow: 'hidden',
-        p: `${spacing.xl}px`,
+        p: `${components.card.padding}px`,
         width: '100%',
       }}
     >
-      <Stack alignItems='flex-start' spacing={2}>
+      <Stack alignItems="flex-start" spacing={2}>
         <Typography
-          component='h2'
-          fontSize={24}
-          fontWeight={600}
-          id='critical-action-title'
-          lineHeight={1.4}
+          component="h2"
+          fontSize={typography.h3.fontSize}
+          fontWeight={typography.h3.fontWeight}
+          id="critical-action-title"
+          lineHeight={typography.h3.lineHeight}
         >
           Confirmar antes de excluir
         </Typography>
@@ -572,57 +432,58 @@ function CriticalActionConcept() {
           Esta é uma ação crítica. O SeniorEase pergunta de forma clara antes
           de remover uma atividade.
         </Typography>
-        <Button
+        <PrimaryButton>Manter atividade</PrimaryButton>
+        <PrimaryButton
           sx={{
-            bgcolor: colors.primary,
-            color: colors.onPrimary,
-            '&:hover': { bgcolor: colors.charcoal },
+            bgcolor: colors.brandRed,
+            borderColor: 'transparent',
+            color: colors.ink,
+            '&:hover': {
+              bgcolor: colors.brandRedDark,
+              borderColor: 'transparent',
+            },
           }}
-          variant='contained'
+          tone="secondary"
+          variant="text"
         >
-          Manter atividade
-        </Button>
-        <Button sx={{ color: colors.ink }} variant='text'>
           Excluir atividade
-        </Button>
+        </PrimaryButton>
       </Stack>
     </Box>
-  );
+  )
 }
 
 export interface ProfileSettingsProps {
-  mode: ProfileSettingsMode;
-  onPreferenceChange?(preferences: UserPreferences): void;
-  withShellNavigation?: boolean;
+  mode: ProfileSettingsMode
+  onPreferenceChange?(preferences: UserPreferences): void
 }
 
 export function ProfileSettings({
   mode,
   onPreferenceChange,
-  withShellNavigation = true,
 }: ProfileSettingsProps) {
-  const preferences = usePreferenceStore((state) => state.preferences);
-  const hasHydrated = usePreferenceStore((state) => state.hasHydrated);
+  const preferences = usePreferenceStore((state) => state.preferences)
+  const hasHydrated = usePreferenceStore((state) => state.hasHydrated)
   const persistenceWarning = usePreferenceStore(
     (state) => state.persistenceWarning,
-  );
+  )
   const hydratePreferences = usePreferenceStore(
     (state) => state.hydratePreferences,
-  );
+  )
   const resetPreferences = usePreferenceStore(
     (state) => state.resetPreferences,
-  );
-  const setPreferences = usePreferenceStore((state) => state.setPreferences);
+  )
+  const setPreferences = usePreferenceStore((state) => state.setPreferences)
   const [feedbackMessage, setFeedbackMessage] = useState(
     'Configurações prontas para ajuste.',
-  );
-  const isSettingsMode = mode === 'settings';
+  )
+  const isSettingsMode = mode === 'settings'
 
   useEffect(() => {
     if (!hasHydrated) {
-      void hydratePreferences();
+      void hydratePreferences()
     }
-  }, [hasHydrated, hydratePreferences]);
+  }, [hasHydrated, hydratePreferences])
 
   const savePreferences = (
     partialPreferences: Partial<UserPreferences>,
@@ -631,124 +492,65 @@ export function ProfileSettings({
     const savedPreferences = setPreferences({
       ...usePreferenceStore.getState().preferences,
       ...partialPreferences,
-    });
+    })
 
-    setFeedbackMessage(nextFeedbackMessage);
-    onPreferenceChange?.(savedPreferences);
-  };
+    setFeedbackMessage(nextFeedbackMessage)
+    onPreferenceChange?.(savedPreferences)
+  }
 
   const handleReset = () => {
     if (
       preferences.extraConfirmation &&
       typeof window !== 'undefined' &&
-      !window.confirm('Restaurar preferencias para os padroes confortaveis?')
+      !window.confirm('Restaurar preferências para os padrões confortáveis?')
     ) {
-      return;
+      return
     }
 
-    const savedPreferences = resetPreferences();
+    const savedPreferences = resetPreferences()
 
-    setFeedbackMessage('Configurações restauradas para os padrões confortáveis.');
-    onPreferenceChange?.(savedPreferences);
-  };
+    setFeedbackMessage('Configurações restauradas para os padrões confortáveis.')
+    onPreferenceChange?.(savedPreferences)
+  }
 
   return (
-    <Box
-      aria-labelledby='profile-settings-title'
-      component='section'
-      data-node-id={isSettingsMode ? '703:250' : '703:200'}
-      sx={{
-        bgcolor: colors.surface,
-        border: 1,
-        borderColor: colors.hairlineSoft,
-        borderRadius: `${rounded.feature}px`,
-        display: 'flex',
-        flexDirection: { xs: 'column', md: 'row' },
-        gap: '28px',
-        p: `${spacing.xxxl - 8}px`,
-        width: '100%',
-      }}
-    >
-      {withShellNavigation ? <SideNavigation /> : null}
+    <Stack spacing={3}>
+      {isSettingsMode ? (
+        <>
+          <ReminderSettings
+            onLocalFeedback={setFeedbackMessage}
+            onReset={handleReset}
+            onSave={savePreferences}
+            preferences={preferences}
+          />
+          <CriticalActionConcept />
+          <Typography
+            aria-atomic="true"
+            aria-live="polite"
+            role="status"
+            sx={hiddenVisually}
+          >
+            {feedbackMessage}
+          </Typography>
+        </>
+      ) : (
+        <PreferenceSummary preferences={preferences} />
+      )}
 
-      <Stack
-        aria-labelledby='profile-settings-title'
-        component={withShellNavigation ? 'main' : 'section'}
-        spacing={3}
-        sx={{
-          flex: 1,
-          minWidth: 0,
-          overflow: 'hidden',
-          py: { xs: 0, md: `${spacing.sm}px` },
-        }}
-      >
-        <Box>
-          <Typography
-            component={withShellNavigation ? 'h1' : 'h2'}
-            fontSize={36}
-            fontWeight={600}
-            id='profile-settings-title'
-            lineHeight={1.4}
-            sx={{ color: colors.inkDeep }}
-          >
-            {isSettingsMode ? 'Configurações' : 'Resumo do perfil'}
-          </Typography>
-          <Typography
-            fontSize={18}
-            lineHeight={1.4}
-            sx={{ color: colors.slate, mt: '10px' }}
-          >
-            {isSettingsMode
-              ? 'Atualize lembretes e configurações salvas além do painel principal de personalização.'
-              : 'Preferências de acessibilidade salvas apresentadas em linguagem clara.'}
-          </Typography>
+      {persistenceWarning ? (
+        <Box
+          role="alert"
+          sx={{
+            border: 1,
+            borderColor: 'warning.main',
+            borderRadius: `${rounded.md}px`,
+            color: 'text.primary',
+            p: 2,
+          }}
+        >
+          <Typography>{persistenceWarning}</Typography>
         </Box>
-
-        {isSettingsMode ? (
-          <>
-            <ReminderSettings
-              onReset={handleReset}
-              onSave={savePreferences}
-              preferences={preferences}
-            />
-            <CriticalActionConcept />
-            <Typography
-              aria-atomic='true'
-              aria-live='polite'
-              role='status'
-              sx={{
-                border: 0,
-                clip: 'rect(0 0 0 0)',
-                height: 1,
-                m: -1,
-                overflow: 'hidden',
-                p: 0,
-                position: 'absolute',
-                width: 1,
-              }}
-            >
-              {feedbackMessage}
-            </Typography>
-          </>
-        ) : (
-          <PreferenceSummary preferences={preferences} />
-        )}
-
-        {persistenceWarning ? (
-          <Box
-            role='alert'
-            sx={{
-              border: 1,
-              borderColor: 'warning.main',
-              borderRadius: `${rounded.md}px`,
-              color: 'text.primary',
-              p: 2,
-            }}
-          >
-            <Typography>{persistenceWarning}</Typography>
-          </Box>
-        ) : null}
-      </Stack>
-    </Box>
-  );
+      ) : null}
+    </Stack>
+  )
 }

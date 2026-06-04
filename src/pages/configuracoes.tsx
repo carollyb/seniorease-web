@@ -13,10 +13,10 @@ const SettingsPage: NextPage = () => {
     <AppShell
       activeRoute="/configuracoes"
       navigationMode={navigationMode}
-      subtitle="Atualize lembretes e confirmacoes para manter a rotina previsivel."
-      title="Configuracoes"
+      subtitle="Atualize lembretes e configurações salvas além do painel principal de personalização."
+      title="Configurações"
     >
-      <ProfileSettings mode="settings" withShellNavigation={false} />
+      <ProfileSettings mode="settings" />
     </AppShell>
   )
 }

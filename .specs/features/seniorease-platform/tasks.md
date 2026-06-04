@@ -336,14 +336,14 @@ F3,F4 -> F5
 
 **Done when**:
 
-- [ ] E2E test changes font size and verifies visible application.
-- [ ] E2E test creates and completes an activity.
-- [ ] E2E test reloads and verifies Zustand-persisted preferences.
-- [ ] E2E test checks keyboard access to primary flows.
-- [ ] E2E test checks ARIA roles/names, labels, dialog focus behavior, and live-region feedback.
-- [ ] E2E or browser verification covers desktop/tablet/mobile dashboard and activities layouts against the linked Figma frames.
-- [ ] E2E or browser verification covers guided steps desktop/tablet layouts against the linked Figma frames.
-- [ ] Gate check passes: `npm run test:e2e`.
+- [x] E2E test changes font size and verifies visible application.
+- [x] E2E test creates and completes an activity.
+- [x] E2E test reloads and verifies Zustand-persisted preferences.
+- [x] E2E test checks keyboard access to primary flows.
+- [x] E2E test checks ARIA roles/names, labels, dialog focus behavior, and live-region feedback.
+- [x] E2E or browser verification covers desktop/tablet/mobile dashboard and activities layouts against the linked Figma frames.
+- [x] E2E or browser verification covers guided steps desktop/tablet layouts against the linked Figma frames.
+- [x] Gate check passes: `npm run test:e2e`.
 
 **Tests**: e2e
 **Gate**: e2e
@@ -465,12 +465,14 @@ These tasks were added after the Figma screen layouts were supplied. They should
 
 **Done when**:
 
-- [ ] Dashboard matches Figma nodes `703:5`, `703:305`, and `703:407` for desktop, tablet, and mobile.
-- [ ] Profile matches Figma node `703:200` for desktop and adapts responsively through shared shell rules.
-- [ ] Settings matches Figma node `703:250` for desktop and adapts responsively through shared shell rules.
-- [ ] Preference controls remain labeled, keyboard-operable, and connected to helper/status text.
-- [ ] Integration tests cover core dashboard/profile/settings interactions and responsive render assumptions.
-- [ ] Gate check passes: `npm test -- --watchAll=false`.
+- [x] Dashboard matches Figma nodes `703:5`, `703:305`, and `703:407` for desktop, tablet, and mobile.
+- [x] Profile matches Figma node `703:200` for desktop and adapts responsively through shared shell rules.
+- [x] Settings matches Figma node `703:250` for desktop and adapts responsively through shared shell rules.
+- [x] Preference controls remain labeled, keyboard-operable, and connected to helper/status text.
+- [x] Integration tests cover core dashboard/profile/settings interactions and responsive render assumptions.
+- [x] Gate check passes: `npm test -- --watchAll=false`.
+
+**Verification note**: Figma MCP inspection used duplicated NATGEO file `LJkhB7ZgDaJuxVi6CVP22Q` for nodes `703:5`, `703:305`, `703:407`, `703:200`, and `703:250`. Browser verification used a headless Playwright fallback because the in-app Browser Node runtime was blocked by the managed Windows sandbox; checked `/`, `/perfil`, and `/configuracoes` for visible headings/main landmarks and no horizontal overflow. `npm run test:e2e` passed after updating stale dashboard/shell selectors to the Figma-aligned copy.
 
 **Tests**: integration
 **Gate**: unit

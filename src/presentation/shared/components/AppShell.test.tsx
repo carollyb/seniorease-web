@@ -20,13 +20,13 @@ describe('shared app shell components', () => {
         subtitle="Organize tarefas com passos claros."
         title="Atividades"
       >
-        <p>Conteudo principal das atividades.</p>
+        <p>Conteúdo principal das atividades.</p>
       </AppShell>,
     )
 
     expect(
       screen
-        .getByRole('link', { name: 'Pular para o conteudo' })
+        .getByRole('link', { name: 'Pular para o conteúdo' })
         .getAttribute('href'),
     ).toBe('#conteudo-principal')
 
@@ -45,12 +45,12 @@ describe('shared app shell components', () => {
     ).toBe('/perfil')
     expect(
       within(navigation)
-        .getByRole('link', { name: 'Configuracoes' })
+        .getByRole('link', { name: 'Configurações' })
         .getAttribute('href'),
     ).toBe('/configuracoes')
 
     const main = screen.getByRole('main', { name: 'Atividades' })
-    expect(within(main).getByText('Conteudo principal das atividades.')).not.toBeNull()
+    expect(within(main).getByText('Conteúdo principal das atividades.')).not.toBeNull()
   })
 
   it('keeps every route reachable in simplified navigation mode', () => {
@@ -59,9 +59,9 @@ describe('shared app shell components', () => {
         activeRoute="/"
         navigationMode="simplified"
         subtitle="Ajustes essenciais em primeiro lugar."
-        title="Painel SeniorEase"
+        title="Deixe o SeniorEase confortável para você"
       >
-        <p>Preferencias principais.</p>
+        <p>Preferências principais.</p>
       </AppShell>,
     )
 
@@ -78,9 +78,13 @@ describe('shared app shell components', () => {
     ).not.toBeNull()
     expect(within(navigation).getByRole('link', { name: 'Perfil' })).not.toBeNull()
     expect(
-      within(navigation).getByRole('link', { name: 'Configuracoes' }),
+      within(navigation).getByRole('link', { name: 'Configurações' }),
     ).not.toBeNull()
-    expect(within(navigation).getByText('Outras areas')).not.toBeNull()
+    expect(
+      within(navigation).getByText(
+        'Passos claros. Preferências estáveis. Feedback gentil.',
+      ),
+    ).not.toBeNull()
   })
 
   it('renders the Figma mobile menu affordance while keeping routes keyboard reachable', () => {
@@ -89,9 +93,9 @@ describe('shared app shell components', () => {
         activeRoute="/perfil"
         navigationMode="standard"
         subtitle="Confira os ajustes salvos."
-        title="Perfil"
+        title="Resumo do perfil"
       >
-        <p>Resumo do perfil.</p>
+        <p>Conteúdo do resumo do perfil.</p>
       </AppShell>,
     )
 
@@ -104,7 +108,7 @@ describe('shared app shell components', () => {
         .getAttribute('aria-current'),
     ).toBe('page')
     expect(
-      within(navigation).getByRole('link', { name: 'Configuracoes' }),
+      within(navigation).getByRole('link', { name: 'Configurações' }),
     ).not.toBeNull()
   })
 

@@ -1,15 +1,13 @@
 import { useId, useState, type ChangeEvent } from 'react'
 import Box from '@mui/material/Box'
-import Checkbox from '@mui/material/Checkbox'
 import FormControl from '@mui/material/FormControl'
-import FormControlLabel from '@mui/material/FormControlLabel'
-import FormGroup from '@mui/material/FormGroup'
-import FormHelperText from '@mui/material/FormHelperText'
 import FormLabel from '@mui/material/FormLabel'
 import Radio from '@mui/material/Radio'
 import RadioGroup from '@mui/material/RadioGroup'
+import FormControlLabel from '@mui/material/FormControlLabel'
 import Stack from '@mui/material/Stack'
 import Typography from '@mui/material/Typography'
+import type { SxProps, Theme } from '@mui/material/styles'
 
 import type {
   ContrastLevel,
@@ -19,35 +17,51 @@ import type {
   UserPreferences,
 } from '../../domain/preferences/Preference'
 import { usePreferenceStore } from '../../stores/preferences/usePreferenceStore'
+import { designTokens } from '../../theme/designTokens'
 
 interface PreferenceOption<TValue extends string> {
   value: TValue
   label: string
+  accessibleLabel?: string
+  compact?: boolean
+  emphasized?: boolean
 }
 
 const FONT_SCALE_OPTIONS = [
-  { value: 'small', label: 'Pequeno' },
-  { value: 'medium', label: 'Medio' },
-  { value: 'large', label: 'Grande' },
+  { value: 'small', label: 'Pequeno', compact: true },
+  { value: 'medium', label: 'Médio' },
+  { value: 'large', label: 'Grande', emphasized: true },
   { value: 'extraLarge', label: 'Muito grande' },
 ] satisfies readonly PreferenceOption<FontScale>[]
 
 const CONTRAST_OPTIONS = [
-  { value: 'standard', label: 'Contraste padrao' },
-  { value: 'high', label: 'Alto' },
-  { value: 'maximum', label: 'Maximo' },
+  { value: 'standard', label: 'Padrão' },
+  { value: 'high', label: 'Conforto' },
+  { value: 'maximum', label: 'Máximo', accessibleLabel: 'Máximo' },
 ] satisfies readonly PreferenceOption<ContrastLevel>[]
 
 const SPACING_OPTIONS = [
-  { value: 'comfortable', label: 'Confortavel' },
+  { value: 'comfortable', label: 'Confortável' },
   { value: 'wide', label: 'Amplo' },
-  { value: 'extraWide', label: 'Extra amplo' },
+  {
+    value: 'extraWide',
+    label: 'Extra amplo',
+    accessibleLabel: 'Extra amplo',
+  },
 ] satisfies readonly PreferenceOption<SpacingLevel>[]
 
-const NAVIGATION_OPTIONS = [
-  { value: 'simplified', label: 'Simplificado' },
-  { value: 'standard', label: 'Padrao' },
-] satisfies readonly PreferenceOption<NavigationMode>[]
+const { colors, components, rounded, spacing, typography } = designTokens
+
+const hiddenVisually: SxProps<Theme> = {
+  border: 0,
+  clip: 'rect(0 0 0 0)',
+  height: '1px',
+  m: '-1px',
+  overflow: 'hidden',
+  p: 0,
+  position: 'absolute',
+  width: '1px',
+}
 
 function getOptionLabel<TValue extends string>(
   options: readonly PreferenceOption<TValue>[],
@@ -56,7 +70,7 @@ function getOptionLabel<TValue extends string>(
   return options.find((option) => option.value === value)?.label ?? value
 }
 
-interface PreferenceRadioGroupProps<TValue extends string> {
+interface PreferencePillGroupProps<TValue extends string> {
   helperText: string
   legend: string
   name: string
@@ -65,14 +79,14 @@ interface PreferenceRadioGroupProps<TValue extends string> {
   value: TValue
 }
 
-function PreferenceRadioGroup<TValue extends string>({
+function PreferencePillGroup<TValue extends string>({
   helperText,
   legend,
   name,
   onChange,
   options,
   value,
-}: PreferenceRadioGroupProps<TValue>) {
+}: PreferencePillGroupProps<TValue>) {
   const labelId = useId()
   const helperId = useId()
 
@@ -81,8 +95,34 @@ function PreferenceRadioGroup<TValue extends string>({
   }
 
   return (
-    <FormControl component="fieldset" fullWidth>
-      <FormLabel component="legend" id={labelId}>
+    <FormControl
+      aria-labelledby={labelId}
+      component="fieldset"
+      sx={{
+        bgcolor: colors.canvas,
+        border: `1px solid ${colors.hairline}`,
+        borderRadius: `${components.card.radius}px`,
+        gap: `${components.card.gap}px`,
+        m: 0,
+        minWidth: 0,
+        overflow: 'hidden',
+        p: `${components.card.padding}px`,
+        width: '100%',
+      }}
+    >
+      <FormLabel
+        component="legend"
+        id={labelId}
+        sx={{
+          color: colors.ink,
+          fontSize: typography.h5.fontSize,
+          fontWeight: typography.h5.fontWeight,
+          lineHeight: typography.h5.lineHeight,
+          '&.Mui-focused': {
+            color: colors.ink,
+          },
+        }}
+      >
         {legend}
       </FormLabel>
       <RadioGroup
@@ -90,23 +130,78 @@ function PreferenceRadioGroup<TValue extends string>({
         aria-labelledby={labelId}
         name={name}
         onChange={handleChange}
+        sx={{
+          display: 'flex',
+          flexDirection: 'row',
+          flexWrap: 'wrap',
+          gap: `${spacing.sm}px`,
+        }}
         value={value}
       >
-        {options.map((option) => (
-          <FormControlLabel
-            control={<Radio />}
-            key={option.value}
-            label={option.label}
-            value={option.value}
-          />
-        ))}
+        {options.map((option) => {
+          const isSelected = option.value === value
+          const accessibleLabel = option.accessibleLabel ?? option.label
+
+          return (
+            <FormControlLabel
+              data-state={isSelected ? 'selected' : 'available'}
+              data-testid={`preference-pill-${name}-${option.value}`}
+              key={option.value}
+              label={option.label}
+              sx={{
+                m: 0,
+                position: 'relative',
+                '& .MuiRadio-root': {
+                  borderRadius: `${rounded.full}px`,
+                  height: '100%',
+                  inset: 0,
+                  opacity: 0,
+                  p: 0,
+                  position: 'absolute',
+                  width: '100%',
+                  zIndex: 1,
+                },
+                '& .MuiFormControlLabel-label': {
+                  bgcolor: isSelected ? colors.brandBlue : colors.surface,
+                  borderRadius: `${rounded.full}px`,
+                  color: isSelected ? colors.onPrimary : colors.ink,
+                  display: 'inline-flex',
+                  fontSize: option.emphasized ? 20 : option.compact ? 13 : 14,
+                  fontWeight: 500,
+                  lineHeight: option.emphasized ? 1.3 : 1.4,
+                  px: `${option.emphasized ? 18 : option.compact ? 14 : 16}px`,
+                  py: `${option.emphasized ? 12 : option.compact ? 8 : 10}px`,
+                  transition: 'background-color 120ms ease, color 120ms ease',
+                  whiteSpace: 'nowrap',
+                },
+                '& .MuiRadio-root.Mui-focusVisible + .MuiFormControlLabel-label':
+                  {
+                    outline: `3px solid ${colors.brandBlue}`,
+                    outlineOffset: 3,
+                  },
+              }}
+              value={option.value}
+              control={
+                <Radio
+                  slotProps={{
+                    input: {
+                      'aria-label': accessibleLabel,
+                    },
+                  }}
+                />
+              }
+            />
+          )
+        })}
       </RadioGroup>
-      <FormHelperText id={helperId}>{helperText}</FormHelperText>
+      <Typography id={helperId} sx={hiddenVisually}>
+        {helperText}
+      </Typography>
     </FormControl>
   )
 }
 
-interface PreferenceCheckboxProps {
+interface SwitchSettingRowProps {
   checked: boolean
   helperText: string
   label: string
@@ -114,36 +209,133 @@ interface PreferenceCheckboxProps {
   onChange(checked: boolean): void
 }
 
-function PreferenceCheckbox({
+interface FigmaPillSwitchProps {
+  checked: boolean
+  describedBy: string
+  id: string
+  name: string
+  onChange(checked: boolean): void
+}
+
+function FigmaPillSwitch({
+  checked,
+  describedBy,
+  id,
+  name,
+  onChange,
+}: FigmaPillSwitchProps) {
+  return (
+    <Box
+      component="span"
+      data-size="64x36"
+      data-state={checked ? 'on' : 'off'}
+      data-testid={`figma-pill-switch-${name}`}
+      sx={{
+        display: 'inline-flex',
+        flex: '0 0 64px',
+        height: components.switch.height,
+        position: 'relative',
+        width: components.switch.width,
+        '& input:focus-visible + span': {
+          outline: `3px solid ${colors.brandBlue}`,
+          outlineOffset: 3,
+        },
+      }}
+    >
+      <Box
+        aria-describedby={describedBy}
+        checked={checked}
+        component="input"
+        id={id}
+        name={name}
+        onChange={(event) => onChange(event.target.checked)}
+        role="switch"
+        sx={{
+          cursor: 'pointer',
+          height: '100%',
+          inset: 0,
+          m: 0,
+          opacity: 0,
+          position: 'absolute',
+          width: '100%',
+          zIndex: 1,
+        }}
+        type="checkbox"
+      />
+      <Box
+        aria-hidden="true"
+        component="span"
+        sx={{
+          bgcolor: checked ? colors.successAccent : colors.hairlineStrong,
+          borderRadius: `${rounded.full}px`,
+          display: 'block',
+          height: components.switch.height,
+          position: 'relative',
+          transition: 'background-color 120ms ease',
+          width: components.switch.width,
+          '&::after': {
+            bgcolor: colors.canvas,
+            borderRadius: `${rounded.full}px`,
+            content: '""',
+            height: components.switch.thumbSize,
+            left: checked
+              ? components.switch.width -
+                components.switch.thumbSize -
+                components.switch.thumbInset
+              : components.switch.thumbInset,
+            position: 'absolute',
+            top: components.switch.thumbInset,
+            transition: 'left 120ms ease',
+            width: components.switch.thumbSize,
+          },
+        }}
+      />
+    </Box>
+  )
+}
+
+function SwitchSettingRow({
   checked,
   helperText,
   label,
   name,
   onChange,
-}: PreferenceCheckboxProps) {
+}: SwitchSettingRowProps) {
   const helperId = useId()
+  const switchId = useId()
 
   return (
-    <FormControl component="fieldset" fullWidth>
-      <FormGroup>
-        <FormControlLabel
-          control={
-            <Checkbox
-              checked={checked}
-              name={name}
-              onChange={(event) => onChange(event.target.checked)}
-              slotProps={{
-                input: {
-                  'aria-describedby': helperId,
-                },
-              }}
-            />
-          }
-          label={label}
-        />
-      </FormGroup>
-      <FormHelperText id={helperId}>{helperText}</FormHelperText>
-    </FormControl>
+    <Box
+      sx={{
+        alignItems: 'center',
+        display: 'flex',
+        gap: 2,
+        justifyContent: 'space-between',
+        minWidth: 0,
+        py: `${spacing.controlY}px`,
+      }}
+    >
+      <Typography
+        component="label"
+        fontSize={18}
+        fontWeight={500}
+        htmlFor={switchId}
+        lineHeight={1.4}
+        sx={{ color: colors.ink, maxWidth: 280 }}
+      >
+        {label}
+      </Typography>
+      <FigmaPillSwitch
+        checked={checked}
+        describedBy={helperId}
+        id={switchId}
+        name={name}
+        onChange={onChange}
+      />
+      <Typography id={helperId} sx={hiddenVisually}>
+        {helperText}
+      </Typography>
+    </Box>
   )
 }
 
@@ -160,7 +352,7 @@ export function PersonalizationDashboard({
   )
   const setPreferences = usePreferenceStore((state) => state.setPreferences)
   const [feedbackMessage, setFeedbackMessage] = useState(
-    'Preferencias prontas para ajustar.',
+    'Seu layout do SeniorEase continuará assim na próxima vez que você voltar.',
   )
 
   const savePreferences = (
@@ -176,7 +368,7 @@ export function PersonalizationDashboard({
   const handleFontScaleChange = (fontScale: FontScale) => {
     savePreferences(
       { ...preferences, fontScale },
-      `Preferencia salva: tamanho do texto ${getOptionLabel(
+      `Preferência salva: tamanho do texto ${getOptionLabel(
         FONT_SCALE_OPTIONS,
         fontScale,
       )}.`,
@@ -186,7 +378,7 @@ export function PersonalizationDashboard({
   const handleContrastChange = (contrastLevel: ContrastLevel) => {
     savePreferences(
       { ...preferences, contrastLevel },
-      `Preferencia salva: contraste ${getOptionLabel(
+      `Preferência salva: contraste ${getOptionLabel(
         CONTRAST_OPTIONS,
         contrastLevel,
       )}.`,
@@ -196,7 +388,7 @@ export function PersonalizationDashboard({
   const handleSpacingChange = (spacingLevel: SpacingLevel) => {
     savePreferences(
       { ...preferences, spacingLevel },
-      `Preferencia salva: espacamento ${getOptionLabel(
+      `Preferência salva: espaçamento ${getOptionLabel(
         SPACING_OPTIONS,
         spacingLevel,
       )}.`,
@@ -206,17 +398,16 @@ export function PersonalizationDashboard({
   const handleNavigationChange = (navigationMode: NavigationMode) => {
     savePreferences(
       { ...preferences, navigationMode },
-      `Preferencia salva: modo de navegacao ${getOptionLabel(
-        NAVIGATION_OPTIONS,
-        navigationMode,
-      )}.`,
+      `Preferência salva: navegação simplificada ${
+        navigationMode === 'simplified' ? 'ativada' : 'desativada'
+      }.`,
     )
   }
 
   const handleReinforcedFeedbackChange = (reinforcedFeedback: boolean) => {
     savePreferences(
       { ...preferences, reinforcedFeedback },
-      `Preferencia salva: feedback visual reforcado ${
+      `Preferência salva: feedback reforçado ${
         reinforcedFeedback ? 'ativado' : 'desativado'
       }.`,
     )
@@ -225,136 +416,120 @@ export function PersonalizationDashboard({
   const handleExtraConfirmationChange = (extraConfirmation: boolean) => {
     savePreferences(
       { ...preferences, extraConfirmation },
-      `Preferencia salva: confirmacao extra ${
+      `Preferência salva: confirmação extra ${
         extraConfirmation ? 'ativada' : 'desativada'
       }.`,
     )
   }
 
   return (
-    <Box component="section" aria-labelledby="personalization-title">
+    <Box
+      aria-label="Personalization controls"
+      component="section"
+      data-figma-node-desktop="703:5"
+      data-figma-node-mobile="703:407"
+      data-figma-node-tablet="703:305"
+    >
       <Stack spacing={3}>
-        <Box>
-          <Typography component="h2" id="personalization-title" variant="h4">
-            Personalizacao da experiencia
-          </Typography>
-          <Typography color="text.secondary" variant="body1">
-            Ajustes de leitura, contraste, espaco e seguranca.
-          </Typography>
-        </Box>
-
         <Box
           sx={{
             display: 'grid',
-            gap: 2,
-            gridTemplateColumns: { xs: '1fr', md: 'repeat(2, minmax(0, 1fr))' },
+            gap: {
+              xs: `${spacing.mobilePage}px`,
+              md: '18px',
+            },
+            gridTemplateColumns: {
+              xs: '1fr',
+              sm: 'repeat(2, minmax(0, 1fr))',
+            },
           }}
         >
-          <Box
-            sx={{
-              border: 1,
-              borderColor: 'divider',
-              borderRadius: 1,
-              p: 2,
-            }}
-          >
-            <PreferenceRadioGroup
-              helperText="Ajusta a leitura em titulos, botoes e textos."
+          <Stack spacing={2} sx={{ minWidth: 0 }}>
+            <PreferencePillGroup
+              helperText="Ajusta o tamanho do texto em títulos, botões e conteúdo."
               legend="Tamanho do texto"
               name="fontScale"
               onChange={handleFontScaleChange}
               options={FONT_SCALE_OPTIONS}
               value={preferences.fontScale}
             />
-          </Box>
-
-          <Box
-            sx={{
-              border: 1,
-              borderColor: 'divider',
-              borderRadius: 1,
-              p: 2,
-            }}
-          >
-            <PreferenceRadioGroup
-              helperText="Aumenta a diferenca entre texto, fundo e estados."
-              legend="Nivel de contraste"
-              name="contrastLevel"
-              onChange={handleContrastChange}
-              options={CONTRAST_OPTIONS}
-              value={preferences.contrastLevel}
-            />
-          </Box>
-
-          <Box
-            sx={{
-              border: 1,
-              borderColor: 'divider',
-              borderRadius: 1,
-              p: 2,
-            }}
-          >
-            <PreferenceRadioGroup
-              helperText="Define o conforto entre blocos e controles de toque."
-              legend="Espacamento"
+            <PreferencePillGroup
+              helperText="Altera o conforto entre blocos da página e controles de toque."
+              legend="Conforto do espaçamento"
               name="spacingLevel"
               onChange={handleSpacingChange}
               options={SPACING_OPTIONS}
               value={preferences.spacingLevel}
             />
-          </Box>
+          </Stack>
 
-          <Box
-            sx={{
-              border: 1,
-              borderColor: 'divider',
-              borderRadius: 1,
-              p: 2,
-            }}
-          >
-            <PreferenceRadioGroup
-              helperText="Organiza a interface com mais ou menos detalhes."
-              legend="Modo de navegacao"
-              name="navigationMode"
-              onChange={handleNavigationChange}
-              options={NAVIGATION_OPTIONS}
-              value={preferences.navigationMode}
+          <Stack spacing={2} sx={{ minWidth: 0 }}>
+            <PreferencePillGroup
+              helperText="Ajusta o contraste entre texto, superfícies e estados da interface."
+              legend="Nível de contraste"
+              name="contrastLevel"
+              onChange={handleContrastChange}
+              options={CONTRAST_OPTIONS}
+              value={preferences.contrastLevel}
             />
-          </Box>
 
-          <Box
-            sx={{
-              border: 1,
-              borderColor: 'divider',
-              borderRadius: 1,
-              p: 2,
-            }}
-          >
-            <PreferenceCheckbox
-              checked={preferences.reinforcedFeedback}
-              helperText="Mostra mensagens de confirmacao mais evidentes."
-              label="Feedback visual reforcado"
-              name="reinforcedFeedback"
-              onChange={handleReinforcedFeedbackChange}
-            />
-          </Box>
+            <Box
+              aria-labelledby="interface-mode-title"
+              component="section"
+              sx={{
+                bgcolor: colors.canvas,
+                border: `1px solid ${colors.hairline}`,
+                borderRadius: `${components.card.radius}px`,
+                minWidth: 0,
+                overflow: 'hidden',
+                p: `${components.card.padding}px`,
+                width: '100%',
+              }}
+            >
+              <Stack spacing={2}>
+                <Typography
+                  component="h2"
+                  fontSize={22}
+                  fontWeight={600}
+                  id="interface-mode-title"
+                  lineHeight={1.4}
+                  sx={{ color: colors.ink }}
+                >
+                  Modo da interface
+                </Typography>
+                <Typography color="text.secondary" variant="body1">
+                  O modo simplificado mantém apenas as escolhas essenciais
+                  visíveis e facilita encontrar as ações principais.
+                </Typography>
 
-          <Box
-            sx={{
-              border: 1,
-              borderColor: 'divider',
-              borderRadius: 1,
-              p: 2,
-            }}
-          >
-            <PreferenceCheckbox
-              checked={preferences.extraConfirmation}
-              helperText="Pede revisao antes de apagar ou concluir algo importante."
-              label="Confirmacao extra para acoes criticas"
-              name="extraConfirmation"
-              onChange={handleExtraConfirmationChange}
-            />
-          </Box>
+                <Box>
+                  <SwitchSettingRow
+                    checked={preferences.navigationMode === 'simplified'}
+                    helperText="Mantém a interface focada nas escolhas essenciais."
+                    label="Navegação simplificada"
+                    name="navigationMode"
+                    onChange={(checked) =>
+                      handleNavigationChange(checked ? 'simplified' : 'standard')
+                    }
+                  />
+                  <SwitchSettingRow
+                    checked={preferences.reinforcedFeedback}
+                    helperText="Mostra confirmações mais claras após salvamentos e conclusões."
+                    label="Feedback reforçado"
+                    name="reinforcedFeedback"
+                    onChange={handleReinforcedFeedbackChange}
+                  />
+                  <SwitchSettingRow
+                    checked={preferences.extraConfirmation}
+                    helperText="Pergunta antes de concluir ações importantes."
+                    label="Confirmação extra para ações críticas"
+                    name="extraConfirmation"
+                    onChange={handleExtraConfirmationChange}
+                  />
+                </Box>
+              </Stack>
+            </Box>
+          </Stack>
         </Box>
 
         {persistenceWarning ? (
@@ -363,7 +538,7 @@ export function PersonalizationDashboard({
             sx={{
               border: 1,
               borderColor: 'warning.main',
-              borderRadius: 1,
+              borderRadius: `${rounded.md}px`,
               color: 'text.primary',
               p: 2,
             }}
@@ -378,21 +553,23 @@ export function PersonalizationDashboard({
           role="status"
           sx={{
             bgcolor: preferences.reinforcedFeedback
-              ? 'success.main'
+              ? colors.tealLight
               : 'background.paper',
-            border: preferences.reinforcedFeedback ? 0 : 1,
-            borderColor: 'divider',
-            borderRadius: 1,
-            color: preferences.reinforcedFeedback
-              ? 'success.contrastText'
-              : 'text.primary',
-            minHeight: 56,
-            p: 2,
+            border: `1px solid ${colors.hairline}`,
+            borderRadius: `${components.card.radius}px`,
+            color: colors.ink,
+            minHeight: 88,
+            p: `${components.card.padding}px`,
           }}
         >
-          <Typography fontWeight={preferences.reinforcedFeedback ? 700 : 400}>
-            {feedbackMessage}
-          </Typography>
+          <Stack spacing={2}>
+            <Typography component="h2" fontSize={24} fontWeight={600}>
+              Preferências salvas
+            </Typography>
+            <Typography fontSize={18} lineHeight={1.4}>
+              {feedbackMessage}
+            </Typography>
+          </Stack>
         </Box>
       </Stack>
     </Box>

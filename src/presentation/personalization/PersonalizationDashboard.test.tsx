@@ -1,4 +1,4 @@
-import { render, screen, fireEvent } from '@testing-library/react'
+import { fireEvent, render, screen, within } from '@testing-library/react'
 import { ThemeProvider } from '@mui/material/styles'
 
 import { createDefaultPreferences } from '../../domain/preferences/Preference'
@@ -26,61 +26,78 @@ describe('PersonalizationDashboard', () => {
     })
   })
 
-  it('renders accessible controls with helper descriptions for every preference', () => {
+  it('renders the Figma dashboard control groups with responsive node metadata', () => {
     renderDashboard()
 
+    const dashboard = screen.getByRole('region', {
+      name: 'Personalization controls',
+    })
+
+    expect(dashboard.getAttribute('data-figma-node-desktop')).toBe('703:5')
+    expect(dashboard.getAttribute('data-figma-node-tablet')).toBe('703:305')
+    expect(dashboard.getAttribute('data-figma-node-mobile')).toBe('703:407')
     expect(
-      screen.getByRole('radiogroup', { name: 'Tamanho do texto' }),
+      within(dashboard).getByRole('radiogroup', { name: 'Tamanho do texto' }),
     ).not.toBeNull()
-    expect(screen.getByText('Ajusta a leitura em titulos, botoes e textos.')).not.toBeNull()
     expect(
-      screen.getByRole('radiogroup', { name: 'Nivel de contraste' }),
-    ).not.toBeNull()
-    expect(screen.getByText('Aumenta a diferenca entre texto, fundo e estados.')).not.toBeNull()
-    expect(
-      screen.getByRole('radiogroup', { name: 'Espacamento' }),
-    ).not.toBeNull()
-    expect(screen.getByText('Define o conforto entre blocos e controles de toque.')).not.toBeNull()
-    expect(
-      screen.getByRole('radiogroup', { name: 'Modo de navegacao' }),
-    ).not.toBeNull()
-    expect(screen.getByText('Organiza a interface com mais ou menos detalhes.')).not.toBeNull()
-    expect(
-      screen.getByRole('checkbox', {
-        name: 'Feedback visual reforcado',
+      within(dashboard).getByRole('radiogroup', {
+        name: 'Conforto do espaçamento',
       }),
     ).not.toBeNull()
     expect(
-      screen.getByText('Mostra mensagens de confirmacao mais evidentes.'),
+      within(dashboard).getByRole('radiogroup', { name: 'Nível de contraste' }),
     ).not.toBeNull()
     expect(
-      screen.getByRole('checkbox', {
-        name: 'Confirmacao extra para acoes criticas',
+      within(dashboard).getByRole('heading', { name: 'Modo da interface' }),
+    ).not.toBeNull()
+    expect(
+      within(dashboard).getByRole('switch', { name: 'Navegação simplificada' }),
+    ).not.toBeNull()
+    expect(
+      within(dashboard).getByRole('switch', { name: 'Feedback reforçado' }),
+    ).not.toBeNull()
+    expect(
+      within(dashboard).getByRole('switch', {
+        name: 'Confirmação extra para ações críticas',
       }),
     ).not.toBeNull()
     expect(
-      screen.getByText('Pede revisao antes de apagar ou concluir algo importante.'),
-    ).not.toBeNull()
+      screen
+        .getByTestId('figma-pill-switch-navigationMode')
+        .getAttribute('data-size'),
+    ).toBe('64x36')
+    expect(
+      screen
+        .getByTestId('figma-pill-switch-navigationMode')
+        .getAttribute('data-state'),
+    ).toBe('on')
   })
 
-  it('updates the validated preference store when controls change', () => {
+  it('updates the validated preference store from pill and switch controls', () => {
     const { onPreferenceChange } = renderDashboard()
 
     fireEvent.click(screen.getByRole('radio', { name: 'Muito grande' }))
-    fireEvent.click(screen.getByRole('radio', { name: 'Maximo' }))
-    fireEvent.click(screen.getByRole('radio', { name: 'Padrao' }))
+    fireEvent.click(screen.getByRole('radio', { name: 'Máximo' }))
+    fireEvent.click(screen.getByRole('radio', { name: 'Extra amplo' }))
+    fireEvent.click(screen.getByRole('switch', { name: 'Navegação simplificada' }))
     fireEvent.click(
-      screen.getByRole('checkbox', {
-        name: 'Confirmacao extra para acoes criticas',
+      screen.getByRole('switch', {
+        name: 'Confirmação extra para ações críticas',
       }),
     )
 
     expect(usePreferenceStore.getState().preferences).toMatchObject({
       fontScale: 'extraLarge',
       contrastLevel: 'maximum',
+      spacingLevel: 'extraWide',
       navigationMode: 'standard',
       extraConfirmation: false,
     })
+    expect(
+      screen
+        .getByTestId('figma-pill-switch-navigationMode')
+        .getAttribute('data-state'),
+    ).toBe('off')
     expect(onPreferenceChange).toHaveBeenLastCalledWith(
       expect.objectContaining({
         extraConfirmation: false,
@@ -88,7 +105,7 @@ describe('PersonalizationDashboard', () => {
     )
   })
 
-  it('shows visible polite feedback after preference changes', () => {
+  it('shows a Figma positive feedback panel through a polite live region', () => {
     renderDashboard()
 
     fireEvent.click(screen.getByRole('radio', { name: 'Muito grande' }))
@@ -96,8 +113,11 @@ describe('PersonalizationDashboard', () => {
     const status = screen.getByRole('status')
 
     expect(status.getAttribute('aria-live')).toBe('polite')
+    expect(
+      within(status).getByRole('heading', { name: 'Preferências salvas' }),
+    ).not.toBeNull()
     expect(status.textContent).toContain(
-      'Preferencia salva: tamanho do texto Muito grande.',
+      'Preferência salva: tamanho do texto Muito grande.',
     )
   })
 })

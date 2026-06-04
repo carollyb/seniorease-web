@@ -1,4 +1,4 @@
-import { fireEvent, render, screen, waitFor } from '@testing-library/react'
+import { fireEvent, render, screen, waitFor, within } from '@testing-library/react'
 import { ThemeProvider } from '@mui/material/styles'
 
 import {
@@ -7,18 +7,20 @@ import {
 } from '../../domain/preferences/Preference'
 import { usePreferenceStore } from '../../stores/preferences/usePreferenceStore'
 import { createSeniorEaseTheme } from '../../theme/createSeniorEaseTheme'
-import ProfilePage from '../../pages/perfil'
 import SettingsPage from '../../pages/configuracoes'
+import ProfilePage from '../../pages/perfil'
 import { ProfileSettings } from './ProfileSettings'
+
+function renderWithTheme(children: React.ReactNode) {
+  return render(
+    <ThemeProvider theme={createSeniorEaseTheme()}>{children}</ThemeProvider>,
+  )
+}
 
 function renderProfileSettings(
   props: Partial<React.ComponentProps<typeof ProfileSettings>> = {},
 ) {
-  render(
-    <ThemeProvider theme={createSeniorEaseTheme()}>
-      <ProfileSettings mode="profile" {...props} />
-    </ThemeProvider>,
-  )
+  renderWithTheme(<ProfileSettings mode="profile" {...props} />)
 }
 
 function setSavedPreferences(preferences: Partial<UserPreferences>) {
@@ -38,7 +40,7 @@ describe('ProfileSettings', () => {
     setSavedPreferences({})
   })
 
-  it('renders the profile summary frame with persisted preference rows in Portuguese', () => {
+  it('renders the Figma profile summary card with shared status pills', () => {
     setSavedPreferences({
       fontScale: 'extraLarge',
       contrastLevel: 'maximum',
@@ -50,64 +52,51 @@ describe('ProfileSettings', () => {
 
     renderProfileSettings()
 
-    expect(
-      screen.getByRole('heading', { name: 'Resumo do perfil' }),
-    ).not.toBeNull()
-    expect(
-      screen.getByText(
-        'Preferências de acessibilidade salvas apresentadas em linguagem clara.',
-      ),
-    ).not.toBeNull()
-    expect(screen.getByRole('navigation', { name: 'SeniorEase' })).not.toBeNull()
-    const logoMark = screen.getByTestId('senior-ease-logo-mark')
+    const summary = screen.getByRole('region', {
+      name: 'Resumo das preferências do perfil',
+    })
 
-    expect(logoMark.getAttribute('viewBox')).toBe('0 0 160 160')
-    expect(logoMark.getAttribute('preserveAspectRatio')).toBe('xMidYMid meet')
-    expect(screen.getByText('Tamanho do texto')).not.toBeNull()
-    expect(screen.getByText('Muito grande')).not.toBeNull()
-    expect(screen.getByText('Contraste')).not.toBeNull()
-    expect(screen.getByText('Máximo')).not.toBeNull()
-    expect(screen.getByText('Espaçamento')).not.toBeNull()
-    expect(screen.getByText('Extra amplo')).not.toBeNull()
-    expect(screen.getByText('Navegação')).not.toBeNull()
-    expect(screen.getByText('Padrão')).not.toBeNull()
-    expect(screen.getByText('Feedback reforçado')).not.toBeNull()
-    expect(screen.getByText('Confirmações extras')).not.toBeNull()
-    expect(screen.getByText('Inativo')).not.toBeNull()
-    expect(screen.getByText('Ativo')).not.toBeNull()
+    expect(summary.getAttribute('data-node-id')).toBe('703:225')
+    expect(screen.queryByRole('navigation', { name: 'SeniorEase' })).toBeNull()
+    expect(within(summary).getByText('Tamanho do texto')).not.toBeNull()
+    expect(within(summary).getByText('Muito grande')).not.toBeNull()
+    expect(within(summary).getByText('Contraste')).not.toBeNull()
+    expect(within(summary).getByText('Máximo')).not.toBeNull()
+    expect(within(summary).getByText('Espaçamento')).not.toBeNull()
+    expect(within(summary).getByText('Extra amplo')).not.toBeNull()
+    expect(within(summary).getByText('Navegação')).not.toBeNull()
+    expect(within(summary).getByText('Padrão')).not.toBeNull()
+    expect(within(summary).getByText('Feedback reforçado')).not.toBeNull()
+    expect(within(summary).getByText('Confirmações extras')).not.toBeNull()
+    expect(within(summary).getByText('Inativo')).not.toBeNull()
+    expect(within(summary).getByText('Ativo')).not.toBeNull()
   })
 
-  it('updates persisted settings through accessible Portuguese switches', () => {
+  it('updates persisted settings through accessible Figma switches', () => {
     renderProfileSettings({ mode: 'settings' })
 
+    const settings = screen.getByRole('region', {
+      name: 'Preferências de lembrete',
+    })
+
+    expect(settings.getAttribute('data-node-id')).toBe('703:275')
     expect(
-      screen.getByRole('heading', { name: 'Configurações' }),
-    ).not.toBeNull()
-    expect(
-      screen.getByText(
-        'Atualize lembretes e configurações salvas além do painel principal de personalização.',
-      ),
-    ).not.toBeNull()
-    expect(
-      screen.getByRole('heading', { name: 'Preferências de lembrete' }),
-    ).not.toBeNull()
-    expect(
-      screen.getByRole('switch', {
+      within(settings).getByRole('switch', {
         name: 'Usar lembretes em linguagem simples',
       }),
     ).not.toBeNull()
     expect(
-      screen.getByRole('switch', {
+      within(settings).getByRole('switch', {
         name: 'Mostrar lembretes no painel',
       }),
     ).not.toBeNull()
     expect(
-      screen.getByRole('switch', {
+      within(settings).getByRole('switch', {
         name: 'Perguntar antes de excluir atividades',
       }),
     ).not.toBeNull()
     expect(
-      screen.getByRole('switch', {
+      within(settings).getByRole('switch', {
         name: 'Manter histórico concluído visível',
       }),
     ).not.toBeNull()
@@ -121,6 +110,14 @@ describe('ProfileSettings', () => {
         .getByTestId('figma-pill-switch-remindersEnabled')
         .getAttribute('data-state'),
     ).toBe('on')
+    expect(
+      within(settings).getByRole('button', { name: 'Salvar configurações' }),
+    ).not.toBeNull()
+    expect(
+      within(settings).getByRole('button', {
+        name: 'Restaurar padrões confortáveis',
+      }),
+    ).not.toBeNull()
 
     fireEvent.click(
       screen.getByRole('switch', {
@@ -181,27 +178,36 @@ describe('ProfileSettings', () => {
     expect(deleteConfirmationSwitch.checked).toBe(false)
   })
 
-  it('renders profile and settings pages with Portuguese presentation surfaces', async () => {
-    render(
-      <ThemeProvider theme={createSeniorEaseTheme()}>
-        <>
-          <ProfilePage />
-          <SettingsPage />
-        </>
-      </ThemeProvider>,
-    )
+  it('renders profile and settings pages with the shared shell and Figma headings', async () => {
+    const profileRender = renderWithTheme(<ProfilePage />)
 
     await waitFor(() => {
       expect(
         screen.getByRole('heading', { name: 'Resumo do perfil' }),
       ).not.toBeNull()
     })
-    expect(screen.getByRole('heading', { name: 'Configurações' })).not.toBeNull()
     expect(
-      screen.getByRole('button', { name: 'Salvar configurações' }),
+      screen.getByText(
+        'Estado atual das preferências de acessibilidade em linguagem clara.',
+      ),
     ).not.toBeNull()
+    expect(screen.getAllByRole('navigation', { name: 'SeniorEase' })).toHaveLength(1)
+    expect(
+      within(screen.getByRole('navigation', { name: 'SeniorEase' }))
+        .getByRole('link', { name: 'Perfil' })
+        .getAttribute('aria-current'),
+    ).toBe('page')
+
+    profileRender.unmount()
+    renderWithTheme(<SettingsPage />)
+
+    expect(screen.getByRole('heading', { name: 'Configurações' })).not.toBeNull()
+    expect(screen.getAllByRole('navigation', { name: 'SeniorEase' })).toHaveLength(1)
     expect(
       screen.getByRole('heading', { name: 'Confirmar antes de excluir' }),
+    ).not.toBeNull()
+    expect(
+      screen.getByRole('button', { name: 'Salvar configurações' }),
     ).not.toBeNull()
   })
 })

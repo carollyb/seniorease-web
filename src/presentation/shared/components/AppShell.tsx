@@ -59,7 +59,7 @@ export function AppShell({
           },
         }}
       >
-        Pular para o conteudo
+        Pular para o conteúdo
       </Box>
 
       <Box
@@ -123,6 +123,7 @@ export function AppShell({
             component='main'
             id={mainContentId}
             sx={{ minWidth: 0 }}
+            tabIndex={-1}
           >
             {children}
           </Box>
