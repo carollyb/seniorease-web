@@ -1,4 +1,10 @@
-import { expect, test, type Locator, type Page } from '@playwright/test'
+import {
+  expect,
+  test,
+  type Locator,
+  type Page,
+  type TestInfo,
+} from '@playwright/test'
 
 const PREFERENCE_STORAGE_NAME = 'seniorease-preferences:v1'
 
@@ -21,6 +27,65 @@ async function expectNoHorizontalOverflow(page: Page) {
   )
 
   expect(overflow).toBeLessThanOrEqual(1)
+}
+
+async function expectInsideViewport(page: Page, locator: Locator) {
+  await locator.scrollIntoViewIfNeeded()
+
+  const box = await locator.boundingBox()
+  const viewport = page.viewportSize()
+
+  expect(box).not.toBeNull()
+  expect(viewport).not.toBeNull()
+
+  if (!box || !viewport) {
+    return
+  }
+
+  expect(box.x).toBeGreaterThanOrEqual(0)
+  expect(box.x + box.width).toBeLessThanOrEqual(viewport.width + 1)
+}
+
+async function expectPreferencePillsNotClipped(page: Page) {
+  const clippedPills = await page
+    .locator('[data-testid^="preference-pill-"] .MuiFormControlLabel-label')
+    .evaluateAll((labels) =>
+      labels
+        .filter((label) => {
+          return (
+            label.scrollWidth - label.clientWidth > 1 ||
+            label.scrollHeight - label.clientHeight > 1
+          )
+        })
+        .map((label) => label.textContent?.trim() ?? 'unnamed pill'),
+    )
+
+  expect(clippedPills).toEqual([])
+}
+
+async function attachFigmaViewportScreenshot(
+  testInfo: TestInfo,
+  page: Page,
+  name: string,
+) {
+  const screenshotPath = testInfo.outputPath(`${name}.png`)
+
+  await page.evaluate(() => {
+    if (document.activeElement instanceof HTMLElement) {
+      document.activeElement.blur()
+    }
+
+    document.querySelectorAll('nextjs-portal').forEach((element) => {
+      element.remove()
+    })
+    window.scrollTo(0, 0)
+  })
+  await page.waitForTimeout(50)
+  await page.screenshot({ fullPage: true, path: screenshotPath })
+  await testInfo.attach(name, {
+    path: screenshotPath,
+    contentType: 'image/png',
+  })
 }
 
 async function isFocused(locator: Locator) {
@@ -234,10 +299,62 @@ test('exposes ARIA landmarks, labels, helper text, and reduced-motion behavior',
   expect(transitionDuration).toBeLessThanOrEqual(0.001)
 })
 
+test('keeps primary controls usable with largest font size and increased spacing', async ({
+  page,
+}, testInfo) => {
+  const activityTitle = 'Atividade com texto grande'
+
+  await page.setViewportSize({ width: 390, height: 844 })
+  await page.goto('/')
+
+  await page.getByLabel('Muito grande').check()
+  await page.getByLabel('Extra amplo').check()
+
+  await expect(
+    page.getByTestId('preference-pill-fontScale-extraLarge'),
+  ).toHaveAttribute('data-state', 'selected')
+  await expect(
+    page.getByTestId('preference-pill-spacingLevel-extraWide'),
+  ).toHaveAttribute('data-state', 'selected')
+  await expect(page.getByRole('status')).toContainText(
+    'Preferência salva: espaçamento Extra amplo.',
+  )
+
+  await expectNoHorizontalOverflow(page)
+  await expectPreferencePillsNotClipped(page)
+  await expectInsideViewport(
+    page,
+    page.getByTestId('preference-pill-fontScale-extraLarge'),
+  )
+  await expectInsideViewport(
+    page,
+    page.getByTestId('preference-pill-spacingLevel-extraWide'),
+  )
+
+  await page.goto('/atividades')
+  await expectNoHorizontalOverflow(page)
+  await expectInsideViewport(
+    page,
+    page.getByRole('button', { name: 'Criar atividade' }),
+  )
+
+  await createActivity(page, activityTitle)
+  await expectNoHorizontalOverflow(page)
+  await expectInsideViewport(
+    page,
+    page.getByRole('button', { name: `Concluir atividade ${activityTitle}` }),
+  )
+  await attachFigmaViewportScreenshot(
+    testInfo,
+    page,
+    'mobile-stress-font-spacing',
+  )
+})
+
 for (const viewport of dashboardViewports) {
   test(`renders dashboard layout at the ${viewport.label} Figma viewport without overflow`, async ({
     page,
-  }) => {
+  }, testInfo) => {
     await page.setViewportSize(viewport.size)
     await page.goto('/')
 
@@ -254,11 +371,16 @@ for (const viewport of dashboardViewports) {
       page.getByRole('radiogroup', { name: 'Tamanho do texto' }),
     ).toBeVisible()
     await expectNoHorizontalOverflow(page)
+    await attachFigmaViewportScreenshot(
+      testInfo,
+      page,
+      `dashboard-${viewport.label}`,
+    )
   })
 
   test(`renders activities layout at the ${viewport.label} Figma viewport without overflow`, async ({
     page,
-  }) => {
+  }, testInfo) => {
     await page.setViewportSize(viewport.size)
     await page.goto('/atividades')
 
@@ -271,13 +393,18 @@ for (const viewport of dashboardViewports) {
     ).toBeVisible()
     await expect(page.getByRole('button', { name: 'Criar atividade' })).toBeVisible()
     await expectNoHorizontalOverflow(page)
+    await attachFigmaViewportScreenshot(
+      testInfo,
+      page,
+      `activities-${viewport.label}`,
+    )
   })
 }
 
 for (const viewport of guidedStepViewports) {
   test(`renders guided steps at the ${viewport.label} Figma viewport without overflow`, async ({
     page,
-  }) => {
+  }, testInfo) => {
     const activityTitle = `Conferir agenda ${viewport.label}`
 
     await page.setViewportSize(viewport.size)
@@ -291,5 +418,10 @@ for (const viewport of guidedStepViewports) {
       page.getByRole('button', { name: `Concluir atividade ${activityTitle}` }),
     ).toBeVisible()
     await expectNoHorizontalOverflow(page)
+    await attachFigmaViewportScreenshot(
+      testInfo,
+      page,
+      `guided-steps-${viewport.label}`,
+    )
   })
 }

@@ -1,11 +1,16 @@
 import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
 import Stack from '@mui/material/Stack';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 
-import type { Activity, ActivityStatus } from '../../domain/activities';
-import { GuidedSteps } from './components/GuidedSteps';
+import { designTokens } from '../../theme/designTokens';
+import { EmptyState, PrimaryButton, StatusPill } from '../shared';
+import {
+  ActivityList,
+  getActivityReminderLabel,
+  getActivityStatusLabel,
+  GuidedSteps,
+} from './components';
 import type { ActivityOrganizerProps } from './types';
 import { useActivityOrganizer } from './useActivityOrganizer';
 
@@ -16,21 +21,7 @@ export const activityOrganizerWidgetContract = {
   createEventName: 'activity-create',
 } as const;
 
-const STATUS_LABELS: Record<ActivityStatus, string> = {
-  pending: 'Pendente',
-  inProgress: 'Em andamento',
-  completed: 'Concluida',
-};
-
-function getStatusLabel(status: ActivityStatus): string {
-  return STATUS_LABELS[status];
-}
-
-function getReminderLabel(activity: Activity): string {
-  return activity.reminderText
-    ? `Lembrete: ${activity.reminderText}`
-    : 'Sem lembrete cadastrado';
-}
+const { colors, components, typography } = designTokens;
 
 export function ActivityOrganizer({
   activities,
@@ -87,9 +78,13 @@ export function ActivityOrganizer({
             role='alert'
             sx={{
               border: 1,
-              borderColor: 'warning.main',
-              borderRadius: 1,
-              p: 2,
+              borderColor: colors.yellowBorder,
+              borderRadius: `${components.card.radius}px`,
+              bgcolor: colors.yellowSoft,
+              p: {
+                xs: `${designTokens.spacing.lg}px`,
+                sm: `${components.card.padding}px`,
+              },
             }}
           >
             <Typography>{errorMessage}</Typography>
@@ -102,10 +97,14 @@ export function ActivityOrganizer({
             aria-label='Nova atividade'
             onSubmit={handleSubmitCreate}
             sx={{
-              border: 1,
-              borderColor: 'divider',
-              borderRadius: 1,
-              p: 2,
+              bgcolor: colors.canvas,
+              border: '1px solid',
+              borderColor: colors.hairline,
+              borderRadius: `${components.card.radius}px`,
+              p: {
+                xs: `${designTokens.spacing.lg}px`,
+                sm: `${components.card.padding}px`,
+              },
             }}
           >
             <Stack spacing={2}>
@@ -137,48 +136,36 @@ export function ActivityOrganizer({
                 value={firstStepLabel}
               />
               <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1}>
-                <Button disabled={isLoading} type='submit' variant='contained'>
+                <PrimaryButton disabled={isLoading} type='submit'>
                   Salvar atividade
-                </Button>
-                <Button
+                </PrimaryButton>
+                <PrimaryButton
                   disabled={isLoading}
                   onClick={handleCancelCreate}
+                  tone='secondary'
                   type='button'
-                  variant='outlined'
                 >
                   Cancelar
-                </Button>
+                </PrimaryButton>
               </Stack>
             </Stack>
           </Box>
         ) : null}
 
         {activities.length === 0 && !isCreating ? (
-          <Box
-            sx={{
-              border: 1,
-              borderColor: 'divider',
-              borderRadius: 1,
-              p: 2,
-            }}
-          >
-            <Stack spacing={2}>
-              <Typography component='h3' variant='h5'>
-                Nenhuma atividade por enquanto.
-              </Typography>
-              <Typography color='text.secondary'>
-                Comece com uma atividade simples e um primeiro passo.
-              </Typography>
-              <Button
+          <EmptyState
+            action={
+              <PrimaryButton
                 disabled={isLoading}
                 onClick={handleShowCreateForm}
                 type='button'
-                variant='contained'
               >
                 Criar atividade
-              </Button>
-            </Stack>
-          </Box>
+              </PrimaryButton>
+            }
+            description='Comece com uma atividade simples e um primeiro passo.'
+            title='Nenhuma atividade por enquanto.'
+          />
         ) : null}
 
         {activities.length > 0 ? (
@@ -198,71 +185,23 @@ export function ActivityOrganizer({
                   Atividades ativas
                 </Typography>
                 {!isCreating ? (
-                  <Button
+                  <PrimaryButton
                     disabled={isLoading}
                     onClick={handleShowCreateForm}
+                    tone='secondary'
                     type='button'
-                    variant='outlined'
                   >
                     Criar atividade
-                  </Button>
+                  </PrimaryButton>
                 ) : null}
               </Stack>
 
-              <Box
-                component='ul'
-                aria-label='Atividades ativas'
-                sx={{
-                  display: 'grid',
-                  gap: 2,
-                  listStyle: 'none',
-                  m: 0,
-                  p: 0,
-                }}
-              >
-                {activities.map((activity) => (
-                  <Box
-                    component='li'
-                    key={activity.id}
-                    sx={{
-                      border: 1,
-                      borderColor:
-                        activity.id === selectedActivityId
-                          ? 'primary.main'
-                          : 'divider',
-                      borderRadius: 1,
-                      p: 2,
-                    }}
-                  >
-                    <Stack spacing={1.5}>
-                      <Box>
-                        <Typography component='h4' variant='h6'>
-                          {activity.title}
-                        </Typography>
-                        <Typography color='text.secondary'>
-                          {getReminderLabel(activity)}
-                        </Typography>
-                        <Typography>
-                          Status: {getStatusLabel(activity.status)}
-                        </Typography>
-                      </Box>
-                      <Button
-                        aria-label={`Abrir atividade ${activity.title}`}
-                        disabled={isLoading}
-                        onClick={() => onSelectActivity(activity.id)}
-                        type='button'
-                        variant={
-                          activity.id === selectedActivityId
-                            ? 'contained'
-                            : 'outlined'
-                        }
-                      >
-                        Abrir atividade
-                      </Button>
-                    </Stack>
-                  </Box>
-                ))}
-              </Box>
+              <ActivityList
+                activities={activities}
+                isLoading={isLoading}
+                onOpenActivity={onSelectActivity}
+                selectedActivityId={selectedActivityId}
+              />
             </Stack>
           </Box>
         ) : null}
@@ -304,19 +243,26 @@ export function ActivityOrganizer({
                     component='li'
                     key={activity.id}
                     sx={{
-                      border: 1,
-                      borderColor: 'divider',
-                      borderRadius: 1,
-                      p: 1.5,
+                      bgcolor: colors.canvas,
+                      border: '1px solid',
+                      borderColor: colors.hairline,
+                      borderRadius: `${components.activityRow.radius}px`,
+                      p: 2,
                     }}
                   >
-                    <Typography fontWeight={700}>{activity.title}</Typography>
-                    <Typography color='text.secondary'>
-                      Status: {getStatusLabel(activity.status)}
-                    </Typography>
-                    <Typography color='text.secondary'>
-                      {getReminderLabel(activity)}
-                    </Typography>
+                    <Stack spacing={1}>
+                      <Typography fontWeight={700}>{activity.title}</Typography>
+                      <StatusPill
+                        compact
+                        label={`Status: ${getActivityStatusLabel(
+                          activity.status,
+                        )}`}
+                        tone='success'
+                      />
+                      <Typography color='text.secondary'>
+                        {getActivityReminderLabel(activity)}
+                      </Typography>
+                    </Stack>
                   </Box>
                 ))}
               </Box>
@@ -329,14 +275,26 @@ export function ActivityOrganizer({
           aria-live='polite'
           role='status'
           sx={{
-            border: 1,
-            borderColor: 'divider',
-            borderRadius: 1,
+            bgcolor: colors.tealLight,
+            border: '1px solid',
+            borderColor: colors.hairline,
+            borderRadius: `${components.card.radius}px`,
+            color: colors.ink,
             minHeight: 56,
-            p: 2,
+            p: {
+              xs: `${designTokens.spacing.lg}px`,
+              sm: `${components.card.padding}px`,
+            },
           }}
         >
-          <Typography>{feedbackMessage}</Typography>
+          <Typography
+            sx={{
+              fontSize: typography.body.fontSize,
+              lineHeight: typography.body.lineHeight,
+            }}
+          >
+            {feedbackMessage}
+          </Typography>
         </Box>
       </Stack>
     </Box>
