@@ -513,12 +513,14 @@ These tasks were added after the Figma screen layouts were supplied. They should
 
 **Done when**:
 
-- [ ] Dashboard, activities, and guided-step viewports render nonblank and without horizontal overflow.
-- [ ] Desktop/tablet/mobile screenshots are compared against the linked Figma frames during handoff.
-- [ ] Largest font size and increased spacing do not clip or overlap controls.
-- [ ] Keyboard-only navigation reaches all primary flows with visible focus.
-- [ ] Completion feedback is announced through a polite live region.
-- [ ] Gate checks pass: `npm run lint`, `npm test -- --watchAll=false`, `npm run build`, and `npm run test:e2e` when Playwright is available.
+- [x] Dashboard, activities, and guided-step viewports render nonblank and without horizontal overflow.
+- [x] Desktop/tablet/mobile screenshots are compared against the linked Figma frames during handoff.
+- [x] Largest font size and increased spacing do not clip or overlap controls.
+- [x] Keyboard-only navigation reaches all primary flows with visible focus.
+- [x] Completion feedback is announced through a polite live region.
+- [x] Gate checks pass: `npm run lint`, `npm test -- --watchAll=false`, `npm run build`, and `npm run test:e2e` when Playwright is available.
+
+**Verification note**: F5 added Playwright screenshot artifacts for dashboard desktop/tablet/mobile, activities desktop/tablet/mobile, guided steps desktop/tablet, and a mobile largest-font/extra-spacing stress view. Browser checks use the linked Figma viewport dimensions and verify visible landmarks/content, no horizontal overflow, unclipped preference pills, in-viewport primary controls, keyboard-only access, dialog focus return, reduced motion, ARIA labels/descriptions, persistence, and polite live-region completion feedback. The generated screenshots include the Next.js dev indicator because Playwright runs against `next dev`; it is a dev-only overlay and not part of the SeniorEase UI. Gate checks passed on 2026-06-04: `npm run lint`, `npm test -- --watchAll=false` (15 suites, 60 tests), `npm run build`, and `npm run test:e2e` (13 tests).
 
 **Tests**: e2e
 **Gate**: full
