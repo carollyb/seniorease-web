@@ -365,14 +365,14 @@ F3,F4 -> F5
 
 **Done when**:
 
-- [ ] Workflow runs on push to `main`.
-- [ ] Workflow runs on pull request to `main`.
-- [ ] Workflow uses `actions/checkout` and `actions/setup-node`.
-- [ ] Workflow uses Node.js 20 or newer.
-- [ ] Workflow runs `npm install`.
-- [ ] Workflow runs `npm run lint || echo "Linting issues found"`.
-- [ ] Workflow runs `npm test -- --watchAll=false`.
-- [ ] Workflow runs `npm run build`.
+- [x] Workflow runs on push to `main`.
+- [x] Workflow runs on pull request to `main`.
+- [x] Workflow uses `actions/checkout` and `actions/setup-node`.
+- [x] Workflow uses Node.js 20 or newer.
+- [x] Workflow runs `npm install`.
+- [x] Workflow runs `npm run lint || echo "Linting issues found"`.
+- [x] Workflow runs `npm test -- --watchAll=false`.
+- [x] Workflow runs `npm run build`.
 
 **Tests**: none
 **Gate**: build
