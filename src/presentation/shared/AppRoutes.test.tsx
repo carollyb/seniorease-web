@@ -1,4 +1,4 @@
-import { fireEvent, render, screen, waitFor, within } from '@testing-library/react'
+import { act, fireEvent, render, screen, waitFor, within } from '@testing-library/react'
 import { ThemeProvider } from '@mui/material/styles'
 
 import type { Activity } from '../../domain/activities'
@@ -91,13 +91,13 @@ describe('SeniorEase route integration', () => {
     expect(screen.getAllByRole('navigation', { name: 'SeniorEase' })).toHaveLength(2)
   })
 
-  it('asks before completing an activity when extra confirmation is enabled', async () => {
+  it('uses an accessible dialog before completing an activity', async () => {
     setPreferences({ extraConfirmation: true })
     window.localStorage.setItem(
       'seniorease-activities:v1',
       JSON.stringify({ activities: [pendingActivity] }),
     )
-    const confirmSpy = jest.spyOn(window, 'confirm').mockReturnValue(false)
+    const confirmSpy = jest.spyOn(window, 'confirm')
 
     renderPage(<ActivitiesPage />)
 
@@ -110,22 +110,55 @@ describe('SeniorEase route integration', () => {
         name: 'Abrir atividade Enviar trabalho',
       }),
     )
-    fireEvent.click(
-      screen.getByRole('button', {
-        name: 'Concluir atividade Enviar trabalho',
-      }),
-    )
+    const completeButton = screen.getByRole('button', {
+      name: 'Concluir atividade Enviar trabalho',
+    })
 
-    expect(confirmSpy).toHaveBeenCalledWith(
-      'Concluir esta atividade e mover para o historico?',
-    )
-    expect(screen.getByRole('status').textContent).not.toContain(
-      'Atividade concluida',
-    )
+    act(() => completeButton.focus())
+    fireEvent.click(completeButton)
+
+    const dialog = screen.getByRole('dialog', {
+      name: 'Confirmar conclusão',
+    })
+
+    expect(within(dialog).getByText('Título:')).not.toBeNull()
+    expect(within(dialog).getByText('Enviar trabalho')).not.toBeNull()
+    expect(within(dialog).getByText('Lembrete:')).not.toBeNull()
+    expect(within(dialog).getByText('Hoje as 18h')).not.toBeNull()
+    expect(confirmSpy).not.toHaveBeenCalled()
+
+    const cancelButton = within(dialog).getByRole('button', {
+      name: 'Cancelar',
+    })
+
+    await waitFor(() => expect(document.activeElement).toBe(cancelButton))
+    fireEvent.click(cancelButton)
+
+    await waitFor(() => {
+      expect(screen.queryByRole('dialog')).toBeNull()
+      expect(document.activeElement).toBe(completeButton)
+    })
     expect(
       screen.queryByRole('list', {
-        name: 'Historico de atividades concluidas',
+        name: 'Histórico de atividades concluidas',
       }),
     ).toBeNull()
+
+    fireEvent.click(completeButton)
+    fireEvent.click(
+      within(
+        screen.getByRole('dialog', { name: 'Confirmar conclusão' }),
+      ).getByRole('button', { name: 'Concluir' }),
+    )
+
+    await waitFor(() => {
+      expect(
+        within(
+          screen.getByRole('list', {
+            name: 'Histórico de atividades concluidas',
+          }),
+        ).getByText('Enviar trabalho'),
+      ).not.toBeNull()
+    })
   })
 })

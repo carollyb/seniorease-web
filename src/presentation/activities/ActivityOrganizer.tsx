@@ -48,7 +48,6 @@ export function ActivityOrganizer({
     handleShowCreateForm,
     handleCancelCreate,
     selectedActivity,
-    feedbackMessage,
     setFeedbackMessage,
   } = useActivityOrganizer({
     activities,
@@ -64,15 +63,6 @@ export function ActivityOrganizer({
       data-mode={mode}
     >
       <Stack spacing={3}>
-        <Box>
-          <Typography component='h2' id='activity-organizer-title' variant='h4'>
-            Organizador de atividades
-          </Typography>
-          <Typography color='text.secondary'>
-            Crie, siga os passos e veja o historico concluido.
-          </Typography>
-        </Box>
-
         {errorMessage ? (
           <Box
             role='alert'
@@ -94,7 +84,7 @@ export function ActivityOrganizer({
         {isCreating ? (
           <Box
             component='form'
-            aria-label='Nova atividade'
+            aria-label='Nova tarefa'
             onSubmit={handleSubmitCreate}
             sx={{
               bgcolor: colors.canvas,
@@ -109,15 +99,15 @@ export function ActivityOrganizer({
           >
             <Stack spacing={2}>
               <Typography component='h3' variant='h5'>
-                Nova atividade
+                O que você precisa fazer?
               </Typography>
               <TextField
                 error={Boolean(formError)}
                 fullWidth
                 helperText={
-                  formError ?? 'Use um titulo direto e facil de reconhecer.'
+                  formError ?? 'Use um título direto e fácil de reconhecer.'
                 }
-                label='Titulo da atividade'
+                label='Título da tarefa'
                 onChange={(event) => setTitle(event.target.value)}
                 value={title}
               />
@@ -160,11 +150,11 @@ export function ActivityOrganizer({
                 onClick={handleShowCreateForm}
                 type='button'
               >
-                Criar atividade
+                Nova tarefa
               </PrimaryButton>
             }
-            description='Comece com uma atividade simples e um primeiro passo.'
-            title='Nenhuma atividade por enquanto.'
+            description='Toque em Nova tarefa para começar.'
+            title='Sem tarefas para hoje'
           />
         ) : null}
 
@@ -182,7 +172,7 @@ export function ActivityOrganizer({
                   id='active-activities-title'
                   variant='h5'
                 >
-                  Atividades ativas
+                  Tarefas ativas
                 </Typography>
                 {!isCreating ? (
                   <PrimaryButton
@@ -191,7 +181,7 @@ export function ActivityOrganizer({
                     tone='secondary'
                     type='button'
                   >
-                    Criar atividade
+                    Nova tarefa
                   </PrimaryButton>
                 ) : null}
               </Stack>
@@ -225,11 +215,11 @@ export function ActivityOrganizer({
                 id='completed-activities-title'
                 variant='h5'
               >
-                Historico concluido
+                Histórico
               </Typography>
               <Box
                 component='ul'
-                aria-label='Historico de atividades concluidas'
+                aria-label='Histórico de atividades concluidas'
                 sx={{
                   display: 'grid',
                   gap: 1,
@@ -268,34 +258,37 @@ export function ActivityOrganizer({
               </Box>
             </Stack>
           </Box>
-        ) : null}
-
-        <Box
-          aria-atomic='true'
-          aria-live='polite'
-          role='status'
-          sx={{
-            bgcolor: colors.tealLight,
-            border: '1px solid',
-            borderColor: colors.hairline,
-            borderRadius: `${components.card.radius}px`,
-            color: colors.ink,
-            minHeight: 56,
-            p: {
-              xs: `${designTokens.spacing.lg}px`,
-              sm: `${components.card.padding}px`,
-            },
-          }}
-        >
-          <Typography
+        ) : (
+          <Box
+            component='section'
+            aria-labelledby='completed-activities-title'
             sx={{
-              fontSize: typography.body.fontSize,
-              lineHeight: typography.body.lineHeight,
+              bgcolor: colors.surfaceSoft,
+              border: '1px solid',
+              borderColor: colors.hairline,
+              borderRadius: `${components.card.radius}px`,
+              display: 'grid',
+              gap: { xs: 1.5, sm: 2 },
+              listStyle: 'none',
+              m: 0,
+              p: {
+                xs: `${designTokens.spacing.md}px`,
+                sm: `${components.card.padding}px`,
+              },
             }}
           >
-            {feedbackMessage}
-          </Typography>
-        </Box>
+            <Typography
+              component='h3'
+              id='completed-activities-title'
+              variant='h5'
+            >
+              Histórico
+            </Typography>
+            <Typography color='text.secondary'>
+              Sem itens no histórico.
+            </Typography>
+          </Box>
+        )}
       </Stack>
     </Box>
   );

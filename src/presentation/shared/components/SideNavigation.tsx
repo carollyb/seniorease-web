@@ -19,8 +19,8 @@ export interface NavigationItem {
 }
 
 export const seniorEaseNavigationItems: NavigationItem[] = [
-  { href: '/', label: 'Painel', group: 'primary' },
   { href: '/atividades', label: 'Atividades', group: 'primary' },
+  { href: '/', label: 'Painel', group: 'primary' },
   { href: '/perfil', label: 'Perfil', group: 'secondary' },
   { href: '/configuracoes', label: 'Configurações', group: 'secondary' },
 ];
@@ -200,23 +200,6 @@ export function SideNavigation({
             SeniorEase
           </Typography>
         </Stack>
-
-        <Box
-          aria-hidden='true'
-          sx={{
-            bgcolor: components.topNavigation.menuBackgroundColor,
-            borderRadius: `${rounded.full}px`,
-            color: colors.ink,
-            display: { xs: 'inline-flex', md: 'none' },
-            fontSize: 14,
-            fontWeight: 500,
-            lineHeight: 1.4,
-            px: `${components.topNavigation.menuPaddingX}px`,
-            py: `${components.topNavigation.menuPaddingY}px`,
-          }}
-        >
-          Menu
-        </Box>
       </Stack>
 
       <NavigationList

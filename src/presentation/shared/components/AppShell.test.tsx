@@ -87,7 +87,7 @@ describe('shared app shell components', () => {
     ).not.toBeNull()
   })
 
-  it('renders the Figma mobile menu affordance while keeping routes keyboard reachable', () => {
+  it('keeps mobile routes keyboard reachable without a menu label', () => {
     renderWithTheme(
       <AppShell
         activeRoute="/perfil"
@@ -101,7 +101,7 @@ describe('shared app shell components', () => {
 
     const navigation = screen.getByRole('navigation', { name: 'SeniorEase' })
 
-    expect(within(navigation).getByText('Menu')).not.toBeNull()
+    expect(within(navigation).queryByText('Menu')).toBeNull()
     expect(
       within(navigation)
         .getByRole('link', { name: 'Perfil' })

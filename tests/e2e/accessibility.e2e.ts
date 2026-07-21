@@ -106,27 +106,11 @@ async function tabTo(page: Page, locator: Locator, maxTabs = 20) {
   await expect(locator).toBeFocused()
 }
 
-function handleNextDialog(page: Page, action: 'accept' | 'dismiss') {
-  return new Promise<string>((resolve) => {
-    page.once('dialog', async (dialog) => {
-      const message = dialog.message()
-
-      if (action === 'accept') {
-        await dialog.accept()
-      } else {
-        await dialog.dismiss()
-      }
-
-      resolve(message)
-    })
-  })
-}
-
 async function createActivity(page: Page, title: string) {
-  await page.getByRole('button', { name: 'Criar atividade' }).click()
-  await expect(page.getByRole('form', { name: 'Nova atividade' })).toBeVisible()
+  await page.getByRole('button', { name: 'Nova tarefa' }).click()
+  await expect(page.getByRole('form', { name: 'Nova tarefa' })).toBeVisible()
 
-  await page.getByLabel('Titulo da atividade').fill(title)
+  await page.getByLabel('Título da tarefa').fill(title)
   await page
     .getByLabel('Lembrete em linguagem simples')
     .fill('hoje as 18h')
@@ -184,7 +168,7 @@ test('changes font size and persists Zustand preferences after reload', async ({
   ).toHaveAttribute('data-state', 'selected')
 })
 
-test('creates and completes an activity with guided steps and live feedback', async ({
+test('creates and completes an activity with guided steps and history', async ({
   page,
 }) => {
   const activityTitle = 'Enviar relatorio semanal'
@@ -195,21 +179,21 @@ test('creates and completes an activity with guided steps and live feedback', as
   await page.getByLabel('Passo 1 de 1: Separar documentos').check()
   await expect(page.getByText('1 de 1 passos revisados.')).toBeVisible()
 
-  const dialogMessage = handleNextDialog(page, 'accept')
   await page
     .getByRole('button', { name: `Concluir atividade ${activityTitle}` })
     .click()
 
-  await expect(dialogMessage).resolves.toBe(
-    'Concluir esta atividade e mover para o historico?',
-  )
+  const confirmationDialog = page.getByRole('dialog', {
+    name: 'Confirmar conclusão',
+  })
 
-  await expect(page.getByRole('status')).toContainText(
-    `Atividade concluida: ${activityTitle}. Ela foi movida para o historico.`,
-  )
+  await expect(confirmationDialog).toBeVisible()
+  await expect(confirmationDialog).toContainText(activityTitle)
+  await confirmationDialog.getByRole('button', { name: 'Concluir' }).click()
+
   await expect(
     page
-      .getByRole('list', { name: 'Historico de atividades concluidas' })
+      .getByRole('list', { name: 'Histórico de atividades concluidas' })
       .getByText(activityTitle),
   ).toBeVisible()
 })
@@ -226,14 +210,14 @@ test('supports keyboard access, skip link focus, and dialog focus return', async
   await expect(skipLink).toBeFocused()
 
   await page.keyboard.press('Enter')
-  await expect(page.getByRole('main', { name: 'Atividades' })).toBeFocused()
+  await expect(page.getByRole('main', { name: 'Hoje' })).toBeFocused()
 
-  const createButton = page.getByRole('button', { name: 'Criar atividade' })
+  const createButton = page.getByRole('button', { name: 'Nova tarefa' })
   await tabTo(page, createButton)
   await page.keyboard.press('Enter')
-  await expect(page.getByRole('form', { name: 'Nova atividade' })).toBeVisible()
+  await expect(page.getByRole('form', { name: 'Nova tarefa' })).toBeVisible()
 
-  await tabTo(page, page.getByLabel('Titulo da atividade'), 6)
+  await tabTo(page, page.getByLabel('Título da tarefa'), 6)
   await page.keyboard.type(activityTitle)
   await page.keyboard.press('Tab')
   await page.keyboard.type('amanha de manha')
@@ -254,13 +238,19 @@ test('supports keyboard access, skip link focus, and dialog focus return', async
   await completeButton.focus()
   await expect(completeButton).toBeFocused()
 
-  const dialogMessage = handleNextDialog(page, 'dismiss')
   await page.keyboard.press('Enter')
 
-  await expect(dialogMessage).resolves.toBe(
-    'Concluir esta atividade e mover para o historico?',
-  )
+  const confirmationDialog = page.getByRole('dialog', {
+    name: 'Confirmar conclusão',
+  })
+  const cancelButton = confirmationDialog.getByRole('button', {
+    name: 'Cancelar',
+  })
 
+  await expect(confirmationDialog).toBeVisible()
+  await expect(cancelButton).toBeFocused()
+  await page.keyboard.press('Escape')
+  await expect(confirmationDialog).toBeHidden()
   await expect(completeButton).toBeFocused()
   await expect(
     page.getByRole('heading', { name: `Passos de ${activityTitle}` }),
@@ -335,7 +325,7 @@ test('keeps primary controls usable with largest font size and increased spacing
   await expectNoHorizontalOverflow(page)
   await expectInsideViewport(
     page,
-    page.getByRole('button', { name: 'Criar atividade' }),
+    page.getByRole('button', { name: 'Nova tarefa' }),
   )
 
   await createActivity(page, activityTitle)
@@ -385,13 +375,13 @@ for (const viewport of dashboardViewports) {
     await page.goto('/atividades')
 
     await expect(
-      page.getByRole('heading', { level: 1, name: 'Atividades' }),
+      page.getByRole('heading', { level: 1, name: 'Hoje' }),
     ).toBeVisible()
-    await expect(page.getByRole('main', { name: 'Atividades' })).toBeVisible()
+    await expect(page.getByRole('main', { name: 'Hoje' })).toBeVisible()
     await expect(
-      page.getByRole('heading', { name: 'Organizador de atividades' }),
+      page.getByRole('heading', { name: 'Sem tarefas para hoje' }),
     ).toBeVisible()
-    await expect(page.getByRole('button', { name: 'Criar atividade' })).toBeVisible()
+    await expect(page.getByRole('button', { name: 'Nova tarefa' })).toBeVisible()
     await expectNoHorizontalOverflow(page)
     await attachFigmaViewportScreenshot(
       testInfo,
