@@ -1,5 +1,6 @@
 import { act, fireEvent, render, screen, waitFor, within } from '@testing-library/react'
 import { ThemeProvider } from '@mui/material/styles'
+import type { GetServerSidePropsContext } from 'next'
 
 import type { Activity } from '../../domain/activities'
 import {
@@ -10,7 +11,8 @@ import { usePreferenceStore } from '../../stores/preferences/usePreferenceStore'
 import { createSeniorEaseTheme } from '../../theme/createSeniorEaseTheme'
 import ActivitiesPage from '../../pages/atividades'
 import SettingsPage from '../../pages/configuracoes'
-import HomePage from '../../pages'
+import { getServerSideProps } from '../../pages'
+import DashboardPage from '../../pages/painel'
 import ProfilePage from '../../pages/perfil'
 
 const pendingActivity: Activity = {
@@ -43,8 +45,19 @@ describe('SeniorEase route integration', () => {
     setPreferences({})
   })
 
+  it('redirects the root route to activities', async () => {
+    await expect(
+      getServerSideProps({} as GetServerSidePropsContext),
+    ).resolves.toEqual({
+      redirect: {
+        destination: '/atividades',
+        permanent: false,
+      },
+    })
+  })
+
   it('renders the dashboard in the shared shell with predictable page links', () => {
-    renderPage(<HomePage />)
+    renderPage(<DashboardPage />)
 
     expect(
       screen.getByRole('heading', {
@@ -57,6 +70,11 @@ describe('SeniorEase route integration', () => {
 
     const navigation = screen.getByRole('navigation', { name: 'SeniorEase' })
 
+    expect(
+      within(navigation)
+        .getByRole('link', { name: 'Painel' })
+        .getAttribute('href'),
+    ).toBe('/painel')
     expect(
       within(navigation)
         .getByRole('link', { name: 'Painel' })

@@ -34,7 +34,7 @@ describe('shared app shell components', () => {
     expect(within(navigation).getByTestId('senior-ease-logo-mark')).not.toBeNull()
     expect(
       within(navigation).getByRole('link', { name: 'Painel' }).getAttribute('href'),
-    ).toBe('/')
+    ).toBe('/painel')
     expect(
       within(navigation)
         .getByRole('link', { name: 'Atividades' })
@@ -56,7 +56,7 @@ describe('shared app shell components', () => {
   it('keeps every route reachable in simplified navigation mode', () => {
     renderWithTheme(
       <AppShell
-        activeRoute="/"
+        activeRoute="/painel"
         navigationMode="simplified"
         subtitle="Ajustes essenciais em primeiro lugar."
         title="Deixe o SeniorEase confortável para você"

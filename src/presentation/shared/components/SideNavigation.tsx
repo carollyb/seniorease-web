@@ -7,7 +7,7 @@ import type { NavigationMode } from '../../../domain/preferences';
 import { designTokens } from '../../../theme/designTokens';
 
 export type SeniorEaseRoute =
-  | '/'
+  | '/painel'
   | '/atividades'
   | '/perfil'
   | '/configuracoes';
@@ -20,7 +20,7 @@ export interface NavigationItem {
 
 export const seniorEaseNavigationItems: NavigationItem[] = [
   { href: '/atividades', label: 'Atividades', group: 'primary' },
-  { href: '/', label: 'Painel', group: 'primary' },
+  { href: '/painel', label: 'Painel', group: 'primary' },
   { href: '/perfil', label: 'Perfil', group: 'secondary' },
   { href: '/configuracoes', label: 'Configurações', group: 'secondary' },
 ];

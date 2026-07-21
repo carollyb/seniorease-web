@@ -527,6 +527,29 @@ These tasks were added after the Figma screen layouts were supplied. They should
 
 ---
 
+### F6: Make Activities the Landing Page
+
+**What**: Redirect the root route to activities while preserving the personalization dashboard at `/painel` and keeping navigation labels and active-route semantics accurate.
+**Where**: `src/pages`, `src/presentation/shared`, `tests/e2e`
+**Depends on**: F5
+**Reuses**: Existing dashboard, activities page, shared navigation, and routing tests.
+**Requirement**: SE-01, SE-04, SE-11, SE-15
+
+**Done when**:
+
+- [x] Visiting `/` redirects to `/atividades` before rendering page content.
+- [x] The personalization dashboard remains reachable at `/painel`.
+- [x] The `Painel` navigation item points to `/painel` and current-page semantics remain correct.
+- [x] Integration and E2E tests cover the landing redirect and preserved dashboard route.
+- [ ] Gate checks pass: `npm run lint`, `npm test -- --watchAll=false`, `npm run build`, and `npm run test:e2e` when Playwright is available.
+
+**Tests**: integration/e2e
+**Gate**: full
+
+**Verification note**: On 2026-07-20, lint passed with 0 errors and 0 warnings, all 15 Jest suites passed with 61 tests, and the production build passed. The in-app browser was unavailable in the execution environment, so browser verification and `npm run test:e2e` could not be run.
+
+---
+
 ## Parallel Execution Map
 
 ```text
@@ -552,6 +575,9 @@ Phase 5:
   F2,T7,T9,T10 -> F3
   F2,T8,T10 -> F4
   F3,F4 -> F5
+
+Phase 6:
+  F5 -> F6
 ```
 
 ## Diagram-Definition Cross-Check
@@ -576,6 +602,7 @@ Phase 5:
 | F3 | F2, T7, T9, T10 | F2,T7,T9,T10 -> F3 | OK |
 | F4 | F2, T8, T10 | F2,T8,T10 -> F4 | OK |
 | F5 | F3, F4 | F3,F4 -> F5 | OK |
+| F6 | F5 | F5 -> F6 | OK |
 
 ## Test Co-location Validation
 
@@ -599,3 +626,4 @@ Phase 5:
 | F3 | Pages and routing | integration | integration | OK |
 | F4 | Presentation components | unit/integration | integration | OK |
 | F5 | Accessibility critical flows and responsive visual checks | e2e | e2e | OK |
+| F6 | Pages, routing, and landing flow | integration/e2e | integration/e2e | OK |

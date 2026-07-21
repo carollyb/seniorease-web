@@ -125,10 +125,22 @@ async function createActivity(page: Page, title: string) {
   ).toBeVisible()
 }
 
+test('opens activities as the application landing page', async ({ page }) => {
+  await page.goto('/')
+
+  await expect(page).toHaveURL(/\/atividades$/)
+  await expect(
+    page.getByRole('navigation', { name: 'SeniorEase' }),
+  ).toBeVisible()
+  await expect(
+    page.getByRole('link', { name: 'Atividades' }),
+  ).toHaveAttribute('aria-current', 'page')
+})
+
 test('changes font size and persists Zustand preferences after reload', async ({
   page,
 }) => {
-  await page.goto('/')
+  await page.goto('/painel')
 
   const heading = page.getByRole('heading', {
     level: 1,
@@ -261,7 +273,7 @@ test('exposes ARIA landmarks, labels, helper text, and reduced-motion behavior',
   page,
 }) => {
   await page.emulateMedia({ reducedMotion: 'reduce' })
-  await page.goto('/')
+  await page.goto('/painel')
 
   await expect(page.getByRole('navigation', { name: 'SeniorEase' })).toBeVisible()
   await expect(page.getByRole('main', { name: dashboardTitle })).toBeVisible()
@@ -295,7 +307,7 @@ test('keeps primary controls usable with largest font size and increased spacing
   const activityTitle = 'Atividade com texto grande'
 
   await page.setViewportSize({ width: 390, height: 844 })
-  await page.goto('/')
+  await page.goto('/painel')
 
   await page.getByLabel('Muito grande').check()
   await page.getByLabel('Extra amplo').check()
@@ -346,7 +358,7 @@ for (const viewport of dashboardViewports) {
     page,
   }, testInfo) => {
     await page.setViewportSize(viewport.size)
-    await page.goto('/')
+    await page.goto('/painel')
 
     await expect(
       page.getByRole('heading', { level: 1, name: dashboardTitle }),
