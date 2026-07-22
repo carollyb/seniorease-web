@@ -10,7 +10,6 @@ import {
 import type { Activity } from '../domain/activities';
 import { LocalActivityRepository } from '../infrastructure/repositories';
 import { ActivityOrganizer } from '../presentation/activities';
-import { CompletionConfirmationDialog } from '../presentation/activities/components/CompletionConfirmationDialog';
 import { AppShell } from '../presentation/shared';
 import { createActivityStore } from '../stores/activities';
 import { usePreferenceStore } from '../stores/preferences/usePreferenceStore';
@@ -117,12 +116,6 @@ const ActivitiesPage: NextPage = () => {
         onCreateActivity={createActivity}
         onSelectActivity={selectActivity}
         selectedActivityId={selectedActivityId}
-      />
-      <CompletionConfirmationDialog
-        activity={activityToComplete}
-        isLoading={isLoading}
-        onCancel={handleCancelCompletion}
-        onConfirm={handleConfirmCompletion}
       />
     </AppShell>
   );

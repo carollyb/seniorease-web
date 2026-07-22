@@ -1,7 +1,16 @@
-import { useState, type FormEvent } from 'react'
+import { useRef, useState, type FormEvent } from 'react';
 
-import type { CreateActivityInput } from '../../domain/activities'
-import type { UseActivityOrganizerOptions } from './types'
+import {
+  createActivity,
+  type Activity,
+  type CreateActivityInput,
+} from '../../domain/activities';
+import type { UseActivityOrganizerOptions } from './types';
+
+interface PendingCompletion {
+  activityId: string;
+  resolve(completedActivity: Activity | void): void;
+}
 
 export function useActivityOrganizer({
   activities,
@@ -9,82 +18,115 @@ export function useActivityOrganizer({
   onCreateActivity,
   onSelectActivity,
 }: UseActivityOrganizerOptions) {
-  const [isCreating, setIsCreating] = useState(false)
-  const [title, setTitle] = useState('')
-  const [reminderText, setReminderText] = useState('')
-  const [firstStepLabel, setFirstStepLabel] = useState('')
-  const [formError, setFormError] = useState<string | null>(null)
+  const [isCreating, setIsCreating] = useState(false);
+  const [title, setTitle] = useState('');
+  const [reminderText, setReminderText] = useState('');
+  const [firstStepLabel, setFirstStepLabel] = useState('');
+  const [formError, setFormError] = useState<string | null>(null);
   const [feedbackMessage, setFeedbackMessage] = useState(
     'Organizador pronto para novas atividades.',
-  )
+  );
+  const [activityToCreate, setActivityToCreate] = useState<Activity | null>(
+    null,
+  );
+  const [modalType, setModalType] = useState<'create' | 'complete' | null>(
+    null,
+  );
 
   const selectedActivity = selectedActivityId
-    ? activities.find((activity) => activity.id === selectedActivityId) ?? null
-    : null
+    ? (activities.find((activity) => activity.id === selectedActivityId) ??
+      null)
+    : null;
 
   const handleShowCreateForm = () => {
-    setIsCreating(true)
-    setFormError(null)
-  }
+    setIsCreating(true);
+    setFormError(null);
+  };
 
   const handleCancelCreate = () => {
-    setIsCreating(false)
-    setFormError(null)
-    setTitle('')
-    setReminderText('')
-    setFirstStepLabel('')
-  }
+    setIsCreating(false);
+    setFormError(null);
+    setTitle('');
+    setReminderText('');
+    setFirstStepLabel('');
+  };
+  const pendingCompletionRef = useRef<PendingCompletion | null>(null);
 
-  const handleSubmitCreate = async (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault()
+  const handleCancelCreation = () => {
+    const pendingCompletion = pendingCompletionRef.current;
 
-    const trimmedTitle = title.trim()
-    const trimmedReminderText = reminderText.trim()
-    const trimmedFirstStepLabel = firstStepLabel.trim()
+    pendingCompletionRef.current = null;
+    setActivityToCreate(null);
 
-    if (!trimmedTitle) {
-      setFormError('Informe um titulo claro para a atividade.')
-      return
-    }
+    pendingCompletion?.resolve(undefined);
+  };
 
-    const input: CreateActivityInput = {
-      title: trimmedTitle,
-    }
-
-    if (trimmedReminderText) {
-      input.reminderText = trimmedReminderText
-    }
-
-    if (trimmedFirstStepLabel) {
-      input.steps = [{ label: trimmedFirstStepLabel }]
-    }
-
+  const handleConfirmCreationModal = async () => {
     try {
-      const createActivityResult = onCreateActivity(input)
+      const trimmedTitle = title.trim();
 
-      setFeedbackMessage(`Atividade criada: ${trimmedTitle}.`)
+      if (!trimmedTitle) {
+        setFormError('Informe um título claro para a tarefa.');
+        return;
+      }
+      const input: CreateActivityInput = {
+        title: trimmedTitle,
+      };
+      const createActivityResult = onCreateActivity(input);
 
-      const createdActivity = await createActivityResult
-      const createdTitle = createdActivity?.title ?? trimmedTitle
+      setFeedbackMessage(`Tarefa criada: ${trimmedTitle}.`);
 
-      setTitle('')
-      setReminderText('')
-      setFirstStepLabel('')
-      setFormError(null)
-      setIsCreating(false)
-      setFeedbackMessage(`Atividade criada: ${createdTitle}.`)
+      const createdActivity = await createActivityResult;
+      const createdTitle = createdActivity?.title ?? trimmedTitle;
+
+      setTitle('');
+      setReminderText('');
+      setFirstStepLabel('');
+      setFormError(null);
+      setIsCreating(false);
+      setFeedbackMessage(`Tarefa criada: ${createdTitle}.`);
 
       if (createdActivity) {
-        onSelectActivity(createdActivity.id)
+        onSelectActivity(createdActivity.id);
       }
+      setActivityToCreate(null);
     } catch (error) {
       setFormError(
         error instanceof Error
           ? error.message
-          : 'Nao foi possivel criar a atividade.',
-      )
+          : 'Não foi possível criar a atividade.',
+      );
     }
-  }
+  };
+
+  const handleSubmitCreate = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+
+    const trimmedTitle = title.trim();
+    const trimmedReminderText = reminderText.trim();
+    const trimmedFirstStepLabel = firstStepLabel.trim();
+
+    if (!trimmedTitle) {
+      setFormError('Informe um título claro para a tarefa.');
+      return;
+    }
+
+    const input: CreateActivityInput = {
+      title: trimmedTitle,
+    };
+
+    if (trimmedReminderText) {
+      input.reminderText = trimmedReminderText;
+    }
+
+    if (trimmedFirstStepLabel) {
+      input.steps = [{ label: trimmedFirstStepLabel }];
+    }
+    const createActivityResult = createActivity(input);
+
+    setModalType('create');
+    setActivityToCreate(createActivityResult || null);
+  };
 
   return {
     feedbackMessage,
@@ -93,6 +135,8 @@ export function useActivityOrganizer({
     handleCancelCreate,
     handleShowCreateForm,
     handleSubmitCreate,
+    handleConfirmCreationModal,
+    handleCancelCreation,
     isCreating,
     reminderText,
     selectedActivity,
@@ -101,5 +145,7 @@ export function useActivityOrganizer({
     setReminderText,
     setTitle,
     title,
-  }
+    activityToCreate,
+    modalType,
+  };
 }

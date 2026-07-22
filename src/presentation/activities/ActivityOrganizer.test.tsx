@@ -90,7 +90,7 @@ describe('ActivityOrganizer', () => {
     fireEvent.change(screen.getByLabelText('Primeiro passo'), {
       target: { value: ' Abrir a plataforma ' },
     });
-    fireEvent.click(screen.getByRole('button', { name: 'Salvar atividade' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Salvar tarefa' }));
 
     await waitFor(() => {
       expect(onCreateActivity).toHaveBeenCalledWith({

@@ -11,7 +11,8 @@ import type { Activity } from '../../../domain/activities';
 import { designTokens } from '../../../theme/designTokens';
 import { PrimaryButton } from '../../shared/components/PrimaryButton';
 
-export interface CompletionConfirmationDialogProps {
+export interface ConfirmationDialogProps {
+  type: 'create' | 'complete' | null;
   activity: Activity | null;
   isLoading: boolean;
   onCancel(): void;
@@ -20,12 +21,13 @@ export interface CompletionConfirmationDialogProps {
 
 const { colors, components, rounded, spacing, typography } = designTokens;
 
-export function CompletionConfirmationDialog({
+export function ConfirmationDialog({
+  type,
   activity,
   isLoading,
   onCancel,
   onConfirm,
-}: CompletionConfirmationDialogProps) {
+}: ConfirmationDialogProps) {
   const cancelButtonRef = useRef<HTMLButtonElement>(null);
 
   const handleClose = () => {
@@ -36,8 +38,8 @@ export function CompletionConfirmationDialog({
 
   return (
     <Dialog
-      aria-describedby='completion-confirmation-description'
-      aria-labelledby='completion-confirmation-title'
+      aria-describedby='confirmation-description'
+      aria-labelledby='confirmation-title'
       fullWidth
       maxWidth='xs'
       onClose={handleClose}
@@ -60,7 +62,7 @@ export function CompletionConfirmationDialog({
     >
       <DialogTitle
         component='h2'
-        id='completion-confirmation-title'
+        id='confirmation-title'
         sx={{
           color: colors.ink,
           fontSize: typography.h3.fontSize,
@@ -77,7 +79,7 @@ export function CompletionConfirmationDialog({
           },
         }}
       >
-        Confirmar conclusão
+        {type === 'create' ? 'Confirmar Criação' : 'Confirmar Conclusão'}
       </DialogTitle>
 
       <DialogContent
@@ -90,7 +92,7 @@ export function CompletionConfirmationDialog({
         }}
       >
         <DialogContentText
-          id='completion-confirmation-description'
+          id='confirmation-description'
           sx={{
             color: colors.slate,
             fontSize: typography.body.fontSize,
@@ -98,7 +100,9 @@ export function CompletionConfirmationDialog({
             mb: `${spacing.lg}px`,
           }}
         >
-          Deseja concluir esta atividade e movê-la para o histórico?
+          {type === 'create'
+            ? 'Deseja criar esta tarefa?'
+            : 'Deseja concluir esta tarefa e movê-la para o histórico?'}
         </DialogContentText>
 
         {activity ? (
@@ -161,7 +165,7 @@ export function CompletionConfirmationDialog({
           tone='completion'
           type='button'
         >
-          Concluir
+          {type === 'create' ? 'Criar' : 'Concluir'}
         </PrimaryButton>
       </DialogActions>
     </Dialog>
