@@ -25,18 +25,12 @@ export const activityOrganizerWidgetContract = {
 const { colors, components, typography } = designTokens;
 
 export function ActivityOrganizer({
-  activities,
-  completedActivities,
-  selectedActivityId,
-  errorMessage = null,
-  isLoading = false,
   mode = 'standard',
-  onActivityComplete,
-  onCompleteActivity,
-  onCreateActivity,
-  onSelectActivity,
 }: ActivityOrganizerProps) {
   const {
+    activities,
+    completedActivities,
+    selectedActivityId,
     isCreating,
     handleSubmitCreate,
     formError,
@@ -54,12 +48,14 @@ export function ActivityOrganizer({
     handleCancelCreation,
     activityToCreate,
     modalType,
-  } = useActivityOrganizer({
-    activities,
-    onCreateActivity,
-    onSelectActivity,
-    selectedActivityId,
-  });
+    handleConfirmCompletionModal,
+    isLoading,
+    errorMessage,
+    selectActivity,
+    handleCompleteActivity,
+    handleCancelCompletion,
+    activityToComplete,
+  } = useActivityOrganizer({});
 
   return (
     <>
@@ -159,7 +155,7 @@ export function ActivityOrganizer({
                   Nova tarefa
                 </PrimaryButton>
               }
-              description='Toque em Nova tarefa para começar.'
+              description='Clique em Nova tarefa para começar.'
               title='Sem tarefas para hoje'
             />
           ) : null}
@@ -195,7 +191,7 @@ export function ActivityOrganizer({
                 <ActivityList
                   activities={activities}
                   isLoading={isLoading}
-                  onOpenActivity={onSelectActivity}
+                  onOpenActivity={selectActivity}
                   selectedActivityId={selectedActivityId}
                 />
               </Stack>
@@ -207,8 +203,8 @@ export function ActivityOrganizer({
               activity={selectedActivity}
               isLoading={isLoading}
               key={selectedActivity.id}
-              onActivityComplete={onActivityComplete}
-              onCompleteActivity={onCompleteActivity}
+              onActivityComplete={handleConfirmCompletionModal}
+              onCompleteActivity={handleCompleteActivity}
               onFeedbackMessageChange={setFeedbackMessage}
             />
           ) : null}
@@ -304,10 +300,18 @@ export function ActivityOrganizer({
       </Box>
       <ConfirmationDialog
         type={modalType}
-        activity={activityToCreate}
+        activity={
+          modalType === 'create' ? activityToCreate : activityToComplete
+        }
         isLoading={isLoading}
-        onCancel={handleCancelCreation}
-        onConfirm={handleConfirmCreationModal}
+        onCancel={
+          modalType === 'create' ? handleCancelCreation : handleCancelCompletion
+        }
+        onConfirm={
+          modalType === 'create'
+            ? handleConfirmCreationModal
+            : handleConfirmCompletionModal
+        }
       />
     </>
   );

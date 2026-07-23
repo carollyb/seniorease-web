@@ -13,16 +13,7 @@ export interface ActivityOrganizerCreateEventDetail {
 }
 
 export interface ActivityOrganizerProps {
-  activities: Activity[];
-  completedActivities: Activity[];
-  selectedActivityId: string | null;
-  isLoading?: boolean;
-  errorMessage?: string | null;
   mode?: ActivityOrganizerMode;
-  onActivityComplete?(detail: ActivityOrganizerCompleteEventDetail): void;
-  onCompleteActivity(activityId: string): Promise<Activity | void>;
-  onCreateActivity(input: CreateActivityInput): Promise<Activity | void>;
-  onSelectActivity(activityId: string | null): void;
 }
 
 export interface GuidedStepsProps {
@@ -33,9 +24,4 @@ export interface GuidedStepsProps {
   onFeedbackMessageChange(message: string): void;
 }
 
-export interface UseActivityOrganizerOptions {
-  activities: Activity[];
-  selectedActivityId: string | null;
-  onCreateActivity(input: CreateActivityInput): Promise<Activity | void>;
-  onSelectActivity(activityId: string | null): void;
-}
+export interface UseActivityOrganizerOptions {}

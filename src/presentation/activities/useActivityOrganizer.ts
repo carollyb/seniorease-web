@@ -1,23 +1,38 @@
-import { useRef, useState, type FormEvent } from 'react';
+import { useEffect, useRef, useState, type FormEvent } from 'react';
 
 import {
-  createActivity,
+  createActivity as createActivityBO,
   type Activity,
   type CreateActivityInput,
 } from '../../domain/activities';
+
+import {
+  CompleteActivityUseCase,
+  CreateActivityUseCase,
+  ListActivitiesUseCase,
+  ListCompletedActivitiesUseCase,
+} from '../../application/activities';
 import type { UseActivityOrganizerOptions } from './types';
+import { LocalActivityRepository } from '../../infrastructure/repositories';
+import { usePreferenceStore } from '@/stores/preferences/usePreferenceStore';
+import { createActivityStore } from '@/stores/activities';
 
 interface PendingCompletion {
   activityId: string;
   resolve(completedActivity: Activity | void): void;
 }
+const activityRepository = new LocalActivityRepository();
 
-export function useActivityOrganizer({
-  activities,
-  selectedActivityId,
-  onCreateActivity,
-  onSelectActivity,
-}: UseActivityOrganizerOptions) {
+const useActivityStore = createActivityStore({
+  completeActivity: new CompleteActivityUseCase(activityRepository),
+  createActivity: new CreateActivityUseCase(activityRepository),
+  listActivities: new ListActivitiesUseCase(activityRepository),
+  listCompletedActivities: new ListCompletedActivitiesUseCase(
+    activityRepository,
+  ),
+});
+
+export function useActivityOrganizer({}: UseActivityOrganizerOptions) {
   const [isCreating, setIsCreating] = useState(false);
   const [title, setTitle] = useState('');
   const [reminderText, setReminderText] = useState('');
@@ -32,6 +47,24 @@ export function useActivityOrganizer({
   const [modalType, setModalType] = useState<'create' | 'complete' | null>(
     null,
   );
+  const [activityToComplete, setActivityToComplete] = useState<Activity | null>(
+    null,
+  );
+  const preferences = usePreferenceStore((state) => state.preferences);
+  const completeActivity = useActivityStore((state) => state.completeActivity);
+
+  const activities = useActivityStore((state) => state.activities);
+  const completedActivities = useActivityStore(
+    (state) => state.completedActivities,
+  );
+  const selectedActivityId = useActivityStore(
+    (state) => state.selectedActivityId,
+  );
+  const isLoading = useActivityStore((state) => state.isLoading);
+  const errorMessage = useActivityStore((state) => state.errorMessage);
+  const loadActivities = useActivityStore((state) => state.loadActivities);
+  const createActivity = useActivityStore((state) => state.createActivity);
+  const selectActivity = useActivityStore((state) => state.selectActivity);
 
   const selectedActivity = selectedActivityId
     ? (activities.find((activity) => activity.id === selectedActivityId) ??
@@ -57,6 +90,7 @@ export function useActivityOrganizer({
 
     pendingCompletionRef.current = null;
     setActivityToCreate(null);
+    setModalType(null);
 
     pendingCompletion?.resolve(undefined);
   };
@@ -72,7 +106,7 @@ export function useActivityOrganizer({
       const input: CreateActivityInput = {
         title: trimmedTitle,
       };
-      const createActivityResult = onCreateActivity(input);
+      const createActivityResult = await createActivity(input);
 
       setFeedbackMessage(`Tarefa criada: ${trimmedTitle}.`);
 
@@ -84,12 +118,13 @@ export function useActivityOrganizer({
       setFirstStepLabel('');
       setFormError(null);
       setIsCreating(false);
-      setFeedbackMessage(`Tarefa criada: ${createdTitle}.`);
+      setFeedbackMessage(`Tarefas criada: ${createdTitle}.`);
 
       if (createdActivity) {
-        onSelectActivity(createdActivity.id);
+        selectActivity(createdActivity.id);
       }
       setActivityToCreate(null);
+      setModalType(null);
     } catch (error) {
       setFormError(
         error instanceof Error
@@ -122,11 +157,64 @@ export function useActivityOrganizer({
     if (trimmedFirstStepLabel) {
       input.steps = [{ label: trimmedFirstStepLabel }];
     }
-    const createActivityResult = createActivity(input);
+    const createActivityResult = createActivityBO(input);
 
     setModalType('create');
     setActivityToCreate(createActivityResult || null);
   };
+
+  const handleCompleteActivity = (activityId: string) => {
+    if (!preferences.extraConfirmation) {
+      return completeActivity(activityId);
+    }
+
+    const activity = activities.find(({ id }) => id === activityId);
+
+    if (!activity) {
+      return Promise.resolve(undefined);
+    }
+
+    return new Promise<Activity | void>((resolve) => {
+      pendingCompletionRef.current = { activityId, resolve };
+      setActivityToComplete(activity);
+      setModalType('complete');
+    });
+  };
+
+  const handleCancelCompletion = () => {
+    const pendingCompletion = pendingCompletionRef.current;
+
+    pendingCompletionRef.current = null;
+    setActivityToComplete(null);
+    setModalType(null);
+    pendingCompletion?.resolve(undefined);
+  };
+
+  const handleConfirmCompletionModal = async () => {
+    const pendingCompletion = pendingCompletionRef.current;
+
+    if (!pendingCompletion) {
+      return;
+    }
+
+    const completedActivity = await completeActivity(
+      pendingCompletion.activityId,
+    );
+
+    pendingCompletionRef.current = null;
+    setActivityToComplete(null);
+    setModalType(null);
+    pendingCompletion.resolve(completedActivity);
+  };
+
+  useEffect(() => {
+    void loadActivities();
+
+    return () => {
+      pendingCompletionRef.current?.resolve(undefined);
+      pendingCompletionRef.current = null;
+    };
+  }, [loadActivities]);
 
   return {
     feedbackMessage,
@@ -147,5 +235,15 @@ export function useActivityOrganizer({
     title,
     activityToCreate,
     modalType,
+    handleConfirmCompletionModal,
+    activities,
+    isLoading,
+    errorMessage,
+    completedActivities,
+    selectedActivityId,
+    selectActivity,
+    handleCompleteActivity,
+    handleCancelCompletion,
+    activityToComplete,
   };
 }
