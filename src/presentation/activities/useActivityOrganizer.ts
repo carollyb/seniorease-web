@@ -36,7 +36,7 @@ export function useActivityOrganizer({}: UseActivityOrganizerOptions) {
   const [isCreating, setIsCreating] = useState(false);
   const [title, setTitle] = useState('');
   const [reminderText, setReminderText] = useState('');
-  const [firstStepLabel, setFirstStepLabel] = useState('');
+  const [stepLabels, setStepLabels] = useState<string[]>(() => ['']);
   const [formError, setFormError] = useState<string | null>(null);
   const [feedbackMessage, setFeedbackMessage] = useState(
     'Organizador pronto para novas atividades.',
@@ -81,8 +81,28 @@ export function useActivityOrganizer({}: UseActivityOrganizerOptions) {
     setFormError(null);
     setTitle('');
     setReminderText('');
-    setFirstStepLabel('');
+    setStepLabels(['']);
   };
+
+  const handleStepLabelChange = (index: number, label: string) => {
+    setStepLabels((currentLabels) =>
+      currentLabels.map((currentLabel, currentIndex) =>
+        currentIndex === index ? label : currentLabel,
+      ),
+    );
+  };
+
+  const handleAddStep = (index: number) => {
+    setStepLabels((currentLabels) => {
+      const isLastStep = index === currentLabels.length - 1;
+      const isFilled = Boolean(currentLabels[index]?.trim());
+
+      return isLastStep && isFilled
+        ? [...currentLabels, '']
+        : currentLabels;
+    });
+  };
+
   const pendingCompletionRef = useRef<PendingCompletion | null>(null);
 
   const handleCancelCreation = () => {
@@ -131,7 +151,7 @@ export function useActivityOrganizer({}: UseActivityOrganizerOptions) {
 
       setTitle('');
       setReminderText('');
-      setFirstStepLabel('');
+      setStepLabels(['']);
       setFormError(null);
       setIsCreating(false);
       setFeedbackMessage(`Tarefas criada: ${createdTitle}.`);
@@ -155,7 +175,10 @@ export function useActivityOrganizer({}: UseActivityOrganizerOptions) {
 
     const trimmedTitle = title.trim();
     const trimmedReminderText = reminderText.trim();
-    const trimmedFirstStepLabel = firstStepLabel.trim();
+    const steps = stepLabels
+      .map((label) => label.trim())
+      .filter(Boolean)
+      .map((label) => ({ label }));
 
     if (!trimmedTitle) {
       setFormError('Informe um título claro para a tarefa.');
@@ -170,8 +193,8 @@ export function useActivityOrganizer({}: UseActivityOrganizerOptions) {
       input.reminderText = trimmedReminderText;
     }
 
-    if (trimmedFirstStepLabel) {
-      input.steps = [{ label: trimmedFirstStepLabel }];
+    if (steps.length > 0) {
+      input.steps = steps;
     }
     const createActivityResult = createActivityBO(input);
 
@@ -234,10 +257,11 @@ export function useActivityOrganizer({}: UseActivityOrganizerOptions) {
 
   return {
     feedbackMessage,
-    firstStepLabel,
     formError,
+    handleAddStep,
     handleCancelCreate,
     handleShowCreateForm,
+    handleStepLabelChange,
     handleSubmitCreate,
     handleConfirmCreationModal,
     handleCancelCreation,
@@ -245,9 +269,9 @@ export function useActivityOrganizer({}: UseActivityOrganizerOptions) {
     reminderText,
     selectedActivity,
     setFeedbackMessage,
-    setFirstStepLabel,
     setReminderText,
     setTitle,
+    stepLabels,
     title,
     activityToCreate,
     modalType,

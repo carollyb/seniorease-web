@@ -1,4 +1,6 @@
 import Box from '@mui/material/Box';
+import IconButton from '@mui/material/IconButton';
+import InputAdornment from '@mui/material/InputAdornment';
 import Stack from '@mui/material/Stack';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
@@ -22,7 +24,7 @@ export const activityOrganizerWidgetContract = {
   createEventName: 'activity-create',
 } as const;
 
-const { colors, components, typography } = designTokens;
+const { colors, components } = designTokens;
 
 export function ActivityOrganizer({
   mode = 'standard',
@@ -38,8 +40,9 @@ export function ActivityOrganizer({
     title,
     reminderText,
     setReminderText,
-    firstStepLabel,
-    setFirstStepLabel,
+    stepLabels,
+    handleAddStep,
+    handleStepLabelChange,
     handleShowCreateForm,
     handleCancelCreate,
     selectedActivity,
@@ -120,13 +123,64 @@ export function ActivityOrganizer({
                   onChange={(event) => setReminderText(event.target.value)}
                   value={reminderText}
                 />
-                <TextField
-                  fullWidth
-                  helperText='Comece com um passo pequeno e concreto.'
-                  label='Primeiro passo'
-                  onChange={(event) => setFirstStepLabel(event.target.value)}
-                  value={firstStepLabel}
-                />
+                {stepLabels.map((stepLabel, index) => {
+                  const isLastStep = index === stepLabels.length - 1;
+                  const canAddStep = isLastStep && Boolean(stepLabel.trim());
+                  const fieldLabel =
+                    index === 0 ? 'Primeiro passo' : `Passo ${index + 1}`;
+
+                  return (
+                    <TextField
+                      autoFocus={index > 0 && isLastStep}
+                      fullWidth
+                      helperText={
+                        index === 0
+                          ? 'Comece com um passo pequeno e concreto. Use + para adicionar outro.'
+                          : 'Descreva o próximo passo. Use + para adicionar outro.'
+                      }
+                      key={index}
+                      label={fieldLabel}
+                      onChange={(event) =>
+                        handleStepLabelChange(index, event.target.value)
+                      }
+                      slotProps={{
+                        input: {
+                          endAdornment: canAddStep ? (
+                            <InputAdornment position='end'>
+                              <IconButton
+                                aria-label={`Adicionar passo ${index + 2}`}
+                                onClick={() => handleAddStep(index)}
+                                sx={{
+                                  bgcolor: colors.brandBlue,
+                                  color: colors.onPrimary,
+                                  height:
+                                    components.activityRow.addStepButtonSize,
+                                  width:
+                                    components.activityRow.addStepButtonSize,
+                                  flexShrink: 0,
+                                  '&:hover': {
+                                    bgcolor: colors.bluePressed,
+                                  },
+                                }}
+                                type='button'
+                              >
+                                <Typography
+                                  aria-hidden='true'
+                                  component='span'
+                                  lineHeight={1}
+                                  variant='h5'
+                                >
+                                  +
+                                </Typography>
+                              </IconButton>
+                            </InputAdornment>
+                          ) : null,
+                        },
+                      }}
+                      value={stepLabel}
+                    />
+                  );
+                })}
                 <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1}>
                   <PrimaryButton disabled={isLoading} type='submit'>
                     Salvar tarefa

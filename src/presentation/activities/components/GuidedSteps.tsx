@@ -234,7 +234,7 @@ export function GuidedSteps({
             onClick={handleNextStep}
             type='button'
           >
-            Proximo passo
+            Próximo passo
           </PrimaryButton>
           <PrimaryButton
             aria-label={`Concluir atividade ${activity.title}`}

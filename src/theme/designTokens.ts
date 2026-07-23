@@ -28,7 +28,7 @@ export const seniorEaseColorValues = {
   brandRedDark: '#e3c5c5',
   coralDark: '#600000',
   successAccent: '#00b473',
-} as const
+} as const;
 
 export const mobileHighContrastTokens = {
   screenBackground: '#FFFFFF',
@@ -62,7 +62,7 @@ export const mobileHighContrastTokens = {
   completionHover: '#E0B800',
   infoSurface: '#FFFFFF',
   infoBorder: '#000000',
-} as const
+} as const;
 
 export const seniorEaseColorVariableNames = {
   primary: '--seniorease-primary',
@@ -102,21 +102,18 @@ export const seniorEaseColorVariableNames = {
   primaryHover: '--seniorease-primary-hover',
   secondaryHover: '--seniorease-secondary-hover',
   completionHover: '--seniorease-completion-hover',
-} as const
+} as const;
 
-type SeniorEaseColorVariable = keyof typeof seniorEaseColorVariableNames
+type SeniorEaseColorVariable = keyof typeof seniorEaseColorVariableNames;
 
-export type SeniorEaseResolvedColors = Record<
-  SeniorEaseColorVariable,
-  string
->
+export type SeniorEaseResolvedColors = Record<SeniorEaseColorVariable, string>;
 
 const seniorEaseColorVars = Object.fromEntries(
   Object.entries(seniorEaseColorVariableNames).map(([name, variableName]) => [
     name,
     `var(${variableName})`,
   ]),
-) as Record<SeniorEaseColorVariable, string>
+) as Record<SeniorEaseColorVariable, string>;
 
 export const designTokens = {
   colorValues: seniorEaseColorValues,
@@ -224,6 +221,7 @@ export const designTokens = {
       paddingDesktop: 18,
       paddingMobile: 14,
       radius: 20,
+      addStepButtonSize: 42,
     },
     guidedStep: {
       backgroundColor: seniorEaseColorVars.canvas,
@@ -254,6 +252,6 @@ export const designTokens = {
       width: 64,
     },
   },
-} as const
+} as const;
 
-export type SeniorEaseDesignTokens = typeof designTokens
+export type SeniorEaseDesignTokens = typeof designTokens;

@@ -1,4 +1,5 @@
 import {
+  act,
   fireEvent,
   render,
   screen,
@@ -147,6 +148,67 @@ describe('ActivityOrganizer', () => {
       expect(screen.queryByRole('dialog')).toBeNull();
     });
     expect(screen.queryByRole('form', { name: 'Nova tarefa' })).toBeNull();
+  });
+
+  it('adds consecutive step fields and saves every filled step in order', async () => {
+    renderOrganizer();
+    await waitForOrganizerToLoad();
+
+    fireEvent.click(screen.getByRole('button', { name: 'Nova tarefa' }));
+
+    const firstStepInput = screen.getByLabelText('Primeiro passo');
+    expect(
+      screen.queryByRole('button', { name: 'Adicionar passo 2' }),
+    ).toBeNull();
+
+    fireEvent.change(firstStepInput, {
+      target: { value: ' Abrir a plataforma ' },
+    });
+
+    const addSecondStepButton = screen.getByRole('button', {
+      name: 'Adicionar passo 2',
+    });
+    act(() => addSecondStepButton.focus());
+    expect(document.activeElement).toBe(addSecondStepButton);
+    fireEvent.click(addSecondStepButton);
+
+    const secondStepInput = screen.getByLabelText('Passo 2');
+    expect(document.activeElement).toBe(secondStepInput);
+    expect(
+      screen.queryByRole('button', { name: 'Adicionar passo 3' }),
+    ).toBeNull();
+
+    fireEvent.change(secondStepInput, {
+      target: { value: ' Revisar os dados ' },
+    });
+    fireEvent.click(
+      screen.getByRole('button', { name: 'Adicionar passo 3' }),
+    );
+    fireEvent.change(screen.getByLabelText('Passo 3'), {
+      target: { value: ' Enviar o arquivo ' },
+    });
+
+    fireEvent.change(screen.getByLabelText('Título da tarefa'), {
+      target: { value: ' Enviar trabalho ' },
+    });
+    fireEvent.click(screen.getByRole('button', { name: 'Salvar tarefa' }));
+
+    const modal = await screen.findByRole('dialog', {
+      name: 'Confirmar Criação',
+    });
+    fireEvent.click(within(modal).getByRole('button', { name: 'Criar' }));
+
+    await screen.findByRole('list', { name: 'Passos de Enviar trabalho' });
+
+    const storedSnapshot = JSON.parse(
+      window.localStorage.getItem(ACTIVITY_STORAGE_NAME) ?? '{}',
+    );
+
+    expect(storedSnapshot.activities[0].steps).toMatchObject([
+      { label: 'Abrir a plataforma' },
+      { label: 'Revisar os dados' },
+      { label: 'Enviar o arquivo' },
+    ]);
   });
 
   it('shows active activities with reminder, status, and accessible primary action', async () => {
