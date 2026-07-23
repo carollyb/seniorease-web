@@ -73,6 +73,21 @@ describe('PersonalizationDashboard', () => {
     ).toBe('on')
   })
 
+  it('previews font scale options in increasing text sizes', () => {
+    renderDashboard()
+
+    const fontSizes = ['small', 'medium', 'large', 'extraLarge'].map(
+      (value) =>
+        Number(
+          screen
+            .getByTestId(`preference-pill-fontScale-${value}`)
+            .getAttribute('data-preview-font-size'),
+        ),
+    )
+
+    expect(fontSizes).toEqual([13, 14, 20, 22])
+  })
+
   it('updates the validated preference store from pill and switch controls', () => {
     const { onPreferenceChange } = renderDashboard()
 

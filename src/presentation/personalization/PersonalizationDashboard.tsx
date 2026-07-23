@@ -25,13 +25,19 @@ interface PreferenceOption<TValue extends string> {
   accessibleLabel?: string
   compact?: boolean
   emphasized?: boolean
+  previewFontSize?: number
 }
 
 const FONT_SCALE_OPTIONS = [
   { value: 'small', label: 'Pequeno', compact: true },
   { value: 'medium', label: 'Médio' },
   { value: 'large', label: 'Grande', emphasized: true },
-  { value: 'extraLarge', label: 'Muito grande' },
+  {
+    value: 'extraLarge',
+    label: 'Muito grande',
+    emphasized: true,
+    previewFontSize: designTokens.typography.h4.fontSize,
+  },
 ] satisfies readonly PreferenceOption<FontScale>[]
 
 const CONTRAST_OPTIONS = [
@@ -68,6 +74,15 @@ function getOptionLabel<TValue extends string>(
   value: TValue,
 ) {
   return options.find((option) => option.value === value)?.label ?? value
+}
+
+function getPreviewFontSize<TValue extends string>(
+  option: PreferenceOption<TValue>,
+) {
+  return (
+    option.previewFontSize ??
+    (option.emphasized ? 20 : option.compact ? 13 : 14)
+  )
 }
 
 interface PreferencePillGroupProps<TValue extends string> {
@@ -141,9 +156,11 @@ function PreferencePillGroup<TValue extends string>({
         {options.map((option) => {
           const isSelected = option.value === value
           const accessibleLabel = option.accessibleLabel ?? option.label
+          const previewFontSize = getPreviewFontSize(option)
 
           return (
             <FormControlLabel
+              data-preview-font-size={previewFontSize}
               data-state={isSelected ? 'selected' : 'available'}
               data-testid={`preference-pill-${name}-${option.value}`}
               key={option.value}
@@ -166,7 +183,7 @@ function PreferencePillGroup<TValue extends string>({
                   borderRadius: `${rounded.full}px`,
                   color: isSelected ? colors.onPrimary : colors.ink,
                   display: 'inline-flex',
-                  fontSize: option.emphasized ? 20 : option.compact ? 13 : 14,
+                  fontSize: previewFontSize,
                   fontWeight: 500,
                   lineHeight: option.emphasized ? 1.3 : 1.4,
                   px: `${option.emphasized ? 18 : option.compact ? 14 : 16}px`,

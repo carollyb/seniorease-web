@@ -20,7 +20,7 @@ export interface NavigationItem {
 
 export const seniorEaseNavigationItems: NavigationItem[] = [
   { href: '/atividades', label: 'Atividades', group: 'primary' },
-  { href: '/painel', label: 'Painel', group: 'primary' },
+  { href: '/painel', label: 'Painel de preferências', group: 'primary' },
   { href: '/perfil', label: 'Perfil', group: 'secondary' },
   { href: '/configuracoes', label: 'Configurações', group: 'secondary' },
 ];

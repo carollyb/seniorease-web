@@ -77,10 +77,7 @@ export function ActivityCard({
           id={titleId}
           sx={{
             color: colors.ink,
-            fontSize: {
-              xs: typography.mobileActivityTitle.fontSize,
-              sm: typography.h5.fontSize,
-            },
+            fontSize: (theme) => theme.typography.h3.fontSize,
             fontWeight: typography.h5.fontWeight,
             lineHeight: typography.h5.lineHeight,
             overflowWrap: 'anywhere',
@@ -91,10 +88,7 @@ export function ActivityCard({
         <Typography
           sx={{
             color: colors.slate,
-            fontSize: {
-              xs: typography.mobileActivityMeta.fontSize,
-              sm: typography.bodySmall.fontSize,
-            },
+            fontSize: (theme) => theme.typography.caption.fontSize,
             lineHeight: typography.bodySmall.lineHeight,
             overflowWrap: 'anywhere',
           }}
@@ -118,10 +112,7 @@ export function ActivityCard({
           sx={{
             minHeight: { xs: 31, sm: 38 },
             '& .MuiChip-label': {
-              fontSize: {
-                xs: typography.mobileActivityMeta.fontSize,
-                sm: typography.caption.fontSize,
-              },
+              fontSize: (theme) => theme.typography.caption.fontSize,
               px: {
                 xs: `${components.pill.compactPaddingX}px`,
                 sm: `${components.pill.paddingX}px`,
