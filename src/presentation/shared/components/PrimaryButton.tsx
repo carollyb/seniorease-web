@@ -21,7 +21,7 @@ const toneSx: Record<PrimaryButtonTone, SxProps<Theme>> = {
     bgcolor: 'primary.main',
     color: 'primary.contrastText',
     '&:hover': {
-      bgcolor: designTokens.colors.charcoal,
+      bgcolor: designTokens.colors.primaryHover,
     },
   },
   secondary: {
@@ -30,7 +30,7 @@ const toneSx: Record<PrimaryButtonTone, SxProps<Theme>> = {
     boxShadow: 'none',
     color: 'text.primary',
     '&:hover': {
-      bgcolor: designTokens.colors.surface,
+      bgcolor: designTokens.colors.secondaryHover,
       borderColor: designTokens.colors.hairlineStrong,
       boxShadow: 'none',
     },
@@ -39,7 +39,7 @@ const toneSx: Record<PrimaryButtonTone, SxProps<Theme>> = {
     bgcolor: 'warning.main',
     color: 'warning.contrastText',
     '&:hover': {
-      bgcolor: designTokens.colors.yellowBorder,
+      bgcolor: designTokens.colors.completionHover,
     },
   },
 }

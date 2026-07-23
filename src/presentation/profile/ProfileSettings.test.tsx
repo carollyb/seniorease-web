@@ -61,7 +61,7 @@ describe('ProfileSettings', () => {
     expect(within(summary).getByText('Tamanho do texto')).not.toBeNull()
     expect(within(summary).getByText('Muito grande')).not.toBeNull()
     expect(within(summary).getByText('Contraste')).not.toBeNull()
-    expect(within(summary).getByText('Máximo')).not.toBeNull()
+    expect(within(summary).getByText('Alto')).not.toBeNull()
     expect(within(summary).getByText('Espaçamento')).not.toBeNull()
     expect(within(summary).getByText('Extra amplo')).not.toBeNull()
     expect(within(summary).getByText('Navegação')).not.toBeNull()

@@ -92,7 +92,7 @@ describe('PersonalizationDashboard', () => {
     const { onPreferenceChange } = renderDashboard()
 
     fireEvent.click(screen.getByRole('radio', { name: 'Muito grande' }))
-    fireEvent.click(screen.getByRole('radio', { name: 'Máximo' }))
+    fireEvent.click(screen.getByRole('radio', { name: 'Alto' }))
     fireEvent.click(screen.getByRole('radio', { name: 'Extra amplo' }))
     fireEvent.click(screen.getByRole('switch', { name: 'Navegação simplificada' }))
     fireEvent.click(

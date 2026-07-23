@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import {
   fireEvent,
   render,
@@ -9,6 +8,9 @@ import {
 import { ThemeProvider } from '@mui/material/styles';
 
 import type { Activity } from '../../domain/activities';
+import { createDefaultPreferences } from '../../domain/preferences';
+import { ACTIVITY_STORAGE_NAME } from '../../infrastructure/repositories/LocalActivityRepository';
+import { usePreferenceStore } from '../../stores/preferences/usePreferenceStore';
 import { createSeniorEaseTheme } from '../../theme/createSeniorEaseTheme';
 import {
   ActivityOrganizer,
@@ -27,47 +29,61 @@ const pendingActivity: Activity = {
   createdAt: '2026-06-01T12:00:00.000Z',
 };
 
-const completedActivity: Activity = {
-  ...pendingActivity,
-  status: 'completed',
-  steps: pendingActivity.steps.map((step) => ({ ...step, completed: true })),
-  completedAt: '2026-06-01T13:30:00.000Z',
-};
-
 function renderOrganizer(
   props: Partial<React.ComponentProps<typeof ActivityOrganizer>> = {},
 ) {
-  const onCreateActivity = jest.fn().mockResolvedValue(pendingActivity);
-  const onCompleteActivity = jest.fn().mockResolvedValue(completedActivity);
-  const onSelectActivity = jest.fn();
-  const onActivityComplete = jest.fn();
-
   render(
     <ThemeProvider theme={createSeniorEaseTheme()}>
-      <ActivityOrganizer
-        activities={[pendingActivity]}
-        completedActivities={[]}
-        onActivityComplete={onActivityComplete}
-        onCompleteActivity={onCompleteActivity}
-        onCreateActivity={onCreateActivity}
-        onSelectActivity={onSelectActivity}
-        selectedActivityId={null}
-        {...props}
-      />
+      <ActivityOrganizer {...props} />
     </ThemeProvider>,
   );
+}
 
-  return {
-    onActivityComplete,
-    onCompleteActivity,
-    onCreateActivity,
-    onSelectActivity,
-  };
+function storeActivities(activities: Activity[]) {
+  window.localStorage.setItem(
+    ACTIVITY_STORAGE_NAME,
+    JSON.stringify({ activities }),
+  );
+}
+
+async function waitForOrganizerToLoad() {
+  await waitFor(() => {
+    expect(
+      screen
+        .getByRole('button', { name: 'Nova tarefa' })
+        .hasAttribute('disabled'),
+    ).toBe(false);
+  });
+}
+
+async function openPendingActivity() {
+  const openButton = await screen.findByRole('button', {
+    name: 'Abrir atividade Enviar trabalho',
+  });
+
+  await waitFor(() => {
+    expect(openButton.hasAttribute('disabled')).toBe(false);
+  });
+  fireEvent.click(openButton);
+
+  return screen.findByRole('button', {
+    name: 'Concluir atividade Enviar trabalho',
+  });
 }
 
 describe('ActivityOrganizer', () => {
-  it('renders an empty state with one clear primary action', () => {
-    renderOrganizer({ activities: [], completedActivities: [] });
+  beforeEach(() => {
+    window.localStorage.clear();
+    usePreferenceStore.setState({
+      preferences: createDefaultPreferences(),
+      hasHydrated: true,
+      persistenceWarning: null,
+    });
+  });
+
+  it('renders an empty state with one clear primary action', async () => {
+    renderOrganizer();
+    await waitForOrganizerToLoad();
 
     expect(screen.getByText('Sem tarefas para hoje')).not.toBeNull();
     expect(screen.getByRole('button', { name: 'Nova tarefa' })).not.toBeNull();
@@ -75,10 +91,8 @@ describe('ActivityOrganizer', () => {
   });
 
   it('creates an activity with title, reminder, and first guided step', async () => {
-    const { onCreateActivity, onSelectActivity } = renderOrganizer({
-      activities: [],
-      completedActivities: [],
-    });
+    renderOrganizer();
+    await waitForOrganizerToLoad();
 
     fireEvent.click(screen.getByRole('button', { name: 'Nova tarefa' }));
     fireEvent.change(screen.getByLabelText('Título da tarefa'), {
@@ -92,21 +106,54 @@ describe('ActivityOrganizer', () => {
     });
     fireEvent.click(screen.getByRole('button', { name: 'Salvar tarefa' }));
 
+    const modal = await screen.findByRole('dialog', {
+      name: 'Confirmar Criação',
+    });
+    expect(within(modal).getByText('Enviar trabalho')).not.toBeNull();
+    expect(within(modal).getByText('Hoje as 18h')).not.toBeNull();
+    fireEvent.click(
+      within(modal).getByRole('button', {
+        name: 'Criar',
+      }),
+    );
+
+    const activityList = await screen.findByRole('list', {
+      name: 'Atividades ativas',
+    });
+    expect(within(activityList).getByText('Enviar trabalho')).not.toBeNull();
+    expect(
+      within(activityList).getByText('Lembrete: Hoje as 18h'),
+    ).not.toBeNull();
+    expect(
+      await screen.findByRole('list', {
+        name: 'Passos de Enviar trabalho',
+      }),
+    ).not.toBeNull();
+
+    const storedSnapshot = JSON.parse(
+      window.localStorage.getItem(ACTIVITY_STORAGE_NAME) ?? '{}',
+    );
+
+    expect(storedSnapshot).toMatchObject({
+      activities: [
+        {
+          title: 'Enviar trabalho',
+          reminderText: 'Hoje as 18h',
+          steps: [{ label: 'Abrir a plataforma' }],
+        },
+      ],
+    });
     await waitFor(() => {
-      expect(onCreateActivity).toHaveBeenCalledWith({
-        title: 'Enviar trabalho',
-        reminderText: 'Hoje as 18h',
-        steps: [{ label: 'Abrir a plataforma' }],
-      });
+      expect(screen.queryByRole('dialog')).toBeNull();
     });
     expect(screen.queryByRole('form', { name: 'Nova tarefa' })).toBeNull();
-    expect(onSelectActivity).toHaveBeenCalledWith('activity-1');
   });
 
-  it('shows active activities with reminder, status, and accessible primary action', () => {
-    const { onSelectActivity } = renderOrganizer();
+  it('shows active activities with reminder, status, and accessible primary action', async () => {
+    storeActivities([pendingActivity]);
+    renderOrganizer();
 
-    const activityList = screen.getByRole('list', {
+    const activityList = await screen.findByRole('list', {
       name: 'Atividades ativas',
     });
 
@@ -122,11 +169,17 @@ describe('ActivityOrganizer', () => {
       }),
     );
 
-    expect(onSelectActivity).toHaveBeenCalledWith('activity-1');
+    expect(
+      screen.getByRole('heading', {
+        name: 'Passos de Enviar trabalho',
+      }),
+    ).not.toBeNull();
   });
 
-  it('renders guided steps in order with keyboard-operable controls', () => {
-    renderOrganizer({ selectedActivityId: 'activity-1' });
+  it('renders guided steps in order with keyboard-operable controls', async () => {
+    storeActivities([pendingActivity]);
+    renderOrganizer();
+    await openPendingActivity();
 
     const stepList = screen.getByRole('list', {
       name: 'Passos de Enviar trabalho',
@@ -148,92 +201,78 @@ describe('ActivityOrganizer', () => {
     expect(firstStep.checked).toBe(true);
   });
 
-  it('moves the activity to history and emits the completion event', async () => {
-    const onCompleteActivity = jest.fn().mockResolvedValue(completedActivity);
-    const onActivityComplete = jest.fn();
+  it('moves the activity to history after modal confirmation', async () => {
+    storeActivities([pendingActivity]);
+    renderOrganizer();
+    const completeButton = await openPendingActivity();
+    fireEvent.click(completeButton);
 
-    function ControlledOrganizer() {
-      const [activities, setActivities] = useState<Activity[]>([
-        pendingActivity,
-      ]);
-      const [completedActivities, setCompletedActivities] = useState<
-        Activity[]
-      >([]);
-      const [selectedActivityId, setSelectedActivityId] = useState<
-        string | null
-      >('activity-1');
-
-      const handleCompleteActivity = async (activityId: string) => {
-        const activity = await onCompleteActivity(activityId);
-
-        setActivities([]);
-        setCompletedActivities([activity]);
-        setSelectedActivityId(null);
-
-        return activity;
-      };
-
-      return (
-        <ThemeProvider theme={createSeniorEaseTheme()}>
-          <ActivityOrganizer
-            activities={activities}
-            completedActivities={completedActivities}
-            onActivityComplete={onActivityComplete}
-            onCompleteActivity={handleCompleteActivity}
-            onCreateActivity={jest.fn()}
-            onSelectActivity={setSelectedActivityId}
-            selectedActivityId={selectedActivityId}
-          />
-        </ThemeProvider>
-      );
-    }
-
-    render(<ControlledOrganizer />);
-
+    const modal = await screen.findByRole('dialog', {
+      name: 'Confirmar Conclusão',
+    });
     fireEvent.click(
-      screen.getByRole('button', {
-        name: 'Concluir atividade Enviar trabalho',
+      within(modal).getByRole('button', {
+        name: 'Concluir',
       }),
     );
 
-    await waitFor(() => {
-      expect(onCompleteActivity).toHaveBeenCalledWith('activity-1');
-    });
-    expect(screen.queryByRole('status')).toBeNull();
-    expect(onActivityComplete).toHaveBeenCalledWith({
-      activityId: 'activity-1',
-      title: 'Enviar trabalho',
-    });
     expect(
       within(
-        screen.getByRole('list', {
+        await screen.findByRole('list', {
           name: 'Histórico de atividades concluidas',
         }),
       ).getByText('Enviar trabalho'),
     ).not.toBeNull();
+
+    const storedSnapshot = JSON.parse(
+      window.localStorage.getItem(ACTIVITY_STORAGE_NAME) ?? '{}',
+    );
+    expect(storedSnapshot).toMatchObject({
+      activities: [
+        {
+          id: 'activity-1',
+          status: 'completed',
+        },
+      ],
+    });
   });
 
-  it('does not emit completion when the action is cancelled', async () => {
-    const onCompleteActivity = jest.fn().mockResolvedValue(undefined);
-    const onActivityComplete = jest.fn();
+  it('keeps the activity pending when modal completion is cancelled', async () => {
+    storeActivities([pendingActivity]);
+    renderOrganizer();
+    const completeButton = await openPendingActivity();
+    fireEvent.click(completeButton);
 
-    renderOrganizer({
-      onActivityComplete,
-      onCompleteActivity,
-      selectedActivityId: 'activity-1',
+    const modal = await screen.findByRole('dialog', {
+      name: 'Confirmar Conclusão',
     });
-
     fireEvent.click(
-      screen.getByRole('button', {
-        name: 'Concluir atividade Enviar trabalho',
+      within(modal).getByRole('button', {
+        name: 'Cancelar',
       }),
     );
 
     await waitFor(() => {
-      expect(onCompleteActivity).toHaveBeenCalledWith('activity-1');
+      expect(screen.queryByRole('dialog')).toBeNull();
     });
-    expect(screen.queryByRole('status')).toBeNull();
-    expect(onActivityComplete).not.toHaveBeenCalled();
+    expect(screen.getByText('Enviar trabalho')).not.toBeNull();
+    expect(
+      screen.queryByRole('list', {
+        name: 'Histórico de atividades concluidas',
+      }),
+    ).toBeNull();
+
+    const storedSnapshot = JSON.parse(
+      window.localStorage.getItem(ACTIVITY_STORAGE_NAME) ?? '{}',
+    );
+    expect(storedSnapshot).toMatchObject({
+      activities: [
+        {
+          id: 'activity-1',
+          status: 'pending',
+        },
+      ],
+    });
   });
 
   it('exports future widget contract names for Multi-Zone extraction', () => {

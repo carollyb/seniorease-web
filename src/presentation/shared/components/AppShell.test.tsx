@@ -33,7 +33,9 @@ describe('shared app shell components', () => {
     const navigation = screen.getByRole('navigation', { name: 'SeniorEase' })
     expect(within(navigation).getByTestId('senior-ease-logo-mark')).not.toBeNull()
     expect(
-      within(navigation).getByRole('link', { name: 'Painel' }).getAttribute('href'),
+      within(navigation)
+        .getByRole('link', { name: 'Painel de preferências' })
+        .getAttribute('href'),
     ).toBe('/painel')
     expect(
       within(navigation)
@@ -70,7 +72,7 @@ describe('shared app shell components', () => {
     expect(navigation.getAttribute('data-navigation-mode')).toBe('simplified')
     expect(
       within(navigation)
-        .getByRole('link', { name: 'Painel' })
+        .getByRole('link', { name: 'Painel de preferências' })
         .getAttribute('aria-current'),
     ).toBe('page')
     expect(

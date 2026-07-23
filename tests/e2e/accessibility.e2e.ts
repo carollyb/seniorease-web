@@ -181,6 +181,62 @@ test('changes font size and persists Zustand preferences after reload', async ({
   ).toHaveAttribute('data-state', 'selected');
 });
 
+test('applies the mobile-equivalent Alto contrast and restores it after reload', async ({
+  page,
+}) => {
+  await page.goto('/painel');
+
+  await page.getByRole('radio', { name: 'Alto' }).click();
+  await expect(page.getByRole('radio', { name: 'Alto' })).toBeChecked();
+
+  await expect
+    .poll(() =>
+      page.evaluate((storageName) => {
+        return window.localStorage.getItem(storageName);
+      }, PREFERENCE_STORAGE_NAME),
+    )
+    .toContain('maximum');
+
+  const highContrastColors = await page.evaluate(() => {
+    const rootStyles = window.getComputedStyle(document.documentElement);
+    const bodyStyles = window.getComputedStyle(document.body);
+
+    return {
+      background: bodyStyles.backgroundColor,
+      cardBorder: rootStyles
+        .getPropertyValue('--seniorease-card-border')
+        .trim(),
+      focus: rootStyles.getPropertyValue('--seniorease-focus').trim(),
+      selectedBackground: rootStyles
+        .getPropertyValue('--seniorease-selected-background')
+        .trim(),
+      text: bodyStyles.color,
+    };
+  });
+
+  expect(highContrastColors).toEqual({
+    background: 'rgb(255, 255, 255)',
+    cardBorder: '#000000',
+    focus: '#000000',
+    selectedBackground: '#000000',
+    text: 'rgb(0, 0, 0)',
+  });
+
+  await page.reload();
+
+  await expect(page.getByRole('radio', { name: 'Alto' })).toBeChecked();
+  await expect
+    .poll(() =>
+      page.evaluate(() =>
+        window
+          .getComputedStyle(document.documentElement)
+          .getPropertyValue('--seniorease-selected-background')
+          .trim(),
+      ),
+    )
+    .toBe('#000000');
+});
+
 test('creates and completes an activity with guided steps and history', async ({
   page,
 }) => {

@@ -43,7 +43,7 @@ const FONT_SCALE_OPTIONS = [
 const CONTRAST_OPTIONS = [
   { value: 'standard', label: 'Padrão' },
   { value: 'high', label: 'Conforto' },
-  { value: 'maximum', label: 'Máximo', accessibleLabel: 'Máximo' },
+  { value: 'maximum', label: 'Alto', accessibleLabel: 'Alto' },
 ] satisfies readonly PreferenceOption<ContrastLevel>[]
 
 const SPACING_OPTIONS = [
@@ -181,6 +181,7 @@ function PreferencePillGroup<TValue extends string>({
                 '& .MuiFormControlLabel-label': {
                   bgcolor: isSelected ? colors.brandBlue : colors.surface,
                   borderRadius: `${rounded.full}px`,
+                  boxShadow: `inset 0 0 0 1px ${colors.hairlineStrong}`,
                   color: isSelected ? colors.onPrimary : colors.ink,
                   display: 'inline-flex',
                   fontSize: previewFontSize,
@@ -191,9 +192,13 @@ function PreferencePillGroup<TValue extends string>({
                   transition: 'background-color 120ms ease, color 120ms ease',
                   whiteSpace: 'nowrap',
                 },
+                '&:hover .MuiFormControlLabel-label': {
+                  boxShadow: `inset 0 0 0 2px ${colors.interactiveBorder}`,
+                },
                 '& .MuiRadio-root.Mui-focusVisible + .MuiFormControlLabel-label':
                   {
-                    outline: `3px solid ${colors.brandBlue}`,
+                    boxShadow: `0 0 0 6px ${colors.focusHalo}`,
+                    outline: `3px solid ${colors.focus}`,
                     outlineOffset: 3,
                   },
               }}
@@ -254,8 +259,12 @@ function FigmaPillSwitch({
         position: 'relative',
         width: components.switch.width,
         '& input:focus-visible + span': {
-          outline: `3px solid ${colors.brandBlue}`,
+          boxShadow: `0 0 0 6px ${colors.focusHalo}`,
+          outline: `3px solid ${colors.focus}`,
           outlineOffset: 3,
+        },
+        '&:hover span': {
+          boxShadow: `inset 0 0 0 2px ${colors.interactiveBorder}`,
         },
       }}
     >

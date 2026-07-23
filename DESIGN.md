@@ -75,6 +75,33 @@ The visual language prioritizes readability and confidence:
 | `{colors.brand-red}` | `#fbd4d4` | Critical-action confirmation panel |
 | `{colors.coral-dark}` | `#600000` | High-contrast error foreground/background mapping |
 
+### High Contrast: Mobile Parity
+
+The user-facing `Alto` option keeps the persisted web value `maximum` and
+reproduces the `maximum` tokens from
+`seniorease-mobile/src/presentation/hooks/useAccessibilityTheme.ts`. The mobile
+project is a read-only visual reference for this variant.
+
+| Semantic use | Value |
+| --- | --- |
+| Screen and card background | `#FFFFFF` |
+| Primary and secondary text | `#000000` / `#111111` |
+| Card, field, and control border | `#000000` |
+| Selected control / selected text | `#000000` / `#FFFFFF` |
+| Primary button / button text | `#000000` / `#FFFFFF` |
+| Top-bar action and focus halo | `#FFD400` |
+| Warning surface / text | `#FFF7B2` / `#000000` |
+| Success surface / border | `#D9FBE1` / `#0B6E2B` |
+| Danger surface / border / text | `#FFE3E0` / `#8A0000` / `#000000` |
+| Disabled surface / text | `#E5E5E5` / `#595959` |
+
+High-contrast focus uses a black 3px inner outline plus a yellow outer halo so
+it remains visible on both white content surfaces and the black navigation.
+Hover states use a border or a distinct surface tone in addition to pointer
+feedback. Selected, disabled, current-page, error, success, and warning states
+retain native semantics or visible text/icons, so meaning is not communicated
+by color alone.
+
 ## Typography
 
 ### Font Family

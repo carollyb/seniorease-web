@@ -30,7 +30,7 @@ const FONT_SCALE_LABELS: Record<FontScale, string> = {
 const CONTRAST_LABELS: Record<ContrastLevel, string> = {
   standard: 'Padrão',
   high: 'Alto conforto',
-  maximum: 'Máximo',
+  maximum: 'Alto',
 }
 
 const SPACING_LABELS: Record<SpacingLevel, string> = {
@@ -187,6 +187,14 @@ function FigmaPillSwitch({
         height: components.switch.height,
         position: 'relative',
         width: components.switch.width,
+        '& input:focus-visible + span': {
+          boxShadow: `0 0 0 6px ${colors.focusHalo}`,
+          outline: `3px solid ${colors.focus}`,
+          outlineOffset: 3,
+        },
+        '&:hover span': {
+          boxShadow: `inset 0 0 0 2px ${colors.interactiveBorder}`,
+        },
       }}
     >
       <Box

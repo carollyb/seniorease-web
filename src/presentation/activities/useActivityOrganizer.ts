@@ -103,9 +103,25 @@ export function useActivityOrganizer({}: UseActivityOrganizerOptions) {
         setFormError('Informe um título claro para a tarefa.');
         return;
       }
+
+      if (!activityToCreate) {
+        return;
+      }
+
       const input: CreateActivityInput = {
-        title: trimmedTitle,
+        title: activityToCreate.title,
       };
+
+      if (activityToCreate.reminderText) {
+        input.reminderText = activityToCreate.reminderText;
+      }
+
+      if (activityToCreate.steps.length > 0) {
+        input.steps = activityToCreate.steps.map((step) => ({
+          label: step.label,
+        }));
+      }
+
       const createActivityResult = await createActivity(input);
 
       setFeedbackMessage(`Tarefa criada: ${trimmedTitle}.`);

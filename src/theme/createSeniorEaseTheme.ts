@@ -8,7 +8,13 @@ import {
   type SpacingLevel,
   type UserPreferences,
 } from '../domain/preferences'
-import { designTokens } from './designTokens'
+import {
+  designTokens,
+  mobileHighContrastTokens,
+  seniorEaseColorValues,
+  seniorEaseColorVariableNames,
+  type SeniorEaseResolvedColors,
+} from './designTokens'
 
 type SeniorEasePalette = NonNullable<ThemeOptions['palette']> & {
   background: {
@@ -17,6 +23,10 @@ type SeniorEasePalette = NonNullable<ThemeOptions['palette']> & {
   }
   divider: string
   error: {
+    main: string
+    contrastText: string
+  }
+  info: {
     main: string
     contrastText: string
   }
@@ -59,6 +69,79 @@ const touchTargetBySpacing: Record<SpacingLevel, number> = {
   comfortable: designTokens.components.button.minHeight,
   wide: 56,
   extraWide: 64,
+}
+
+const standardResolvedColors: SeniorEaseResolvedColors = {
+  ...seniorEaseColorValues,
+  focus: seniorEaseColorValues.brandBlue,
+  focusHalo: 'transparent',
+  interactiveBorder: seniorEaseColorValues.inkDeep,
+  disabledBackground: seniorEaseColorValues.hairline,
+  disabledText: seniorEaseColorValues.steel,
+  primaryHover: seniorEaseColorValues.charcoal,
+  secondaryHover: seniorEaseColorValues.surface,
+  completionHover: seniorEaseColorValues.yellowBorder,
+}
+
+const maximumResolvedColors: SeniorEaseResolvedColors = {
+  primary: mobileHighContrastTokens.primaryButtonBackground,
+  onPrimary: mobileHighContrastTokens.primaryButtonText,
+  canvas: mobileHighContrastTokens.cardBackground,
+  surface: mobileHighContrastTokens.screenBackground,
+  surfaceSoft: mobileHighContrastTokens.cardBackground,
+  hairline: mobileHighContrastTokens.cardBorder,
+  hairlineSoft: mobileHighContrastTokens.cardBorder,
+  hairlineStrong: mobileHighContrastTokens.cardBorder,
+  inkDeep: mobileHighContrastTokens.textPrimary,
+  ink: mobileHighContrastTokens.textPrimary,
+  charcoal: mobileHighContrastTokens.primaryHover,
+  slate: mobileHighContrastTokens.textSecondary,
+  steel: mobileHighContrastTokens.disabledText,
+  muted: mobileHighContrastTokens.primaryButtonText,
+  brandBlue: mobileHighContrastTokens.chipSelectedBackground,
+  blue450: mobileHighContrastTokens.primaryHover,
+  bluePressed: mobileHighContrastTokens.chipSelectedBackground,
+  brandYellow: mobileHighContrastTokens.topBarActionBackground,
+  yellowLight: mobileHighContrastTokens.warningSurface,
+  yellowSoft: mobileHighContrastTokens.warningSurface,
+  yellowBorder: mobileHighContrastTokens.cardBorder,
+  yellowDark: mobileHighContrastTokens.warningText,
+  brandTeal: mobileHighContrastTokens.successBorder,
+  tealLight: mobileHighContrastTokens.successSurface,
+  mossDark: mobileHighContrastTokens.textPrimary,
+  brandRed: mobileHighContrastTokens.dangerSurface,
+  brandRedDark: '#FFD0CC',
+  coralDark: mobileHighContrastTokens.dangerText,
+  successAccent: mobileHighContrastTokens.successBorder,
+  focus: mobileHighContrastTokens.focus,
+  focusHalo: mobileHighContrastTokens.focusHalo,
+  interactiveBorder: mobileHighContrastTokens.interactiveBorder,
+  disabledBackground: mobileHighContrastTokens.disabledBackground,
+  disabledText: mobileHighContrastTokens.disabledText,
+  primaryHover: mobileHighContrastTokens.primaryHover,
+  secondaryHover: mobileHighContrastTokens.secondaryHover,
+  completionHover: mobileHighContrastTokens.completionHover,
+}
+
+function createResolvedColors(
+  contrastLevel: ContrastLevel,
+): SeniorEaseResolvedColors {
+  return contrastLevel === 'maximum'
+    ? maximumResolvedColors
+    : standardResolvedColors
+}
+
+function createCssColorVariables(
+  colors: SeniorEaseResolvedColors,
+): Record<string, string> {
+  return Object.fromEntries(
+    Object.entries(seniorEaseColorVariableNames).map(
+      ([colorName, variableName]) => [
+        variableName,
+        colors[colorName as keyof SeniorEaseResolvedColors],
+      ],
+    ),
+  )
 }
 
 function toScaledPx(baseSize: number, fontScale: FontScale): string {
@@ -144,39 +227,49 @@ function createTypographyOptions(
 }
 
 function createPaletteOptions(contrastLevel: ContrastLevel): SeniorEasePalette {
-  const { colors } = designTokens
+  const colors = seniorEaseColorValues
 
   if (contrastLevel === 'maximum') {
     return {
-      mode: 'dark',
+      mode: 'light',
       primary: {
-        main: '#ffffff',
-        contrastText: '#000000',
+        main: mobileHighContrastTokens.primaryButtonBackground,
+        contrastText: mobileHighContrastTokens.primaryButtonText,
       },
       secondary: {
-        main: colors.brandYellow,
-        contrastText: '#000000',
+        main: mobileHighContrastTokens.chipSelectedBackground,
+        contrastText: mobileHighContrastTokens.chipSelectedText,
       },
       success: {
-        main: '#00e091',
-        contrastText: '#000000',
+        main: mobileHighContrastTokens.successBorder,
+        contrastText: '#FFFFFF',
       },
       error: {
-        main: '#ffb4b4',
-        contrastText: '#000000',
+        main: mobileHighContrastTokens.dangerBorder,
+        contrastText: '#FFFFFF',
       },
       warning: {
-        main: colors.brandYellow,
-        contrastText: '#000000',
+        main: mobileHighContrastTokens.topBarActionBackground,
+        contrastText: mobileHighContrastTokens.topBarActionText,
+      },
+      info: {
+        main: mobileHighContrastTokens.infoBorder,
+        contrastText: '#FFFFFF',
       },
       background: {
-        default: '#000000',
-        paper: '#000000',
+        default: mobileHighContrastTokens.screenBackground,
+        paper: mobileHighContrastTokens.cardBackground,
       },
-      divider: '#ffffff',
+      divider: mobileHighContrastTokens.cardBorder,
       text: {
-        primary: '#ffffff',
-        secondary: '#f7f8fa',
+        primary: mobileHighContrastTokens.textPrimary,
+        secondary: mobileHighContrastTokens.textSecondary,
+      },
+      action: {
+        disabled: mobileHighContrastTokens.disabledText,
+        disabledBackground: mobileHighContrastTokens.disabledBackground,
+        hover: 'rgba(0, 0, 0, 0.12)',
+        selected: 'rgba(0, 0, 0, 0.16)',
       },
     }
   }
@@ -202,6 +295,10 @@ function createPaletteOptions(contrastLevel: ContrastLevel): SeniorEasePalette {
       },
       warning: {
         main: colors.yellowDark,
+        contrastText: colors.onPrimary,
+      },
+      info: {
+        main: colors.bluePressed,
         contrastText: colors.onPrimary,
       },
       background: {
@@ -238,6 +335,10 @@ function createPaletteOptions(contrastLevel: ContrastLevel): SeniorEasePalette {
       main: colors.brandYellow,
       contrastText: colors.primary,
     },
+    info: {
+      main: colors.brandBlue,
+      contrastText: colors.onPrimary,
+    },
     background: {
       default: colors.surface,
       paper: colors.canvas,
@@ -255,15 +356,13 @@ function createComponentOptions(
   palette: SeniorEasePalette,
 ): ThemeOptions['components'] {
   const { colors, rounded, spacing } = designTokens
+  const resolvedColors = createResolvedColors(preferences.contrastLevel)
   const componentTokens = designTokens.components
   const touchTarget = touchTargetBySpacing[preferences.spacingLevel]
   const spacingBase = spacingBaseByLevel[preferences.spacingLevel]
-  const focusColor =
-    preferences.contrastLevel === 'maximum'
-      ? colors.brandYellow
-      : colors.brandBlue
   const focusStyles = {
-    outline: `3px solid ${focusColor}`,
+    boxShadow: `0 0 0 6px ${colors.focusHalo}`,
+    outline: `3px solid ${colors.focus}`,
     outlineOffset: 3,
   }
   const buttonPadding = `${Math.max(
@@ -285,9 +384,22 @@ function createComponentOptions(
   return {
     MuiCssBaseline: {
       styleOverrides: {
+        ':root': createCssColorVariables(resolvedColors),
         body: {
           backgroundColor: palette.background.default,
           color: palette.text.primary,
+        },
+        '::selection': {
+          backgroundColor: resolvedColors.brandBlue,
+          color: resolvedColors.onPrimary,
+        },
+        a: {
+          color: palette.secondary.main,
+          textDecorationThickness: '0.12em',
+          textUnderlineOffset: '0.18em',
+          '&:hover': {
+            textDecorationThickness: '0.2em',
+          },
         },
         ':focus-visible': focusStyles,
         '@media (prefers-reduced-motion: reduce)': {
@@ -320,14 +432,18 @@ function createComponentOptions(
           padding: buttonPadding,
           textTransform: 'none',
           '&.Mui-disabled': {
-            backgroundColor: colors.hairline,
-            color: colors.steel,
+            backgroundColor: colors.disabledBackground,
+            color: colors.disabledText,
+            opacity: 1,
+          },
+          '&:hover': {
+            boxShadow: `inset 0 0 0 2px ${colors.interactiveBorder}`,
           },
           '&.Mui-focusVisible': focusStyles,
           '&[aria-current="page"]': selectedState,
           '&[aria-pressed="true"]': {
             ...selectedState,
-            boxShadow: `inset 0 0 0 2px ${focusColor}`,
+            boxShadow: `inset 0 0 0 2px ${colors.focus}`,
           },
         },
       },
@@ -363,8 +479,14 @@ function createComponentOptions(
         root: {
           borderRadius: rounded.md,
           minHeight: touchTarget,
+          backgroundColor: colors.canvas,
+          color: colors.ink,
           '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
-            borderColor: focusColor,
+            borderColor: colors.focus,
+            borderWidth: 2,
+          },
+          '&:hover .MuiOutlinedInput-notchedOutline': {
+            borderColor: colors.interactiveBorder,
             borderWidth: 2,
           },
           '&.Mui-error .MuiOutlinedInput-notchedOutline': {
@@ -384,11 +506,51 @@ function createComponentOptions(
     MuiFormHelperText: {
       styleOverrides: {
         root: {
+          color: colors.slate,
           fontSize: toScaledPx(
             designTokens.typography.caption.fontSize,
             preferences.fontScale,
           ),
           lineHeight: designTokens.typography.caption.lineHeight,
+          '&.Mui-error': {
+            color: palette.error.main,
+            fontWeight: 600,
+          },
+        },
+      },
+    },
+    MuiFormLabel: {
+      styleOverrides: {
+        root: {
+          color: colors.ink,
+          '&.Mui-focused': {
+            color: colors.ink,
+          },
+          '&.Mui-error': {
+            color: palette.error.main,
+          },
+        },
+      },
+    },
+    MuiRadio: {
+      styleOverrides: {
+        root: {
+          color: colors.ink,
+          '&.Mui-checked': {
+            color: colors.brandBlue,
+          },
+          '&.Mui-focusVisible': focusStyles,
+        },
+      },
+    },
+    MuiCheckbox: {
+      styleOverrides: {
+        root: {
+          color: colors.ink,
+          '&.Mui-checked': {
+            color: colors.brandBlue,
+          },
+          '&.Mui-focusVisible': focusStyles,
         },
       },
     },
@@ -396,6 +558,9 @@ function createComponentOptions(
       styleOverrides: {
         root: {
           minHeight: touchTarget,
+          '&:hover': {
+            boxShadow: `inset 0 0 0 2px ${colors.interactiveBorder}`,
+          },
           '&.Mui-focusVisible': focusStyles,
           '&[aria-selected="true"]': selectedState,
         },
@@ -405,6 +570,9 @@ function createComponentOptions(
       styleOverrides: {
         root: {
           minHeight: touchTarget,
+          '&:hover': {
+            boxShadow: `inset 0 0 0 2px ${colors.interactiveBorder}`,
+          },
           '&.Mui-focusVisible': focusStyles,
           '&[aria-current="page"]': selectedState,
           '&[aria-selected="true"]': selectedState,
@@ -418,6 +586,9 @@ function createComponentOptions(
           minHeight: touchTarget,
           minWidth: touchTarget,
           textTransform: 'none',
+          '&:hover': {
+            boxShadow: `inset 0 0 0 2px ${colors.interactiveBorder}`,
+          },
           '&.Mui-focusVisible': focusStyles,
           '&[aria-selected="true"]': selectedState,
         },
@@ -438,8 +609,13 @@ function createComponentOptions(
         switchBase: {
           padding: componentTokens.switch.thumbInset,
           '&.Mui-focusVisible + .MuiSwitch-track': {
-            outline: `3px solid ${focusColor}`,
+            boxShadow: `0 0 0 6px ${colors.focusHalo}`,
+            outline: `3px solid ${colors.focus}`,
             outlineOffset: 3,
+          },
+          '&.Mui-checked + .MuiSwitch-track': {
+            backgroundColor: colors.successAccent,
+            opacity: 1,
           },
         },
         track: {
@@ -493,15 +669,61 @@ function createComponentOptions(
         },
       },
     },
+    MuiDialog: {
+      styleOverrides: {
+        paper: {
+          border: `2px solid ${colors.hairline}`,
+        },
+      },
+    },
     MuiAlert: {
       styleOverrides: {
         root: {
+          border: '2px solid',
           borderRadius: rounded.md,
           fontSize: toScaledPx(
             designTokens.typography.body.fontSize,
             preferences.fontScale,
           ),
           minHeight: touchTarget,
+          '&.MuiAlert-standardSuccess': {
+            backgroundColor: colors.tealLight,
+            borderColor: palette.success.main,
+            color: colors.ink,
+          },
+          '&.MuiAlert-standardWarning': {
+            backgroundColor: colors.yellowSoft,
+            borderColor: palette.warning.main,
+            color: colors.yellowDark,
+          },
+          '&.MuiAlert-standardError': {
+            backgroundColor: colors.brandRed,
+            borderColor: palette.error.main,
+            color: colors.coralDark,
+          },
+          '&.MuiAlert-standardInfo': {
+            backgroundColor:
+              preferences.contrastLevel === 'maximum'
+                ? mobileHighContrastTokens.infoSurface
+                : colors.surfaceSoft,
+            borderColor: palette.info.main,
+            color: colors.ink,
+          },
+        },
+      },
+    },
+    MuiLink: {
+      styleOverrides: {
+        root: {
+          color: palette.secondary.main,
+          fontWeight: 600,
+          textDecoration: 'underline',
+          textDecorationThickness: '0.12em',
+          textUnderlineOffset: '0.18em',
+          '&:hover': {
+            textDecorationThickness: '0.2em',
+          },
+          '&.Mui-focusVisible': focusStyles,
         },
       },
     },

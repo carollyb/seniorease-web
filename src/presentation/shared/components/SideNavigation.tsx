@@ -111,8 +111,12 @@ function NavigationList({ activeRoute, items, label }: NavigationListProps) {
                 textDecoration: 'none',
                 whiteSpace: 'nowrap',
                 width: 'auto',
+                '&:hover': {
+                  boxShadow: `inset 0 0 0 2px ${colors.interactiveBorder}`,
+                },
                 '&:focus-visible': {
-                  outline: `3px solid ${colors.brandBlue}`,
+                  boxShadow: `0 0 0 6px ${colors.focusHalo}`,
+                  outline: `3px solid ${colors.focus}`,
                   outlineOffset: 3,
                 },
               }}
