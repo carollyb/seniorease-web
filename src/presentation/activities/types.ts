@@ -1,6 +1,7 @@
 import type { Activity, CreateActivityInput } from '../../domain/activities';
 
 export type ActivityOrganizerMode = 'standard' | 'simplified';
+export type HistoryFilter = 'completed' | 'pending';
 
 export interface ActivityOrganizerCompleteEventDetail {
   activityId: string;
@@ -24,4 +25,6 @@ export interface GuidedStepsProps {
   onFeedbackMessageChange(message: string): void;
 }
 
-export interface UseActivityOrganizerOptions {}
+export interface UseActivityOrganizerOptions {
+  mode: ActivityOrganizerMode;
+}

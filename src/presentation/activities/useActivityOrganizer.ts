@@ -12,7 +12,10 @@ import {
   ListActivitiesUseCase,
   ListCompletedActivitiesUseCase,
 } from '../../application/activities';
-import type { UseActivityOrganizerOptions } from './types';
+import type {
+  HistoryFilter,
+  UseActivityOrganizerOptions,
+} from './types';
 import { LocalActivityRepository } from '../../infrastructure/repositories';
 import { usePreferenceStore } from '@/stores/preferences/usePreferenceStore';
 import { createActivityStore } from '@/stores/activities';
@@ -32,12 +35,14 @@ const useActivityStore = createActivityStore({
   ),
 });
 
-export function useActivityOrganizer({}: UseActivityOrganizerOptions) {
+export function useActivityOrganizer({ mode }: UseActivityOrganizerOptions) {
   const [isCreating, setIsCreating] = useState(false);
   const [title, setTitle] = useState('');
   const [reminderText, setReminderText] = useState('');
   const [stepLabels, setStepLabels] = useState<string[]>(() => ['']);
   const [formError, setFormError] = useState<string | null>(null);
+  const [historyFilter, setHistoryFilter] =
+    useState<HistoryFilter>('completed');
   const [feedbackMessage, setFeedbackMessage] = useState(
     'Organizador pronto para novas atividades.',
   );
@@ -70,6 +75,19 @@ export function useActivityOrganizer({}: UseActivityOrganizerOptions) {
     ? (activities.find((activity) => activity.id === selectedActivityId) ??
       null)
     : null;
+  const isSimplified = mode === 'simplified';
+  const historyActivities =
+    isSimplified || historyFilter === 'completed'
+      ? completedActivities
+      : activities.filter((activity) => activity.status === 'pending');
+  const historyListLabel =
+    !isSimplified && historyFilter === 'pending'
+      ? 'Histórico de atividades a fazer'
+      : 'Histórico de atividades concluidas';
+  const emptyHistoryMessage =
+    !isSimplified && historyFilter === 'pending'
+      ? 'Sem tarefas a fazer.'
+      : 'Sem itens no histórico.';
 
   const handleShowCreateForm = () => {
     setIsCreating(true);
@@ -101,6 +119,10 @@ export function useActivityOrganizer({}: UseActivityOrganizerOptions) {
         ? [...currentLabels, '']
         : currentLabels;
     });
+  };
+
+  const handleHistoryFilterChange = (filter: HistoryFilter) => {
+    setHistoryFilter(filter);
   };
 
   const pendingCompletionRef = useRef<PendingCompletion | null>(null);
@@ -265,7 +287,9 @@ export function useActivityOrganizer({}: UseActivityOrganizerOptions) {
     handleSubmitCreate,
     handleConfirmCreationModal,
     handleCancelCreation,
+    handleHistoryFilterChange,
     isCreating,
+    isSimplified,
     reminderText,
     selectedActivity,
     setFeedbackMessage,
@@ -277,9 +301,12 @@ export function useActivityOrganizer({}: UseActivityOrganizerOptions) {
     modalType,
     handleConfirmCompletionModal,
     activities,
+    emptyHistoryMessage,
+    historyActivities,
+    historyFilter,
+    historyListLabel,
     isLoading,
     errorMessage,
-    completedActivities,
     selectedActivityId,
     selectActivity,
     handleCompleteActivity,

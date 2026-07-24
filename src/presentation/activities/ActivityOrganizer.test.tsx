@@ -30,6 +30,26 @@ const pendingActivity: Activity = {
   createdAt: '2026-06-01T12:00:00.000Z',
 };
 
+const completedActivity: Activity = {
+  id: 'activity-2',
+  title: 'Revisar orçamento',
+  reminderText: 'Ontem às 15h',
+  status: 'completed',
+  steps: [
+    { id: 'step-3', label: 'Conferir valores', completed: true },
+    { id: 'step-4', label: 'Enviar aprovação', completed: true },
+  ],
+  createdAt: '2026-05-31T12:00:00.000Z',
+  completedAt: '2026-06-01T15:00:00.000Z',
+};
+
+const inProgressActivity: Activity = {
+  ...pendingActivity,
+  id: 'activity-3',
+  title: 'Preparar apresentação',
+  status: 'inProgress',
+};
+
 function renderOrganizer(
   props: Partial<React.ComponentProps<typeof ActivityOrganizer>> = {},
 ) {
@@ -83,7 +103,7 @@ describe('ActivityOrganizer', () => {
   });
 
   it('renders an empty state with one clear primary action', async () => {
-    renderOrganizer();
+    renderOrganizer({ mode: 'simplified' });
     await waitForOrganizerToLoad();
 
     expect(screen.getByText('Sem tarefas para hoje')).not.toBeNull();
@@ -236,6 +256,81 @@ describe('ActivityOrganizer', () => {
         name: 'Passos de Enviar trabalho',
       }),
     ).not.toBeNull();
+  });
+
+  it('defaults the standard history filter to completed activities', async () => {
+    storeActivities([pendingActivity, completedActivity]);
+    renderOrganizer({ mode: 'standard' });
+
+    const filterGroup = await screen.findByRole('group', {
+      name: 'Filtrar histórico por status',
+    });
+    const completedFilter = within(filterGroup).getByRole('button', {
+      name: 'Concluídas',
+    });
+    const pendingFilter = within(filterGroup).getByRole('button', {
+      name: 'A Fazer',
+    });
+
+    expect(completedFilter.getAttribute('aria-pressed')).toBe('true');
+    expect(pendingFilter.getAttribute('aria-pressed')).toBe('false');
+
+    const history = screen.getByRole('list', {
+      name: 'Histórico de atividades concluidas',
+    });
+
+    expect(within(history).getByText('Revisar orçamento')).not.toBeNull();
+    expect(within(history).queryByText('Enviar trabalho')).toBeNull();
+  });
+
+  it('lists only pending activities with a warning status and bullet steps', async () => {
+    storeActivities([pendingActivity, inProgressActivity]);
+    renderOrganizer({ mode: 'standard' });
+
+    const pendingFilter = await screen.findByRole('button', {
+      name: 'A Fazer',
+    });
+    act(() => pendingFilter.focus());
+    fireEvent.click(pendingFilter);
+
+    expect(document.activeElement).toBe(pendingFilter);
+    expect(pendingFilter.getAttribute('aria-pressed')).toBe('true');
+    expect(
+      screen
+        .getByRole('button', { name: 'Concluídas' })
+        .getAttribute('aria-pressed'),
+    ).toBe('false');
+
+    const history = screen.getByRole('list', {
+      name: 'Histórico de atividades a fazer',
+    });
+    expect(within(history).getByText('Enviar trabalho')).not.toBeNull();
+    expect(within(history).queryByText('Preparar apresentação')).toBeNull();
+    expect(within(history).getByText('Status: Pendente')).not.toBeNull();
+
+    const steps = within(history).getByRole('list', {
+      name: 'Passos de Enviar trabalho',
+    });
+    expect(within(steps).getAllByRole('listitem')).toHaveLength(2);
+    expect(within(steps).getByText('Abrir a plataforma')).not.toBeNull();
+    expect(within(steps).getByText('Enviar o arquivo')).not.toBeNull();
+  });
+
+  it('keeps simplified navigation unchanged without history filters', async () => {
+    storeActivities([pendingActivity, completedActivity]);
+    renderOrganizer({ mode: 'simplified' });
+
+    const history = await screen.findByRole('list', {
+      name: 'Histórico de atividades concluidas',
+    });
+
+    expect(
+      screen.queryByRole('group', {
+        name: 'Filtrar histórico por status',
+      }),
+    ).toBeNull();
+    expect(within(history).getByText('Revisar orçamento')).not.toBeNull();
+    expect(within(history).queryByText('Enviar trabalho')).toBeNull();
   });
 
   it('renders guided steps in order with keyboard-operable controls', async () => {

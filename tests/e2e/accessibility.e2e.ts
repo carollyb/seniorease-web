@@ -7,6 +7,7 @@ import {
 } from '@playwright/test';
 
 const PREFERENCE_STORAGE_NAME = 'seniorease-preferences:v1';
+const ACTIVITY_STORAGE_NAME = 'seniorease-activities:v1';
 
 const dashboardViewports = [
   { label: 'desktop', size: { width: 1440, height: 900 } },
@@ -265,6 +266,118 @@ test('creates and completes an activity with guided steps and history', async ({
       .getByRole('list', { name: 'Histórico de atividades concluidas' })
       .getByText(activityTitle),
   ).toBeVisible();
+});
+
+test('filters history by status with keyboard-accessible pills', async ({
+  page,
+}) => {
+  await page.addInitScript(
+    ({ activityStorageName, preferenceStorageName }) => {
+      window.localStorage.setItem(
+        preferenceStorageName,
+        JSON.stringify({
+          state: {
+            preferences: {
+              fontScale: 'extraLarge',
+              contrastLevel: 'high',
+              spacingLevel: 'extraWide',
+              navigationMode: 'standard',
+              reinforcedFeedback: true,
+              extraConfirmation: true,
+              remindersEnabled: true,
+              reminderTone: 'gentle',
+            },
+          },
+          version: 1,
+        }),
+      );
+      window.localStorage.setItem(
+        activityStorageName,
+        JSON.stringify({
+          activities: [
+            {
+              id: 'pending-history-activity',
+              title: 'Enviar documentos',
+              reminderText: 'Hoje às 18h',
+              status: 'pending',
+              steps: [
+                {
+                  id: 'pending-step-1',
+                  label: 'Separar os documentos',
+                  completed: false,
+                },
+                {
+                  id: 'pending-step-2',
+                  label: 'Enviar por e-mail',
+                  completed: false,
+                },
+              ],
+              createdAt: '2026-07-23T12:00:00.000Z',
+            },
+            {
+              id: 'completed-history-activity',
+              title: 'Revisar agenda',
+              reminderText: 'Ontem às 15h',
+              status: 'completed',
+              steps: [],
+              createdAt: '2026-07-22T12:00:00.000Z',
+              completedAt: '2026-07-22T15:00:00.000Z',
+            },
+          ],
+        }),
+      );
+    },
+    {
+      activityStorageName: ACTIVITY_STORAGE_NAME,
+      preferenceStorageName: PREFERENCE_STORAGE_NAME,
+    },
+  );
+
+  await page.goto('/atividades');
+
+  const filterGroup = page.getByRole('group', {
+    name: 'Filtrar histórico por status',
+  });
+  const completedFilter = filterGroup.getByRole('button', {
+    name: 'Concluídas',
+  });
+  const pendingFilter = filterGroup.getByRole('button', {
+    name: 'A Fazer',
+  });
+
+  await expect(completedFilter).toHaveAttribute('aria-pressed', 'true');
+  await expect(pendingFilter).toHaveAttribute('aria-pressed', 'false');
+  await expect(
+    page
+      .getByRole('list', { name: 'Histórico de atividades concluidas' })
+      .getByText('Revisar agenda'),
+  ).toBeVisible();
+
+  await pendingFilter.focus();
+  await page.keyboard.press('Space');
+
+  await expect(pendingFilter).toBeFocused();
+  await expect(pendingFilter).toHaveAttribute('aria-pressed', 'true');
+  await expect(completedFilter).toHaveAttribute('aria-pressed', 'false');
+
+  const pendingHistory = page.getByRole('list', {
+    name: 'Histórico de atividades a fazer',
+  });
+  const pendingStatus = pendingHistory
+    .getByText('Status: Pendente')
+    .locator('..');
+  const steps = pendingHistory.getByRole('list', {
+    name: 'Passos de Enviar documentos',
+  });
+
+  await expect(pendingHistory.getByText('Enviar documentos')).toBeVisible();
+  await expect(pendingStatus).toHaveCSS(
+    'background-color',
+    'rgb(255, 248, 224)',
+  );
+  await expect(steps).toHaveCSS('list-style-type', 'disc');
+  await expect(steps.getByRole('listitem')).toHaveCount(2);
+  await expectNoHorizontalOverflow(page);
 });
 
 test('supports keyboard access, skip link focus, and dialog focus return', async ({

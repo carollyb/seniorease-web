@@ -1,4 +1,5 @@
 import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
 import InputAdornment from '@mui/material/InputAdornment';
 import Stack from '@mui/material/Stack';
@@ -13,7 +14,10 @@ import {
   getActivityStatusLabel,
   GuidedSteps,
 } from './components';
-import type { ActivityOrganizerProps } from './types';
+import type {
+  ActivityOrganizerProps,
+  HistoryFilter,
+} from './types';
 import { useActivityOrganizer } from './useActivityOrganizer';
 import { ConfirmationDialog } from './components/ConfirmationDialog';
 
@@ -26,12 +30,77 @@ export const activityOrganizerWidgetContract = {
 
 const { colors, components } = designTokens;
 
+const HISTORY_FILTER_OPTIONS = [
+  { label: 'Concluídas', value: 'completed' },
+  { label: 'A Fazer', value: 'pending' },
+] satisfies readonly { label: string; value: HistoryFilter }[];
+
+interface HistoryFilterPillsProps {
+  onChange(filter: HistoryFilter): void;
+  value: HistoryFilter;
+}
+
+function HistoryFilterPills({
+  onChange,
+  value,
+}: HistoryFilterPillsProps) {
+  return (
+    <Box
+      aria-label='Filtrar histórico por status'
+      role='group'
+      sx={{
+        display: 'flex',
+        flexWrap: 'wrap',
+        gap: 1,
+      }}
+    >
+      {HISTORY_FILTER_OPTIONS.map((option) => {
+        const isSelected = option.value === value;
+
+        return (
+          <Button
+            aria-pressed={isSelected}
+            disableRipple
+            key={option.value}
+            onClick={() => onChange(option.value)}
+            sx={{
+              bgcolor: colors.surface,
+              borderColor: colors.hairlineStrong,
+              color: colors.ink,
+              px: `${components.pill.paddingX}px`,
+              py: `${components.pill.compactPaddingY}px`,
+              '&:hover': {
+                bgcolor: isSelected ? colors.bluePressed : colors.surfaceSoft,
+                borderColor: colors.interactiveBorder,
+              },
+              '&[aria-pressed="true"]': {
+                bgcolor: colors.brandBlue,
+                borderColor: colors.brandBlue,
+                color: colors.onPrimary,
+              },
+            }}
+            type='button'
+            variant='outlined'
+          >
+            {option.label}
+          </Button>
+        );
+      })}
+    </Box>
+  );
+}
+
 export function ActivityOrganizer({
   mode = 'standard',
 }: ActivityOrganizerProps) {
   const {
     activities,
-    completedActivities,
+    emptyHistoryMessage,
+    handleHistoryFilterChange,
+    historyActivities,
+    historyFilter,
+    historyListLabel,
+    isSimplified,
     selectedActivityId,
     isCreating,
     handleSubmitCreate,
@@ -58,7 +127,7 @@ export function ActivityOrganizer({
     handleCompleteActivity,
     handleCancelCompletion,
     activityToComplete,
-  } = useActivityOrganizer({});
+  } = useActivityOrganizer({ mode });
 
   return (
     <>
@@ -263,93 +332,115 @@ export function ActivityOrganizer({
             />
           ) : null}
 
-          {completedActivities.length > 0 ? (
-            <Box
-              component='section'
-              aria-labelledby='completed-activities-title'
-            >
-              <Stack spacing={2}>
-                <Typography
-                  component='h3'
-                  id='completed-activities-title'
-                  variant='h5'
-                >
-                  Histórico
-                </Typography>
-                <Box
-                  component='ul'
-                  aria-label='Histórico de atividades concluidas'
-                  sx={{
-                    display: 'grid',
-                    gap: 1,
+          <Box
+            component='section'
+            aria-labelledby='completed-activities-title'
+            sx={{
+              display: 'grid',
+              gap:
+                historyActivities.length === 0 ? { xs: 1.5, sm: 2 } : 2,
+              ...(historyActivities.length === 0
+                ? {
+                    bgcolor: colors.surfaceSoft,
+                    border: '1px solid',
+                    borderColor: colors.hairline,
+                    borderRadius: `${components.card.radius}px`,
                     listStyle: 'none',
                     m: 0,
-                    p: 0,
-                  }}
-                >
-                  {completedActivities.map((activity) => (
-                    <Box
-                      component='li'
-                      key={activity.id}
-                      sx={{
-                        bgcolor: colors.canvas,
-                        border: '1px solid',
-                        borderColor: colors.hairline,
-                        borderRadius: `${components.activityRow.radius}px`,
-                        p: 2,
-                      }}
-                    >
-                      <Stack spacing={1}>
-                        <Typography fontWeight={700}>
-                          {activity.title}
-                        </Typography>
-                        <StatusPill
-                          compact
-                          label={`Status: ${getActivityStatusLabel(
-                            activity.status,
-                          )}`}
-                          tone='success'
-                        />
-                        <Typography color='text.secondary'>
-                          {getActivityReminderLabel(activity)}
-                        </Typography>
-                      </Stack>
-                    </Box>
-                  ))}
-                </Box>
-              </Stack>
-            </Box>
-          ) : (
-            <Box
-              component='section'
-              aria-labelledby='completed-activities-title'
-              sx={{
-                bgcolor: colors.surfaceSoft,
-                border: '1px solid',
-                borderColor: colors.hairline,
-                borderRadius: `${components.card.radius}px`,
-                display: 'grid',
-                gap: { xs: 1.5, sm: 2 },
-                listStyle: 'none',
-                m: 0,
-                p: {
-                  xs: `${designTokens.spacing.md}px`,
-                  sm: `${components.card.padding}px`,
-                },
-              }}
+                    p: {
+                      xs: `${designTokens.spacing.md}px`,
+                      sm: `${components.card.padding}px`,
+                    },
+                  }
+                : {}),
+            }}
+          >
+            <Typography
+              component='h3'
+              id='completed-activities-title'
+              variant='h5'
             >
-              <Typography
-                component='h3'
-                id='completed-activities-title'
-                variant='h5'
+              Histórico
+            </Typography>
+            {!isSimplified ? (
+              <HistoryFilterPills
+                onChange={handleHistoryFilterChange}
+                value={historyFilter}
+              />
+            ) : null}
+            {historyActivities.length > 0 ? (
+              <Box
+                aria-label={historyListLabel}
+                component='ul'
+                sx={{
+                  display: 'grid',
+                  gap: 1,
+                  listStyle: 'none',
+                  m: 0,
+                  p: 0,
+                }}
               >
-                Histórico
-              </Typography>
+                {historyActivities.map((activity) => (
+                  <Box
+                    component='li'
+                    key={activity.id}
+                    sx={{
+                      bgcolor: colors.canvas,
+                      border: '1px solid',
+                      borderColor: colors.hairline,
+                      borderRadius: `${components.activityRow.radius}px`,
+                      p: 2,
+                    }}
+                  >
+                    <Stack spacing={1}>
+                      <Typography fontWeight={700}>
+                        {activity.title}
+                      </Typography>
+                      <StatusPill
+                        compact
+                        label={`Status: ${getActivityStatusLabel(
+                          activity.status,
+                        )}`}
+                        tone={
+                          activity.status === 'pending'
+                            ? 'warning'
+                            : 'success'
+                        }
+                      />
+                      <Typography color='text.secondary'>
+                        {getActivityReminderLabel(activity)}
+                      </Typography>
+                      {activity.status === 'pending' &&
+                      activity.steps.length > 0 ? (
+                        <Box
+                          aria-label={`Passos de ${activity.title}`}
+                          component='ul'
+                          sx={{
+                            color: colors.slate,
+                            display: 'grid',
+                            gap: 0.5,
+                            listStyleType: 'disc',
+                            m: 0,
+                            pl: 3,
+                          }}
+                        >
+                          {activity.steps.map((step) => (
+                            <Typography component='li' key={step.id}>
+                              {step.label}
+                            </Typography>
+                          ))}
+                        </Box>
+                      ) : null}
+                    </Stack>
+                  </Box>
+                ))}
+              </Box>
+            ) : (
               <Typography color='text.secondary'>
-                Sem itens no histórico.
+                {emptyHistoryMessage}
               </Typography>
-            </Box>
-          )}
+            )}
+          </Box>
         </Stack>
       </Box>
       <ConfirmationDialog
