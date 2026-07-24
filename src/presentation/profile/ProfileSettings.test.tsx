@@ -204,7 +204,9 @@ describe('ProfileSettings', () => {
     expect(screen.getByRole('heading', { name: 'Configurações' })).not.toBeNull()
     expect(screen.getAllByRole('navigation', { name: 'SeniorEase' })).toHaveLength(1)
     expect(
-      screen.getByRole('heading', { name: 'Confirmar antes de excluir' }),
+      screen.getByRole('switch', {
+        name: 'Perguntar antes de excluir atividades',
+      }),
     ).not.toBeNull()
     expect(
       screen.getByRole('button', { name: 'Salvar configurações' }),
