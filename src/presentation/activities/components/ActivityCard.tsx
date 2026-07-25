@@ -1,35 +1,35 @@
-import { useId } from 'react'
-import Box from '@mui/material/Box'
-import Stack from '@mui/material/Stack'
-import Typography from '@mui/material/Typography'
+import { useId } from 'react';
+import Box from '@mui/material/Box';
+import Stack from '@mui/material/Stack';
+import Typography from '@mui/material/Typography';
 
-import type { Activity, ActivityStatus } from '../../../domain/activities'
-import { designTokens } from '../../../theme/designTokens'
-import { PrimaryButton, StatusPill } from '../../shared'
+import type { Activity, ActivityStatus } from '../../../domain/activities';
+import { designTokens } from '../../../theme/designTokens';
+import { PrimaryButton, StatusPill } from '../../shared';
 
 export interface ActivityCardProps {
-  activity: Activity
-  isLoading: boolean
-  isSelected: boolean
-  onOpen(activityId: string): void
+  activity: Activity;
+  isLoading: boolean;
+  isSelected: boolean;
+  onOpen(activityId: string): void;
 }
 
 const STATUS_LABELS: Record<ActivityStatus, string> = {
   pending: 'Pendente',
   inProgress: 'Em andamento',
-  completed: 'Concluida',
-}
+  completed: 'Concluída',
+};
 
-const { colors, components, typography } = designTokens
+const { colors, components, typography } = designTokens;
 
 export function getActivityStatusLabel(status: ActivityStatus): string {
-  return STATUS_LABELS[status]
+  return STATUS_LABELS[status];
 }
 
 export function getActivityReminderLabel(activity: Activity): string {
   return activity.reminderText
     ? `Lembrete: ${activity.reminderText}`
-    : 'Sem lembrete cadastrado'
+    : 'Sem lembrete cadastrado';
 }
 
 export function ActivityCard({
@@ -38,13 +38,13 @@ export function ActivityCard({
   isSelected,
   onOpen,
 }: ActivityCardProps) {
-  const titleId = useId()
-  const statusLabel = getActivityStatusLabel(activity.status)
+  const titleId = useId();
+  const statusLabel = getActivityStatusLabel(activity.status);
 
   return (
     <Box
       aria-labelledby={titleId}
-      component="article"
+      component='article'
       sx={{
         bgcolor: colors.canvas,
         border: '1px solid',
@@ -73,14 +73,11 @@ export function ActivityCard({
         }}
       >
         <Typography
-          component="h4"
+          component='h4'
           id={titleId}
           sx={{
             color: colors.ink,
-            fontSize: {
-              xs: typography.mobileActivityTitle.fontSize,
-              sm: typography.h5.fontSize,
-            },
+            fontSize: (theme) => theme.typography.h3.fontSize,
             fontWeight: typography.h5.fontWeight,
             lineHeight: typography.h5.lineHeight,
             overflowWrap: 'anywhere',
@@ -91,10 +88,7 @@ export function ActivityCard({
         <Typography
           sx={{
             color: colors.slate,
-            fontSize: {
-              xs: typography.mobileActivityMeta.fontSize,
-              sm: typography.bodySmall.fontSize,
-            },
+            fontSize: (theme) => theme.typography.caption.fontSize,
             lineHeight: typography.bodySmall.lineHeight,
             overflowWrap: 'anywhere',
           }}
@@ -104,8 +98,8 @@ export function ActivityCard({
       </Stack>
 
       <Stack
-        alignItems="center"
-        direction="row"
+        alignItems='center'
+        direction='row'
         spacing={{ xs: 1, sm: 1.5 }}
         sx={{
           flexShrink: 0,
@@ -118,10 +112,7 @@ export function ActivityCard({
           sx={{
             minHeight: { xs: 31, sm: 38 },
             '& .MuiChip-label': {
-              fontSize: {
-                xs: typography.mobileActivityMeta.fontSize,
-                sm: typography.caption.fontSize,
-              },
+              fontSize: (theme) => theme.typography.caption.fontSize,
               px: {
                 xs: `${components.pill.compactPaddingX}px`,
                 sm: `${components.pill.paddingX}px`,
@@ -141,11 +132,11 @@ export function ActivityCard({
             minWidth: { xs: 61, sm: 'auto' },
             px: { xs: 2, sm: `${components.button.paddingX}px` },
           }}
-          type="button"
+          type='button'
         >
           Abrir
         </PrimaryButton>
       </Stack>
     </Box>
-  )
+  );
 }

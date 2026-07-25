@@ -1,22 +1,12 @@
-import type { NextPage } from 'next'
+import type { GetServerSideProps, NextPage } from 'next'
 
-import { PersonalizationDashboard } from '../presentation/personalization'
-import { AppShell } from '../presentation/shared'
-import { usePreferenceStore } from '../stores/preferences/usePreferenceStore'
+const RootPage: NextPage = () => null
 
-const HomePage: NextPage = () => {
-  const preferences = usePreferenceStore((state) => state.preferences)
+export const getServerSideProps: GetServerSideProps = async () => ({
+  redirect: {
+    destination: '/atividades',
+    permanent: false,
+  },
+})
 
-  return (
-    <AppShell
-      activeRoute="/"
-      navigationMode={preferences.navigationMode}
-      subtitle="Ajuste legibilidade, contraste, espaçamento, complexidade da navegação, feedback e confirmações."
-      title="Deixe o SeniorEase confortável para você"
-    >
-      <PersonalizationDashboard />
-    </AppShell>
-  )
-}
-
-export default HomePage
+export default RootPage

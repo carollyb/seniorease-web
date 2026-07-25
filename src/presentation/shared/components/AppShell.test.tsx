@@ -11,7 +11,27 @@ function renderWithTheme(children: React.ReactNode) {
   render(<ThemeProvider theme={createSeniorEaseTheme()}>{children}</ThemeProvider>)
 }
 
+function setDesktopViewport(matches: boolean) {
+  Object.defineProperty(window, 'matchMedia', {
+    configurable: true,
+    value: jest.fn().mockImplementation((query: string) => ({
+      addEventListener: jest.fn(),
+      addListener: jest.fn(),
+      dispatchEvent: jest.fn(),
+      matches,
+      media: query,
+      onchange: null,
+      removeEventListener: jest.fn(),
+      removeListener: jest.fn(),
+    })),
+  })
+}
+
 describe('shared app shell components', () => {
+  beforeEach(() => {
+    setDesktopViewport(false)
+  })
+
   it('renders landmarks, skip link, active navigation, and main content', () => {
     renderWithTheme(
       <AppShell
@@ -33,8 +53,10 @@ describe('shared app shell components', () => {
     const navigation = screen.getByRole('navigation', { name: 'SeniorEase' })
     expect(within(navigation).getByTestId('senior-ease-logo-mark')).not.toBeNull()
     expect(
-      within(navigation).getByRole('link', { name: 'Painel' }).getAttribute('href'),
-    ).toBe('/')
+      within(navigation)
+        .getByRole('link', { name: 'Painel de preferências' })
+        .getAttribute('href'),
+    ).toBe('/painel')
     expect(
       within(navigation)
         .getByRole('link', { name: 'Atividades' })
@@ -56,7 +78,7 @@ describe('shared app shell components', () => {
   it('keeps every route reachable in simplified navigation mode', () => {
     renderWithTheme(
       <AppShell
-        activeRoute="/"
+        activeRoute="/painel"
         navigationMode="simplified"
         subtitle="Ajustes essenciais em primeiro lugar."
         title="Deixe o SeniorEase confortável para você"
@@ -70,7 +92,7 @@ describe('shared app shell components', () => {
     expect(navigation.getAttribute('data-navigation-mode')).toBe('simplified')
     expect(
       within(navigation)
-        .getByRole('link', { name: 'Painel' })
+        .getByRole('link', { name: 'Painel de preferências' })
         .getAttribute('aria-current'),
     ).toBe('page')
     expect(
@@ -87,7 +109,7 @@ describe('shared app shell components', () => {
     ).not.toBeNull()
   })
 
-  it('renders the Figma mobile menu affordance while keeping routes keyboard reachable', () => {
+  it('keeps mobile routes keyboard reachable without a menu label', () => {
     renderWithTheme(
       <AppShell
         activeRoute="/perfil"
@@ -101,7 +123,7 @@ describe('shared app shell components', () => {
 
     const navigation = screen.getByRole('navigation', { name: 'SeniorEase' })
 
-    expect(within(navigation).getByText('Menu')).not.toBeNull()
+    expect(within(navigation).queryByText('Menu')).toBeNull()
     expect(
       within(navigation)
         .getByRole('link', { name: 'Perfil' })
@@ -110,6 +132,45 @@ describe('shared app shell components', () => {
     expect(
       within(navigation).getByRole('link', { name: 'Configurações' }),
     ).not.toBeNull()
+  })
+
+  it('places contextual content immediately below navigation on mobile and tablet', () => {
+    renderWithTheme(
+      <AppShell
+        activeRoute="/painel"
+        contextualContent={<div role="status">Preferências salvas</div>}
+        title="Preferências"
+      >
+        <p>Controles de preferências.</p>
+      </AppShell>,
+    )
+
+    const navigation = screen.getByRole('navigation', { name: 'SeniorEase' })
+    const status = screen.getByRole('status')
+
+    expect(navigation.nextElementSibling).toBe(status)
+    expect(screen.getByRole('main').contains(status)).toBe(false)
+  })
+
+  it('places contextual content immediately below the header on desktop', () => {
+    setDesktopViewport(true)
+
+    renderWithTheme(
+      <AppShell
+        activeRoute="/painel"
+        contextualContent={<div role="status">Preferências salvas</div>}
+        subtitle="Ajuste legibilidade, contraste e feedback."
+        title="Preferências"
+      >
+        <p>Controles de preferências.</p>
+      </AppShell>,
+    )
+
+    const header = screen.getByRole('heading', { name: 'Preferências' }).closest('header')
+    const status = screen.getByRole('status')
+
+    expect(header?.nextElementSibling).toBe(status)
+    expect(screen.getByRole('main').contains(status)).toBe(false)
   })
 
   it('centralizes primary actions, status pills, and empty states', () => {

@@ -63,6 +63,7 @@ src/
     profile/
   pages/
     index.tsx
+    painel.tsx
     atividades.tsx
     perfil.tsx
     configuracoes.tsx
@@ -75,8 +76,8 @@ src/
 
 The implementation must treat the linked Figma frames in `spec.md` as the authoritative source for user-facing layout and visual behavior:
 
-- Dashboard: desktop, tablet, and mobile frames define the primary landing route.
-- Activities: desktop, tablet, and mobile frames define activity list behavior.
+- Dashboard: desktop, tablet, and mobile frames define the personalization page at `/painel`.
+- Activities: desktop, tablet, and mobile frames define activity list behavior; `/` redirects to `/atividades`, making it the primary landing route.
 - Guided steps: desktop and tablet frames define the step-by-step activity flow.
 - Profile and settings: desktop frames define the profile/settings composition and must be adapted responsively through the shared shell patterns.
 

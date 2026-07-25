@@ -64,7 +64,7 @@ export function GuidedSteps({
     };
 
     onFeedbackMessageChange(
-      `Atividade concluida: ${title}. Ela foi movida para o historico.`,
+      `Atividade concluida: ${title}. Ela foi movida para o histórico.`,
     );
     onActivityComplete?.(detail);
   };
@@ -234,7 +234,7 @@ export function GuidedSteps({
             onClick={handleNextStep}
             type='button'
           >
-            Proximo passo
+            Próximo passo
           </PrimaryButton>
           <PrimaryButton
             aria-label={`Concluir atividade ${activity.title}`}

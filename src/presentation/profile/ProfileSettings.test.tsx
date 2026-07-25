@@ -61,7 +61,7 @@ describe('ProfileSettings', () => {
     expect(within(summary).getByText('Tamanho do texto')).not.toBeNull()
     expect(within(summary).getByText('Muito grande')).not.toBeNull()
     expect(within(summary).getByText('Contraste')).not.toBeNull()
-    expect(within(summary).getByText('Máximo')).not.toBeNull()
+    expect(within(summary).getByText('Alto')).not.toBeNull()
     expect(within(summary).getByText('Espaçamento')).not.toBeNull()
     expect(within(summary).getByText('Extra amplo')).not.toBeNull()
     expect(within(summary).getByText('Navegação')).not.toBeNull()
@@ -204,7 +204,9 @@ describe('ProfileSettings', () => {
     expect(screen.getByRole('heading', { name: 'Configurações' })).not.toBeNull()
     expect(screen.getAllByRole('navigation', { name: 'SeniorEase' })).toHaveLength(1)
     expect(
-      screen.getByRole('heading', { name: 'Confirmar antes de excluir' }),
+      screen.getByRole('switch', {
+        name: 'Perguntar antes de excluir atividades',
+      }),
     ).not.toBeNull()
     expect(
       screen.getByRole('button', { name: 'Salvar configurações' }),

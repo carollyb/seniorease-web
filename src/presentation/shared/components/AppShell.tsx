@@ -2,6 +2,8 @@ import { useId, type ReactNode } from 'react';
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
+import useMediaQuery from '@mui/material/useMediaQuery';
+import type { Theme } from '@mui/material/styles';
 
 import type { NavigationMode } from '../../../domain/preferences';
 import { designTokens } from '../../../theme/designTokens';
@@ -10,6 +12,7 @@ import { SideNavigation, type SeniorEaseRoute } from './SideNavigation';
 export interface AppShellProps {
   activeRoute: SeniorEaseRoute;
   children: ReactNode;
+  contextualContent?: ReactNode;
   navigationMode?: NavigationMode;
   subtitle?: string;
   title: string;
@@ -21,11 +24,15 @@ const mainContentId = 'conteudo-principal';
 export function AppShell({
   activeRoute,
   children,
+  contextualContent,
   navigationMode = 'standard',
   subtitle,
   title,
 }: AppShellProps) {
   const titleId = useId();
+  const isDesktop = useMediaQuery<Theme>((theme) =>
+    theme.breakpoints.up('md'),
+  );
 
   return (
     <Box
@@ -89,6 +96,8 @@ export function AppShell({
           navigationMode={navigationMode}
         />
 
+        {!isDesktop ? contextualContent : null}
+
         <Stack
           spacing={3}
           sx={{
@@ -117,6 +126,8 @@ export function AppShell({
               </Typography>
             ) : null}
           </Box>
+
+          {isDesktop ? contextualContent : null}
 
           <Box
             aria-labelledby={titleId}

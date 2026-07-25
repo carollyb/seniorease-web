@@ -1,56 +1,22 @@
-import { useId, useState, type ChangeEvent } from 'react'
-import Box from '@mui/material/Box'
-import FormControl from '@mui/material/FormControl'
-import FormLabel from '@mui/material/FormLabel'
-import Radio from '@mui/material/Radio'
-import RadioGroup from '@mui/material/RadioGroup'
-import FormControlLabel from '@mui/material/FormControlLabel'
-import Stack from '@mui/material/Stack'
-import Typography from '@mui/material/Typography'
-import type { SxProps, Theme } from '@mui/material/styles'
+import { useId, type ChangeEvent } from 'react';
+import Box from '@mui/material/Box';
+import FormControl from '@mui/material/FormControl';
+import FormLabel from '@mui/material/FormLabel';
+import Radio from '@mui/material/Radio';
+import RadioGroup from '@mui/material/RadioGroup';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import Stack from '@mui/material/Stack';
+import Typography from '@mui/material/Typography';
+import type { SxProps, Theme } from '@mui/material/styles';
 
-import type {
-  ContrastLevel,
-  FontScale,
-  NavigationMode,
-  SpacingLevel,
-  UserPreferences,
-} from '../../domain/preferences/Preference'
-import { usePreferenceStore } from '../../stores/preferences/usePreferenceStore'
-import { designTokens } from '../../theme/designTokens'
+import { designTokens } from '../../theme/designTokens';
+import {
+  type PreferenceOption,
+  type UsePersonalizationDashboardOptions,
+  usePersonalizationDashboard,
+} from './usePersonalizationDashboard';
 
-interface PreferenceOption<TValue extends string> {
-  value: TValue
-  label: string
-  accessibleLabel?: string
-  compact?: boolean
-  emphasized?: boolean
-}
-
-const FONT_SCALE_OPTIONS = [
-  { value: 'small', label: 'Pequeno', compact: true },
-  { value: 'medium', label: 'Médio' },
-  { value: 'large', label: 'Grande', emphasized: true },
-  { value: 'extraLarge', label: 'Muito grande' },
-] satisfies readonly PreferenceOption<FontScale>[]
-
-const CONTRAST_OPTIONS = [
-  { value: 'standard', label: 'Padrão' },
-  { value: 'high', label: 'Conforto' },
-  { value: 'maximum', label: 'Máximo', accessibleLabel: 'Máximo' },
-] satisfies readonly PreferenceOption<ContrastLevel>[]
-
-const SPACING_OPTIONS = [
-  { value: 'comfortable', label: 'Confortável' },
-  { value: 'wide', label: 'Amplo' },
-  {
-    value: 'extraWide',
-    label: 'Extra amplo',
-    accessibleLabel: 'Extra amplo',
-  },
-] satisfies readonly PreferenceOption<SpacingLevel>[]
-
-const { colors, components, rounded, spacing, typography } = designTokens
+const { colors, components, rounded, spacing, typography } = designTokens;
 
 const hiddenVisually: SxProps<Theme> = {
   border: 0,
@@ -61,22 +27,24 @@ const hiddenVisually: SxProps<Theme> = {
   p: 0,
   position: 'absolute',
   width: '1px',
-}
+};
 
-function getOptionLabel<TValue extends string>(
-  options: readonly PreferenceOption<TValue>[],
-  value: TValue,
+function getPreviewFontSize<TValue extends string>(
+  option: PreferenceOption<TValue>,
 ) {
-  return options.find((option) => option.value === value)?.label ?? value
+  return (
+    option.previewFontSize ??
+    (option.emphasized ? 20 : option.compact ? 13 : 14)
+  );
 }
 
 interface PreferencePillGroupProps<TValue extends string> {
-  helperText: string
-  legend: string
-  name: string
-  onChange(value: TValue): void
-  options: readonly PreferenceOption<TValue>[]
-  value: TValue
+  helperText: string;
+  legend: string;
+  name: string;
+  onChange(value: TValue): void;
+  options: readonly PreferenceOption<TValue>[];
+  value: TValue;
 }
 
 function PreferencePillGroup<TValue extends string>({
@@ -87,17 +55,17 @@ function PreferencePillGroup<TValue extends string>({
   options,
   value,
 }: PreferencePillGroupProps<TValue>) {
-  const labelId = useId()
-  const helperId = useId()
+  const labelId = useId();
+  const helperId = useId();
 
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
-    onChange(event.target.value as TValue)
-  }
+    onChange(event.target.value as TValue);
+  };
 
   return (
     <FormControl
       aria-labelledby={labelId}
-      component="fieldset"
+      component='fieldset'
       sx={{
         bgcolor: colors.canvas,
         border: `1px solid ${colors.hairline}`,
@@ -111,7 +79,7 @@ function PreferencePillGroup<TValue extends string>({
       }}
     >
       <FormLabel
-        component="legend"
+        component='legend'
         id={labelId}
         sx={{
           color: colors.ink,
@@ -139,11 +107,13 @@ function PreferencePillGroup<TValue extends string>({
         value={value}
       >
         {options.map((option) => {
-          const isSelected = option.value === value
-          const accessibleLabel = option.accessibleLabel ?? option.label
+          const isSelected = option.value === value;
+          const accessibleLabel = option.accessibleLabel ?? option.label;
+          const previewFontSize = getPreviewFontSize(option);
 
           return (
             <FormControlLabel
+              data-preview-font-size={previewFontSize}
               data-state={isSelected ? 'selected' : 'available'}
               data-testid={`preference-pill-${name}-${option.value}`}
               key={option.value}
@@ -164,9 +134,10 @@ function PreferencePillGroup<TValue extends string>({
                 '& .MuiFormControlLabel-label': {
                   bgcolor: isSelected ? colors.brandBlue : colors.surface,
                   borderRadius: `${rounded.full}px`,
+                  boxShadow: `inset 0 0 0 1px ${colors.hairlineStrong}`,
                   color: isSelected ? colors.onPrimary : colors.ink,
                   display: 'inline-flex',
-                  fontSize: option.emphasized ? 20 : option.compact ? 13 : 14,
+                  fontSize: previewFontSize,
                   fontWeight: 500,
                   lineHeight: option.emphasized ? 1.3 : 1.4,
                   px: `${option.emphasized ? 18 : option.compact ? 14 : 16}px`,
@@ -174,9 +145,13 @@ function PreferencePillGroup<TValue extends string>({
                   transition: 'background-color 120ms ease, color 120ms ease',
                   whiteSpace: 'nowrap',
                 },
+                '&:hover .MuiFormControlLabel-label': {
+                  boxShadow: `inset 0 0 0 2px ${colors.interactiveBorder}`,
+                },
                 '& .MuiRadio-root.Mui-focusVisible + .MuiFormControlLabel-label':
                   {
-                    outline: `3px solid ${colors.brandBlue}`,
+                    boxShadow: `0 0 0 6px ${colors.focusHalo}`,
+                    outline: `3px solid ${colors.focus}`,
                     outlineOffset: 3,
                   },
               }}
@@ -191,30 +166,30 @@ function PreferencePillGroup<TValue extends string>({
                 />
               }
             />
-          )
+          );
         })}
       </RadioGroup>
       <Typography id={helperId} sx={hiddenVisually}>
         {helperText}
       </Typography>
     </FormControl>
-  )
+  );
 }
 
 interface SwitchSettingRowProps {
-  checked: boolean
-  helperText: string
-  label: string
-  name: string
-  onChange(checked: boolean): void
+  checked: boolean;
+  helperText: string;
+  label: string;
+  name: string;
+  onChange(checked: boolean): void;
 }
 
 interface FigmaPillSwitchProps {
-  checked: boolean
-  describedBy: string
-  id: string
-  name: string
-  onChange(checked: boolean): void
+  checked: boolean;
+  describedBy: string;
+  id: string;
+  name: string;
+  onChange(checked: boolean): void;
 }
 
 function FigmaPillSwitch({
@@ -226,8 +201,8 @@ function FigmaPillSwitch({
 }: FigmaPillSwitchProps) {
   return (
     <Box
-      component="span"
-      data-size="64x36"
+      component='span'
+      data-size='64x36'
       data-state={checked ? 'on' : 'off'}
       data-testid={`figma-pill-switch-${name}`}
       sx={{
@@ -237,19 +212,23 @@ function FigmaPillSwitch({
         position: 'relative',
         width: components.switch.width,
         '& input:focus-visible + span': {
-          outline: `3px solid ${colors.brandBlue}`,
+          boxShadow: `0 0 0 6px ${colors.focusHalo}`,
+          outline: `3px solid ${colors.focus}`,
           outlineOffset: 3,
+        },
+        '&:hover span': {
+          boxShadow: `inset 0 0 0 2px ${colors.interactiveBorder}`,
         },
       }}
     >
       <Box
         aria-describedby={describedBy}
         checked={checked}
-        component="input"
+        component='input'
         id={id}
         name={name}
         onChange={(event) => onChange(event.target.checked)}
-        role="switch"
+        role='switch'
         sx={{
           cursor: 'pointer',
           height: '100%',
@@ -260,11 +239,11 @@ function FigmaPillSwitch({
           width: '100%',
           zIndex: 1,
         }}
-        type="checkbox"
+        type='checkbox'
       />
       <Box
-        aria-hidden="true"
-        component="span"
+        aria-hidden='true'
+        component='span'
         sx={{
           bgcolor: checked ? colors.successAccent : colors.hairlineStrong,
           borderRadius: `${rounded.full}px`,
@@ -291,7 +270,7 @@ function FigmaPillSwitch({
         }}
       />
     </Box>
-  )
+  );
 }
 
 function SwitchSettingRow({
@@ -301,8 +280,8 @@ function SwitchSettingRow({
   name,
   onChange,
 }: SwitchSettingRowProps) {
-  const helperId = useId()
-  const switchId = useId()
+  const helperId = useId();
+  const switchId = useId();
 
   return (
     <Box
@@ -316,7 +295,7 @@ function SwitchSettingRow({
       }}
     >
       <Typography
-        component="label"
+        component='label'
         fontSize={18}
         fontWeight={500}
         htmlFor={switchId}
@@ -336,99 +315,41 @@ function SwitchSettingRow({
         {helperText}
       </Typography>
     </Box>
-  )
+  );
 }
 
-export interface PersonalizationDashboardProps {
-  onPreferenceChange?(preferences: UserPreferences): void
-}
+export type PersonalizationDashboardProps =
+  UsePersonalizationDashboardOptions;
 
 export function PersonalizationDashboard({
+  onFeedbackMessageChange,
   onPreferenceChange,
 }: PersonalizationDashboardProps) {
-  const preferences = usePreferenceStore((state) => state.preferences)
-  const persistenceWarning = usePreferenceStore(
-    (state) => state.persistenceWarning,
-  )
-  const setPreferences = usePreferenceStore((state) => state.setPreferences)
-  const [feedbackMessage, setFeedbackMessage] = useState(
-    'Seu layout do SeniorEase continuará assim na próxima vez que você voltar.',
-  )
-
-  const savePreferences = (
-    nextPreferences: UserPreferences,
-    nextFeedbackMessage: string,
-  ) => {
-    const savedPreferences = setPreferences(nextPreferences)
-
-    setFeedbackMessage(nextFeedbackMessage)
-    onPreferenceChange?.(savedPreferences)
-  }
-
-  const handleFontScaleChange = (fontScale: FontScale) => {
-    savePreferences(
-      { ...preferences, fontScale },
-      `Preferência salva: tamanho do texto ${getOptionLabel(
-        FONT_SCALE_OPTIONS,
-        fontScale,
-      )}.`,
-    )
-  }
-
-  const handleContrastChange = (contrastLevel: ContrastLevel) => {
-    savePreferences(
-      { ...preferences, contrastLevel },
-      `Preferência salva: contraste ${getOptionLabel(
-        CONTRAST_OPTIONS,
-        contrastLevel,
-      )}.`,
-    )
-  }
-
-  const handleSpacingChange = (spacingLevel: SpacingLevel) => {
-    savePreferences(
-      { ...preferences, spacingLevel },
-      `Preferência salva: espaçamento ${getOptionLabel(
-        SPACING_OPTIONS,
-        spacingLevel,
-      )}.`,
-    )
-  }
-
-  const handleNavigationChange = (navigationMode: NavigationMode) => {
-    savePreferences(
-      { ...preferences, navigationMode },
-      `Preferência salva: navegação simplificada ${
-        navigationMode === 'simplified' ? 'ativada' : 'desativada'
-      }.`,
-    )
-  }
-
-  const handleReinforcedFeedbackChange = (reinforcedFeedback: boolean) => {
-    savePreferences(
-      { ...preferences, reinforcedFeedback },
-      `Preferência salva: feedback reforçado ${
-        reinforcedFeedback ? 'ativado' : 'desativado'
-      }.`,
-    )
-  }
-
-  const handleExtraConfirmationChange = (extraConfirmation: boolean) => {
-    savePreferences(
-      { ...preferences, extraConfirmation },
-      `Preferência salva: confirmação extra ${
-        extraConfirmation ? 'ativada' : 'desativada'
-      }.`,
-    )
-  }
+  const {
+    contrastOptions,
+    fontScaleOptions,
+    handleContrastChange,
+    handleExtraConfirmationChange,
+    handleFontScaleChange,
+    handleNavigationChange,
+    handleReinforcedFeedbackChange,
+    handleSpacingChange,
+    isSimplifiedNavigation,
+    persistenceWarning,
+    preferences,
+    spacingOptions,
+  } = usePersonalizationDashboard({
+    onFeedbackMessageChange,
+    onPreferenceChange,
+  });
 
   return (
     <Box
-      aria-label="Personalization controls"
-      component="section"
-      data-figma-node-desktop="703:5"
-      data-figma-node-mobile="703:407"
-      data-figma-node-tablet="703:305"
+      aria-label='Personalization controls'
+      component='section'
+      data-figma-node-desktop='703:5'
+      data-figma-node-mobile='703:407'
+      data-figma-node-tablet='703:305'
     >
       <Stack spacing={3}>
         <Box
@@ -446,36 +367,36 @@ export function PersonalizationDashboard({
         >
           <Stack spacing={2} sx={{ minWidth: 0 }}>
             <PreferencePillGroup
-              helperText="Ajusta o tamanho do texto em títulos, botões e conteúdo."
-              legend="Tamanho do texto"
-              name="fontScale"
+              helperText='Ajusta o tamanho do texto em títulos, botões e conteúdo.'
+              legend='Tamanho do texto'
+              name='fontScale'
               onChange={handleFontScaleChange}
-              options={FONT_SCALE_OPTIONS}
+              options={fontScaleOptions}
               value={preferences.fontScale}
             />
             <PreferencePillGroup
-              helperText="Altera o conforto entre blocos da página e controles de toque."
-              legend="Conforto do espaçamento"
-              name="spacingLevel"
+              helperText='Altera o conforto entre blocos da página e controles de toque.'
+              legend='Conforto do espaçamento'
+              name='spacingLevel'
               onChange={handleSpacingChange}
-              options={SPACING_OPTIONS}
+              options={spacingOptions}
               value={preferences.spacingLevel}
             />
           </Stack>
 
           <Stack spacing={2} sx={{ minWidth: 0 }}>
             <PreferencePillGroup
-              helperText="Ajusta o contraste entre texto, superfícies e estados da interface."
-              legend="Nível de contraste"
-              name="contrastLevel"
+              helperText='Ajusta o contraste entre texto, superfícies e estados da interface.'
+              legend='Nível de contraste'
+              name='contrastLevel'
               onChange={handleContrastChange}
-              options={CONTRAST_OPTIONS}
+              options={contrastOptions}
               value={preferences.contrastLevel}
             />
 
             <Box
-              aria-labelledby="interface-mode-title"
-              component="section"
+              aria-labelledby='interface-mode-title'
+              component='section'
               sx={{
                 bgcolor: colors.canvas,
                 border: `1px solid ${colors.hairline}`,
@@ -488,42 +409,40 @@ export function PersonalizationDashboard({
             >
               <Stack spacing={2}>
                 <Typography
-                  component="h2"
+                  component='h2'
                   fontSize={22}
                   fontWeight={600}
-                  id="interface-mode-title"
+                  id='interface-mode-title'
                   lineHeight={1.4}
                   sx={{ color: colors.ink }}
                 >
                   Modo da interface
                 </Typography>
-                <Typography color="text.secondary" variant="body1">
+                <Typography color='text.secondary' variant='body1'>
                   O modo simplificado mantém apenas as escolhas essenciais
                   visíveis e facilita encontrar as ações principais.
                 </Typography>
 
                 <Box>
                   <SwitchSettingRow
-                    checked={preferences.navigationMode === 'simplified'}
-                    helperText="Mantém a interface focada nas escolhas essenciais."
-                    label="Navegação simplificada"
-                    name="navigationMode"
-                    onChange={(checked) =>
-                      handleNavigationChange(checked ? 'simplified' : 'standard')
-                    }
+                    checked={isSimplifiedNavigation}
+                    helperText='Mantém a interface focada nas escolhas essenciais.'
+                    label='Navegação simplificada'
+                    name='navigationMode'
+                    onChange={handleNavigationChange}
                   />
                   <SwitchSettingRow
                     checked={preferences.reinforcedFeedback}
-                    helperText="Mostra confirmações mais claras após salvamentos e conclusões."
-                    label="Feedback reforçado"
-                    name="reinforcedFeedback"
+                    helperText='Mostra confirmações mais claras após salvamentos e conclusões.'
+                    label='Feedback reforçado'
+                    name='reinforcedFeedback'
                     onChange={handleReinforcedFeedbackChange}
                   />
                   <SwitchSettingRow
                     checked={preferences.extraConfirmation}
-                    helperText="Pergunta antes de concluir ações importantes."
-                    label="Confirmação extra para ações críticas"
-                    name="extraConfirmation"
+                    helperText='Pergunta antes de concluir ações importantes.'
+                    label='Confirmação extra para ações críticas'
+                    name='extraConfirmation'
                     onChange={handleExtraConfirmationChange}
                   />
                 </Box>
@@ -534,7 +453,7 @@ export function PersonalizationDashboard({
 
         {persistenceWarning ? (
           <Box
-            role="alert"
+            role='alert'
             sx={{
               border: 1,
               borderColor: 'warning.main',
@@ -547,31 +466,7 @@ export function PersonalizationDashboard({
           </Box>
         ) : null}
 
-        <Box
-          aria-atomic="true"
-          aria-live="polite"
-          role="status"
-          sx={{
-            bgcolor: preferences.reinforcedFeedback
-              ? colors.tealLight
-              : 'background.paper',
-            border: `1px solid ${colors.hairline}`,
-            borderRadius: `${components.card.radius}px`,
-            color: colors.ink,
-            minHeight: 88,
-            p: `${components.card.padding}px`,
-          }}
-        >
-          <Stack spacing={2}>
-            <Typography component="h2" fontSize={24} fontWeight={600}>
-              Preferências salvas
-            </Typography>
-            <Typography fontSize={18} lineHeight={1.4}>
-              {feedbackMessage}
-            </Typography>
-          </Stack>
-        </Box>
       </Stack>
     </Box>
-  )
+  );
 }

@@ -7,7 +7,7 @@ import type { NavigationMode } from '../../../domain/preferences';
 import { designTokens } from '../../../theme/designTokens';
 
 export type SeniorEaseRoute =
-  | '/'
+  | '/painel'
   | '/atividades'
   | '/perfil'
   | '/configuracoes';
@@ -19,8 +19,8 @@ export interface NavigationItem {
 }
 
 export const seniorEaseNavigationItems: NavigationItem[] = [
-  { href: '/', label: 'Painel', group: 'primary' },
   { href: '/atividades', label: 'Atividades', group: 'primary' },
+  { href: '/painel', label: 'Painel de preferências', group: 'primary' },
   { href: '/perfil', label: 'Perfil', group: 'secondary' },
   { href: '/configuracoes', label: 'Configurações', group: 'secondary' },
 ];
@@ -111,8 +111,12 @@ function NavigationList({ activeRoute, items, label }: NavigationListProps) {
                 textDecoration: 'none',
                 whiteSpace: 'nowrap',
                 width: 'auto',
+                '&:hover': {
+                  boxShadow: `inset 0 0 0 2px ${colors.interactiveBorder}`,
+                },
                 '&:focus-visible': {
-                  outline: `3px solid ${colors.brandBlue}`,
+                  boxShadow: `0 0 0 6px ${colors.focusHalo}`,
+                  outline: `3px solid ${colors.focus}`,
                   outlineOffset: 3,
                 },
               }}
@@ -200,23 +204,6 @@ export function SideNavigation({
             SeniorEase
           </Typography>
         </Stack>
-
-        <Box
-          aria-hidden='true'
-          sx={{
-            bgcolor: components.topNavigation.menuBackgroundColor,
-            borderRadius: `${rounded.full}px`,
-            color: colors.ink,
-            display: { xs: 'inline-flex', md: 'none' },
-            fontSize: 14,
-            fontWeight: 500,
-            lineHeight: 1.4,
-            px: `${components.topNavigation.menuPaddingX}px`,
-            py: `${components.topNavigation.menuPaddingY}px`,
-          }}
-        >
-          Menu
-        </Box>
       </Stack>
 
       <NavigationList

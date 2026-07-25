@@ -6,14 +6,20 @@ import { usePreferenceStore } from '../../stores/preferences/usePreferenceStore'
 import { createSeniorEaseTheme } from '../../theme/createSeniorEaseTheme'
 import { PersonalizationDashboard } from './PersonalizationDashboard'
 
-function renderDashboard(onPreferenceChange = jest.fn()) {
+function renderDashboard(
+  onPreferenceChange = jest.fn(),
+  onFeedbackMessageChange = jest.fn(),
+) {
   render(
     <ThemeProvider theme={createSeniorEaseTheme()}>
-      <PersonalizationDashboard onPreferenceChange={onPreferenceChange} />
+      <PersonalizationDashboard
+        onFeedbackMessageChange={onFeedbackMessageChange}
+        onPreferenceChange={onPreferenceChange}
+      />
     </ThemeProvider>,
   )
 
-  return { onPreferenceChange }
+  return { onFeedbackMessageChange, onPreferenceChange }
 }
 
 describe('PersonalizationDashboard', () => {
@@ -73,11 +79,26 @@ describe('PersonalizationDashboard', () => {
     ).toBe('on')
   })
 
+  it('previews font scale options in increasing text sizes', () => {
+    renderDashboard()
+
+    const fontSizes = ['small', 'medium', 'large', 'extraLarge'].map(
+      (value) =>
+        Number(
+          screen
+            .getByTestId(`preference-pill-fontScale-${value}`)
+            .getAttribute('data-preview-font-size'),
+        ),
+    )
+
+    expect(fontSizes).toEqual([13, 14, 20, 22])
+  })
+
   it('updates the validated preference store from pill and switch controls', () => {
     const { onPreferenceChange } = renderDashboard()
 
     fireEvent.click(screen.getByRole('radio', { name: 'Muito grande' }))
-    fireEvent.click(screen.getByRole('radio', { name: 'Máximo' }))
+    fireEvent.click(screen.getByRole('radio', { name: 'Alto' }))
     fireEvent.click(screen.getByRole('radio', { name: 'Extra amplo' }))
     fireEvent.click(screen.getByRole('switch', { name: 'Navegação simplificada' }))
     fireEvent.click(
@@ -105,18 +126,12 @@ describe('PersonalizationDashboard', () => {
     )
   })
 
-  it('shows a Figma positive feedback panel through a polite live region', () => {
-    renderDashboard()
+  it('reports the positive feedback message after saving a preference', () => {
+    const { onFeedbackMessageChange } = renderDashboard()
 
     fireEvent.click(screen.getByRole('radio', { name: 'Muito grande' }))
 
-    const status = screen.getByRole('status')
-
-    expect(status.getAttribute('aria-live')).toBe('polite')
-    expect(
-      within(status).getByRole('heading', { name: 'Preferências salvas' }),
-    ).not.toBeNull()
-    expect(status.textContent).toContain(
+    expect(onFeedbackMessageChange).toHaveBeenLastCalledWith(
       'Preferência salva: tamanho do texto Muito grande.',
     )
   })

@@ -70,6 +70,7 @@ describe('Preference Zustand store', () => {
   it('hydrates and loads preferences from persisted storage', async () => {
     const persistedPreferences: UserPreferences = {
       ...DEFAULT_USER_PREFERENCES,
+      contrastLevel: 'maximum',
       fontScale: 'extraLarge',
       navigationMode: 'standard',
       reminderTone: 'direct',

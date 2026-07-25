@@ -1,11 +1,11 @@
-import type { Theme } from '@mui/material/styles'
+import { getContrastRatio, type Theme } from '@mui/material/styles'
 
 import {
   createDefaultPreferences,
   type UserPreferences,
 } from '../domain/preferences'
 import { createSeniorEaseTheme } from './createSeniorEaseTheme'
-import { designTokens } from './designTokens'
+import { designTokens, mobileHighContrastTokens } from './designTokens'
 
 function preferences(overrides: Partial<UserPreferences>): UserPreferences {
   return {
@@ -18,7 +18,23 @@ function getRootStyles(
   theme: Theme,
   componentName: keyof NonNullable<Theme['components']>,
 ): Record<string, unknown> {
-  return (theme.components?.[componentName]?.styleOverrides?.root ??
+  const component = theme.components?.[componentName]
+
+  if (!component || typeof component === 'boolean') {
+    return {}
+  }
+
+  return (
+    (
+      component as {
+        styleOverrides?: { root?: Record<string, unknown> }
+      }
+    ).styleOverrides?.root ?? {}
+  )
+}
+
+function getCssBaselineStyles(theme: Theme): Record<string, unknown> {
+  return (theme.components?.MuiCssBaseline?.styleOverrides ??
     {}) as Record<string, unknown>
 }
 
@@ -50,18 +66,122 @@ describe('createSeniorEaseTheme', () => {
       preferences({ contrastLevel: 'maximum' }),
     )
 
-    expect(standardTheme.palette.text.primary).toBe(designTokens.colors.ink)
+    expect(standardTheme.palette.text.primary).toBe(
+      designTokens.colorValues.ink,
+    )
     expect(standardTheme.palette.background.default).toBe(
-      designTokens.colors.surface,
+      designTokens.colorValues.surface,
     )
     expect(standardTheme.palette.background.paper).toBe(
-      designTokens.colors.canvas,
+      designTokens.colorValues.canvas,
     )
     expect(highTheme.palette.secondary.main).toBe(
-      designTokens.colors.bluePressed,
+      designTokens.colorValues.bluePressed,
     )
-    expect(maximumTheme.palette.background.default).toBe('#000000')
-    expect(maximumTheme.palette.text.primary).toBe('#ffffff')
+    expect(maximumTheme.palette.background.default).toBe(
+      mobileHighContrastTokens.screenBackground,
+    )
+    expect(maximumTheme.palette.background.paper).toBe(
+      mobileHighContrastTokens.cardBackground,
+    )
+    expect(maximumTheme.palette.text.primary).toBe(
+      mobileHighContrastTokens.textPrimary,
+    )
+    expect(maximumTheme.palette.text.secondary).toBe(
+      mobileHighContrastTokens.textSecondary,
+    )
+    expect(maximumTheme.palette.primary).toMatchObject({
+      main: mobileHighContrastTokens.primaryButtonBackground,
+      contrastText: mobileHighContrastTokens.primaryButtonText,
+    })
+    expect(maximumTheme.palette.divider).toBe(
+      mobileHighContrastTokens.cardBorder,
+    )
+  })
+
+  it('keeps Alto text, actions, disabled states, and semantic colors accessible', () => {
+    const theme = createSeniorEaseTheme(
+      preferences({ contrastLevel: 'maximum' }),
+    )
+
+    expect(
+      getContrastRatio(
+        theme.palette.text.primary,
+        theme.palette.background.default,
+      ),
+    ).toBeGreaterThanOrEqual(7)
+    expect(
+      getContrastRatio(
+        theme.palette.text.secondary,
+        theme.palette.background.default,
+      ),
+    ).toBeGreaterThanOrEqual(7)
+    expect(
+      getContrastRatio(
+        theme.palette.primary.contrastText,
+        theme.palette.primary.main,
+      ),
+    ).toBeGreaterThanOrEqual(7)
+    expect(
+      getContrastRatio(
+        theme.palette.warning.contrastText,
+        theme.palette.warning.main,
+      ),
+    ).toBeGreaterThanOrEqual(7)
+    expect(
+      getContrastRatio(
+        theme.palette.error.contrastText,
+        theme.palette.error.main,
+      ),
+    ).toBeGreaterThanOrEqual(4.5)
+    expect(
+      getContrastRatio(
+        mobileHighContrastTokens.disabledText,
+        mobileHighContrastTokens.disabledBackground,
+      ),
+    ).toBeGreaterThanOrEqual(4.5)
+  })
+
+  it('centralizes Alto surfaces and interactive state colors in the theme', () => {
+    const theme = createSeniorEaseTheme(
+      preferences({ contrastLevel: 'maximum' }),
+    )
+    const cssBaselineStyles = getCssBaselineStyles(theme)
+    const buttonStyles = getRootStyles(theme, 'MuiButton')
+    const fieldStyles = getRootStyles(theme, 'MuiOutlinedInput')
+
+    expect(cssBaselineStyles[':root']).toMatchObject({
+      '--seniorease-canvas': mobileHighContrastTokens.cardBackground,
+      '--seniorease-card-border': mobileHighContrastTokens.cardBorder,
+      '--seniorease-selected-background':
+        mobileHighContrastTokens.chipSelectedBackground,
+      '--seniorease-selected-text':
+        mobileHighContrastTokens.chipSelectedText,
+      '--seniorease-focus': mobileHighContrastTokens.focus,
+      '--seniorease-focus-halo': mobileHighContrastTokens.focusHalo,
+    })
+    expect(cssBaselineStyles['::selection']).toEqual({
+      backgroundColor: mobileHighContrastTokens.chipSelectedBackground,
+      color: mobileHighContrastTokens.chipSelectedText,
+    })
+    expect(buttonStyles['&.Mui-disabled']).toMatchObject({
+      backgroundColor: designTokens.colors.disabledBackground,
+      color: designTokens.colors.disabledText,
+    })
+    expect(buttonStyles['&.Mui-focusVisible']).toMatchObject({
+      boxShadow: `0 0 0 6px ${designTokens.colors.focusHalo}`,
+      outline: `3px solid ${designTokens.colors.focus}`,
+    })
+    expect(fieldStyles['&:hover .MuiOutlinedInput-notchedOutline'])
+      .toMatchObject({
+        borderColor: designTokens.colors.interactiveBorder,
+        borderWidth: 2,
+      })
+    expect(fieldStyles['&.Mui-error .MuiOutlinedInput-notchedOutline'])
+      .toMatchObject({
+        borderColor: theme.palette.error.main,
+        borderWidth: 2,
+      })
   })
 
   it('expands spacing and accessible touch targets from the spacing preference', () => {
@@ -88,7 +208,8 @@ describe('createSeniorEaseTheme', () => {
     )
 
     expect(getRootStyles(theme, 'MuiButton')['&.Mui-focusVisible']).toEqual({
-      outline: `3px solid ${designTokens.colors.brandBlue}`,
+      boxShadow: `0 0 0 6px ${designTokens.colors.focusHalo}`,
+      outline: `3px solid ${designTokens.colors.focus}`,
       outlineOffset: 3,
     })
     expect(getRootStyles(theme, 'MuiButton')['&[aria-current="page"]'])

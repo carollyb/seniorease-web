@@ -2,6 +2,10 @@ import { render, screen } from '@testing-library/react'
 import { ThemeProvider } from '@mui/material/styles'
 
 import type { Activity } from '../../../domain/activities'
+import {
+  createDefaultPreferences,
+  type FontScale,
+} from '../../../domain/preferences'
 import { createSeniorEaseTheme } from '../../../theme/createSeniorEaseTheme'
 import { ActivityCard } from './ActivityCard'
 
@@ -14,11 +18,19 @@ const pendingActivity: Activity = {
   createdAt: '2026-06-01T12:00:00.000Z',
 }
 
-function renderCard(activity: Activity = pendingActivity) {
+function renderCard(
+  activity: Activity = pendingActivity,
+  fontScale?: FontScale,
+) {
   const onOpen = jest.fn()
+  const preferences = createDefaultPreferences()
+
+  if (fontScale) {
+    preferences.fontScale = fontScale
+  }
 
   render(
-    <ThemeProvider theme={createSeniorEaseTheme()}>
+    <ThemeProvider theme={createSeniorEaseTheme(preferences)}>
       <ActivityCard
         activity={activity}
         isLoading={false}
@@ -52,4 +64,22 @@ describe('ActivityCard', () => {
 
     expect(screen.getByText('Sem lembrete cadastrado')).not.toBeNull()
   })
+
+  it.each(
+    [
+      ['small', '14px'],
+      ['medium', '16px'],
+      ['large', '18px'],
+      ['extraLarge', '19px'],
+    ] satisfies [FontScale, string][],
+  )(
+    'scales the status pill text for the %s font preference',
+    (fontScale, expectedFontSize) => {
+      renderCard(pendingActivity, fontScale)
+
+      expect(
+        window.getComputedStyle(screen.getByText('Status: Pendente')).fontSize,
+      ).toBe(expectedFontSize)
+    },
+  )
 })
