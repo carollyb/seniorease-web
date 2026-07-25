@@ -12,18 +12,22 @@ import {
   ListActivitiesUseCase,
   ListCompletedActivitiesUseCase,
 } from '../../application/activities';
-import type {
-  HistoryFilter,
-  UseActivityOrganizerOptions,
-} from './types';
+import type { HistoryFilter, UseActivityOrganizerOptions } from './types';
 import { LocalActivityRepository } from '../../infrastructure/repositories';
 import { usePreferenceStore } from '@/stores/preferences/usePreferenceStore';
 import { createActivityStore } from '@/stores/activities';
+import { useTimedFeedback } from '../shared/hooks/useTimedFeedback';
 
 interface PendingCompletion {
   activityId: string;
   resolve(completedActivity: Activity | void): void;
 }
+
+interface ActivityFeedback {
+  subtitle: string;
+  title: string;
+}
+
 const activityRepository = new LocalActivityRepository();
 
 const useActivityStore = createActivityStore({
@@ -43,9 +47,11 @@ export function useActivityOrganizer({ mode }: UseActivityOrganizerOptions) {
   const [formError, setFormError] = useState<string | null>(null);
   const [historyFilter, setHistoryFilter] =
     useState<HistoryFilter>('completed');
-  const [feedbackMessage, setFeedbackMessage] = useState(
-    'Organizador pronto para novas atividades.',
-  );
+  const {
+    feedback,
+    isFeedbackVisible: isTimedFeedbackVisible,
+    showFeedback: showTimedFeedback,
+  } = useTimedFeedback<ActivityFeedback>();
   const [activityToCreate, setActivityToCreate] = useState<Activity | null>(
     null,
   );
@@ -55,7 +61,12 @@ export function useActivityOrganizer({ mode }: UseActivityOrganizerOptions) {
   const [activityToComplete, setActivityToComplete] = useState<Activity | null>(
     null,
   );
-  const preferences = usePreferenceStore((state) => state.preferences);
+  const extraConfirmation = usePreferenceStore(
+    (state) => state.preferences.extraConfirmation,
+  );
+  const reinforcedFeedback = usePreferenceStore(
+    (state) => state.preferences.reinforcedFeedback,
+  );
   const completeActivity = useActivityStore((state) => state.completeActivity);
 
   const activities = useActivityStore((state) => state.activities);
@@ -115,9 +126,7 @@ export function useActivityOrganizer({ mode }: UseActivityOrganizerOptions) {
       const isLastStep = index === currentLabels.length - 1;
       const isFilled = Boolean(currentLabels[index]?.trim());
 
-      return isLastStep && isFilled
-        ? [...currentLabels, '']
-        : currentLabels;
+      return isLastStep && isFilled ? [...currentLabels, ''] : currentLabels;
     });
   };
 
@@ -126,6 +135,18 @@ export function useActivityOrganizer({ mode }: UseActivityOrganizerOptions) {
   };
 
   const pendingCompletionRef = useRef<PendingCompletion | null>(null);
+
+  const showFeedback = (title: string, subtitle: string) => {
+    if (!reinforcedFeedback) {
+      return;
+    }
+
+    showTimedFeedback({ subtitle, title });
+  };
+
+  const handleFeedbackMessageChange = (message: string) => {
+    showFeedback('Muito bem!', message);
+  };
 
   const handleCancelCreation = () => {
     const pendingCompletion = pendingCompletionRef.current;
@@ -164,23 +185,20 @@ export function useActivityOrganizer({ mode }: UseActivityOrganizerOptions) {
         }));
       }
 
-      const createActivityResult = await createActivity(input);
-
-      setFeedbackMessage(`Tarefa criada: ${trimmedTitle}.`);
-
-      const createdActivity = await createActivityResult;
-      const createdTitle = createdActivity?.title ?? trimmedTitle;
+      const createdActivity = await createActivity(input);
+      const createdTitle = createdActivity.title;
 
       setTitle('');
       setReminderText('');
       setStepLabels(['']);
       setFormError(null);
       setIsCreating(false);
-      setFeedbackMessage(`Tarefas criada: ${createdTitle}.`);
+      showFeedback(
+        'Tarefa salva com sucesso!',
+        `A tarefa “${createdTitle}” foi adicionada à lista de hoje.`,
+      );
 
-      if (createdActivity) {
-        selectActivity(createdActivity.id);
-      }
+      selectActivity(createdActivity.id);
       setActivityToCreate(null);
       setModalType(null);
     } catch (error) {
@@ -225,7 +243,7 @@ export function useActivityOrganizer({ mode }: UseActivityOrganizerOptions) {
   };
 
   const handleCompleteActivity = (activityId: string) => {
-    if (!preferences.extraConfirmation) {
+    if (!extraConfirmation) {
       return completeActivity(activityId);
     }
 
@@ -277,8 +295,13 @@ export function useActivityOrganizer({ mode }: UseActivityOrganizerOptions) {
     };
   }, [loadActivities]);
 
+  const feedbackSubtitle = feedback?.subtitle ?? '';
+  const feedbackTitle = feedback?.title ?? '';
+  const isFeedbackVisible = isTimedFeedbackVisible && reinforcedFeedback;
+
   return {
-    feedbackMessage,
+    feedbackSubtitle,
+    feedbackTitle,
     formError,
     handleAddStep,
     handleCancelCreate,
@@ -287,12 +310,12 @@ export function useActivityOrganizer({ mode }: UseActivityOrganizerOptions) {
     handleSubmitCreate,
     handleConfirmCreationModal,
     handleCancelCreation,
+    handleFeedbackMessageChange,
     handleHistoryFilterChange,
     isCreating,
     isSimplified,
     reminderText,
     selectedActivity,
-    setFeedbackMessage,
     setReminderText,
     setTitle,
     stepLabels,
@@ -305,6 +328,7 @@ export function useActivityOrganizer({ mode }: UseActivityOrganizerOptions) {
     historyActivities,
     historyFilter,
     historyListLabel,
+    isFeedbackVisible,
     isLoading,
     errorMessage,
     selectedActivityId,

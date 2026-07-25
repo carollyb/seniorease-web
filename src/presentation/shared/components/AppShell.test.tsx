@@ -11,7 +11,27 @@ function renderWithTheme(children: React.ReactNode) {
   render(<ThemeProvider theme={createSeniorEaseTheme()}>{children}</ThemeProvider>)
 }
 
+function setDesktopViewport(matches: boolean) {
+  Object.defineProperty(window, 'matchMedia', {
+    configurable: true,
+    value: jest.fn().mockImplementation((query: string) => ({
+      addEventListener: jest.fn(),
+      addListener: jest.fn(),
+      dispatchEvent: jest.fn(),
+      matches,
+      media: query,
+      onchange: null,
+      removeEventListener: jest.fn(),
+      removeListener: jest.fn(),
+    })),
+  })
+}
+
 describe('shared app shell components', () => {
+  beforeEach(() => {
+    setDesktopViewport(false)
+  })
+
   it('renders landmarks, skip link, active navigation, and main content', () => {
     renderWithTheme(
       <AppShell
@@ -112,6 +132,45 @@ describe('shared app shell components', () => {
     expect(
       within(navigation).getByRole('link', { name: 'Configurações' }),
     ).not.toBeNull()
+  })
+
+  it('places contextual content immediately below navigation on mobile and tablet', () => {
+    renderWithTheme(
+      <AppShell
+        activeRoute="/painel"
+        contextualContent={<div role="status">Preferências salvas</div>}
+        title="Preferências"
+      >
+        <p>Controles de preferências.</p>
+      </AppShell>,
+    )
+
+    const navigation = screen.getByRole('navigation', { name: 'SeniorEase' })
+    const status = screen.getByRole('status')
+
+    expect(navigation.nextElementSibling).toBe(status)
+    expect(screen.getByRole('main').contains(status)).toBe(false)
+  })
+
+  it('places contextual content immediately below the header on desktop', () => {
+    setDesktopViewport(true)
+
+    renderWithTheme(
+      <AppShell
+        activeRoute="/painel"
+        contextualContent={<div role="status">Preferências salvas</div>}
+        subtitle="Ajuste legibilidade, contraste e feedback."
+        title="Preferências"
+      >
+        <p>Controles de preferências.</p>
+      </AppShell>,
+    )
+
+    const header = screen.getByRole('heading', { name: 'Preferências' }).closest('header')
+    const status = screen.getByRole('status')
+
+    expect(header?.nextElementSibling).toBe(status)
+    expect(screen.getByRole('main').contains(status)).toBe(false)
   })
 
   it('centralizes primary actions, status pills, and empty states', () => {

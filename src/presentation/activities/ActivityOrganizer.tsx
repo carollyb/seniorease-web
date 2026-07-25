@@ -7,7 +7,12 @@ import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 
 import { designTokens } from '../../theme/designTokens';
-import { EmptyState, PrimaryButton, StatusPill } from '../shared';
+import {
+  EmptyState,
+  PrimaryButton,
+  ReinforcedFeedback,
+  StatusPill,
+} from '../shared';
 import {
   ActivityList,
   getActivityReminderLabel,
@@ -115,13 +120,16 @@ export function ActivityOrganizer({
     handleShowCreateForm,
     handleCancelCreate,
     selectedActivity,
-    setFeedbackMessage,
+    feedbackSubtitle,
+    feedbackTitle,
+    handleFeedbackMessageChange,
     handleConfirmCreationModal,
     handleCancelCreation,
     activityToCreate,
     modalType,
     handleConfirmCompletionModal,
     isLoading,
+    isFeedbackVisible,
     errorMessage,
     selectActivity,
     handleCompleteActivity,
@@ -131,10 +139,16 @@ export function ActivityOrganizer({
 
   return (
     <>
+      <ReinforcedFeedback
+        reinforcedFeedback={isFeedbackVisible}
+        subtitle={feedbackSubtitle}
+        title={feedbackTitle}
+      />
       <Box
         component='section'
         aria-labelledby='activity-organizer-title'
         data-mode={mode}
+        sx={{ mt: isFeedbackVisible ? 3 : 0 }}
       >
         <Stack spacing={3}>
           {errorMessage ? (
@@ -328,7 +342,7 @@ export function ActivityOrganizer({
               key={selectedActivity.id}
               onActivityComplete={handleConfirmCompletionModal}
               onCompleteActivity={handleCompleteActivity}
-              onFeedbackMessageChange={setFeedbackMessage}
+              onFeedbackMessageChange={handleFeedbackMessageChange}
             />
           ) : null}
 

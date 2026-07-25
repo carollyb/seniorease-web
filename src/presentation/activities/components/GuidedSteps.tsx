@@ -64,7 +64,7 @@ export function GuidedSteps({
     };
 
     onFeedbackMessageChange(
-      `Atividade concluida: ${title}. Ela foi movida para o historico.`,
+      `Atividade concluida: ${title}. Ela foi movida para o histórico.`,
     );
     onActivityComplete?.(detail);
   };

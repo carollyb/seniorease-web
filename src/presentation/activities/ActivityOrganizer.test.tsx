@@ -138,6 +138,9 @@ describe('ActivityOrganizer', () => {
       }),
     );
 
+    await waitFor(() => {
+      expect(screen.queryByRole('dialog')).toBeNull();
+    });
     const activityList = await screen.findByRole('list', {
       name: 'Atividades ativas',
     });
@@ -164,10 +167,19 @@ describe('ActivityOrganizer', () => {
         },
       ],
     });
-    await waitFor(() => {
-      expect(screen.queryByRole('dialog')).toBeNull();
-    });
     expect(screen.queryByRole('form', { name: 'Nova tarefa' })).toBeNull();
+    const feedback = screen.getByRole('status');
+    const organizer = document.querySelector('[data-mode="standard"]');
+
+    expect(
+      within(feedback).getByRole('heading', {
+        name: 'Tarefa salva com sucesso!',
+      }),
+    ).not.toBeNull();
+    expect(feedback.textContent).toContain(
+      'A tarefa “Enviar trabalho” foi adicionada à lista de hoje.',
+    );
+    expect(feedback.nextElementSibling).toBe(organizer);
   });
 
   it('adds consecutive step fields and saves every filled step in order', async () => {
