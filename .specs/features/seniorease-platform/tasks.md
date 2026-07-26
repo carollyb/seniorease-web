@@ -34,6 +34,16 @@ T5,T6,T7,T8 -> T9 -> T10 -> T11
 T11 -> T12 -> T13
 ```
 
+### Phase 5: Figma Layout Alignment
+
+```text
+T6 -> F1
+F1,T10 -> F2
+F2,T7,T9,T10 -> F3
+F2,T8,T10 -> F4
+F3,F4 -> F5
+```
+
 ---
 
 ## Task Breakdown
@@ -53,12 +63,12 @@ T11 -> T12 -> T13
 
 **Done when**:
 
-- [ ] Next.js 16 Pages Router structure exists.
-- [ ] Node.js 20+ is documented in `.nvmrc`, `package.json` engines, and CI expectations.
-- [ ] TypeScript is configured.
-- [ ] Material UI, Emotion, and Zustand dependencies are declared.
-- [ ] Scripts exist for `lint`, `test`, `test:e2e`, and `build`.
-- [ ] Gate check passes: `npm run build`.
+- [x] Next.js 16 Pages Router structure exists.
+- [x] Node.js 20+ is documented in `.nvmrc`, `package.json` engines, and CI expectations.
+- [x] TypeScript is configured.
+- [x] Material UI, Emotion, and Zustand dependencies are declared.
+- [x] Scripts exist for `lint`, `test`, `test:e2e`, and `build`.
+- [x] Gate check passes: `npm run build`.
 
 **Tests**: none
 **Gate**: build
@@ -80,11 +90,11 @@ T11 -> T12 -> T13
 
 **Done when**:
 
-- [ ] Layer folders exist.
-- [ ] Domain folders have no UI imports.
-- [ ] Application ports folder exists.
-- [ ] Store folders exist outside domain and application layers.
-- [ ] Gate check passes: `npm run build`.
+- [x] Layer folders exist.
+- [x] Domain folders have no UI imports.
+- [x] Application ports folder exists.
+- [x] Store folders exist outside domain and application layers.
+- [x] Gate check passes: `npm run build`.
 
 **Tests**: none
 **Gate**: build
@@ -106,11 +116,11 @@ T11 -> T12 -> T13
 
 **Done when**:
 
-- [ ] Preference defaults are accessible and valid.
-- [ ] Activity creation and completion rules are implemented.
-- [ ] Domain files do not import React, Next.js, Material UI, Zustand, or browser APIs.
-- [ ] Unit tests cover defaults, validation, and completion transitions.
-- [ ] Gate check passes: `npm test -- --watchAll=false`.
+- [x] Preference defaults are accessible and valid.
+- [x] Activity creation and completion rules are implemented.
+- [x] Domain files do not import React, Next.js, Material UI, Zustand, or browser APIs.
+- [x] Unit tests cover defaults, validation, and completion transitions.
+- [x] Gate check passes: `npm test -- --watchAll=false`.
 
 **Tests**: unit
 **Gate**: unit
@@ -132,10 +142,10 @@ T11 -> T12 -> T13
 
 **Done when**:
 
-- [ ] Application ports are defined for preference state and activity repositories.
-- [ ] Use cases depend on ports or plain input/output contracts, not infrastructure, Zustand stores, or UI.
-- [ ] Unit tests mock repository ports.
-- [ ] Gate check passes: `npm test -- --watchAll=false`.
+- [x] Application ports are defined for preference state and activity repositories.
+- [x] Use cases depend on ports or plain input/output contracts, not infrastructure, Zustand stores, or UI.
+- [x] Unit tests mock repository ports.
+- [x] Gate check passes: `npm test -- --watchAll=false`.
 
 **Tests**: unit
 **Gate**: unit
@@ -157,12 +167,12 @@ T11 -> T12 -> T13
 
 **Done when**:
 
-- [ ] Preference store uses Zustand `persist`.
-- [ ] Store hydration is handled safely for SSR/client rendering.
-- [ ] Invalid persisted preference data recovers to defaults.
-- [ ] Activity store coordinates use cases without embedding business rules.
-- [ ] Unit tests cover save, load, hydration, invalid data, and unavailable persistence.
-- [ ] Gate check passes: `npm test -- --watchAll=false`.
+- [x] Preference store uses Zustand `persist`.
+- [x] Store hydration is handled safely for SSR/client rendering.
+- [x] Invalid persisted preference data recovers to defaults.
+- [x] Activity store coordinates use cases without embedding business rules.
+- [x] Unit tests cover save, load, hydration, invalid data, and unavailable persistence.
+- [x] Gate check passes: `npm test -- --watchAll=false`.
 
 **Tests**: unit
 **Gate**: unit
@@ -184,11 +194,11 @@ T11 -> T12 -> T13
 
 **Done when**:
 
-- [ ] Theme supports font scale, contrast level, spacing level, and reduced complexity.
-- [ ] Buttons and controls use enlarged accessible touch targets.
-- [ ] Theme supports visible focus states and ARIA-compatible component states.
-- [ ] Unit tests verify theme changes for font, contrast, and spacing inputs.
-- [ ] Gate check passes: `npm test -- --watchAll=false`.
+- [x] Theme supports font scale, contrast level, spacing level, and reduced complexity.
+- [x] Buttons and controls use enlarged accessible touch targets.
+- [x] Theme supports visible focus states and ARIA-compatible component states.
+- [x] Unit tests verify theme changes for font, contrast, and spacing inputs.
+- [x] Gate check passes: `npm test -- --watchAll=false`.
 
 **Tests**: unit
 **Gate**: unit
@@ -210,12 +220,12 @@ T11 -> T12 -> T13
 
 **Done when**:
 
-- [ ] Controls exist for font size, contrast, spacing, navigation mode, reinforced feedback, and extra confirmation.
-- [ ] Changes update the Zustand preference store and remain validated by domain helpers.
-- [ ] Controls have accessible names, labels, and helper/error descriptions.
-- [ ] Reinforced feedback is visible and announced through a polite live region.
-- [ ] Component tests cover preference changes and feedback.
-- [ ] Gate check passes: `npm test -- --watchAll=false`.
+- [x] Controls exist for font size, contrast, spacing, navigation mode, reinforced feedback, and extra confirmation.
+- [x] Changes update the Zustand preference store and remain validated by domain helpers.
+- [x] Controls have accessible names, labels, and helper/error descriptions.
+- [x] Reinforced feedback is visible and announced through a polite live region.
+- [x] Component tests cover preference changes and feedback.
+- [x] Gate check passes: `npm test -- --watchAll=false`.
 
 **Tests**: integration
 **Gate**: unit
@@ -237,13 +247,14 @@ T11 -> T12 -> T13
 
 **Done when**:
 
-- [ ] Empty state has one clear primary action.
-- [ ] Activity list shows title, reminder, status, and primary action with meaningful roles and accessible names.
-- [ ] Guided steps render in predictable order and are keyboard-operable.
-- [ ] Completing an activity shows positive feedback, announces it through a live region, and moves it to history.
-- [ ] Public contracts are ready for future extraction into an Activity Organizer Multi-Zone app.
-- [ ] Component tests cover create, guided step view, complete, and history.
-- [ ] Gate check passes: `npm test -- --watchAll=false`.
+- [x] Empty state has one clear primary action.
+- [x] Activity list shows title, reminder, status, and primary action with meaningful roles and accessible names.
+- [x] Guided steps render in predictable order and are keyboard-operable.
+- [x] Completing an activity shows positive feedback, announces it through a live region, and moves it to history.
+- [x] Deleting an activity permanently removes it from persisted storage, the active list, and history through an accessible destructive action.
+- [x] Public contracts are ready for future extraction into an Activity Organizer Multi-Zone app.
+- [x] Component tests cover create, guided step view, complete, and history.
+- [x] Gate check passes: `npm test -- --watchAll=false`.
 
 **Tests**: integration
 **Gate**: unit
@@ -252,11 +263,11 @@ T11 -> T12 -> T13
 
 ### T9: Implement Profile and Settings Pages
 
-**What**: Create profile/configuration presentation that summarizes persisted settings and reminder preferences.
+**What**: Create profile/configuration presentation that summarizes persisted settings and reminder preferences, aligned to the supplied desktop Figma frames.
 **Where**: `src/presentation/profile`, `src/pages/perfil.tsx`, `src/pages/configuracoes.tsx`
 **Depends on**: T5, T6, T7, T8
 **Reuses**: Zustand preference store and theme system.
-**Requirement**: SE-06, SE-07, SE-11, SE-14, SE-15
+**Requirement**: SE-06, SE-07, SE-11, SE-14, SE-15, SE-17, SE-18
 
 **Tools**:
 
@@ -265,12 +276,16 @@ T11 -> T12 -> T13
 
 **Done when**:
 
-- [ ] Profile page displays current preferences.
-- [ ] Settings page lets users update reminder preferences.
-- [ ] Saved settings are restored after reload.
-- [ ] Profile and settings controls expose accessible labels and descriptions.
-- [ ] Integration tests cover profile/settings render with saved preferences.
-- [ ] Gate check passes: `npm test -- --watchAll=false`.
+- [x] Profile page displays current preferences.
+- [x] Settings page lets users update reminder preferences.
+- [x] Profile desktop layout matches Figma node `703:200`.
+- [x] Settings desktop layout matches Figma node `703:250`.
+- [x] Saved settings are restored after reload.
+- [x] Profile and settings controls expose accessible labels and descriptions.
+- [x] Integration tests cover profile/settings render with saved preferences.
+- [x] Gate check passes: `npm test -- --watchAll=false`.
+
+**Verification note**: Figma MCP access succeeded through the duplicated NATGEO file `LJkhB7ZgDaJuxVi6CVP22Q` for nodes `703:200` and `703:250`.
 
 **Tests**: integration
 **Gate**: unit
@@ -279,11 +294,11 @@ T11 -> T12 -> T13
 
 ### T10: Integrate Pages, Layout, Navigation, and Providers
 
-**What**: Wire app providers, theme provider, predictable navigation, and pages for dashboard, activities, profile, and settings.
+**What**: Wire app providers, theme provider, predictable navigation, shared shell components, and pages for dashboard, activities, profile, and settings.
 **Where**: `src/pages`, `src/presentation/shared`
 **Depends on**: T9
 **Reuses**: Presentation modules, Zustand stores, and activity infrastructure adapters.
-**Requirement**: SE-01, SE-04, SE-06, SE-10, SE-11, SE-14, SE-15
+**Requirement**: SE-01, SE-04, SE-06, SE-10, SE-11, SE-14, SE-15, SE-17, SE-18
 
 **Tools**:
 
@@ -292,12 +307,15 @@ T11 -> T12 -> T13
 
 **Done when**:
 
-- [ ] `_app.tsx` loads providers, theme, and Zustand hydration handling.
-- [ ] Main navigation supports simplified and standard modes.
-- [ ] Pages are reachable through predictable labels.
-- [ ] Critical actions honor extra confirmation.
-- [ ] Navigation uses semantic landmarks, accessible names, and stable focus order.
-- [ ] Gate check passes: `npm run build`.
+- [x] `_app.tsx` loads providers, theme, and Zustand hydration handling.
+- [x] `AppShell` composes shared page structure and main landmark behavior.
+- [x] `SideNavigation` renders the Figma-aligned navigation pattern with active-route semantics.
+- [x] `PrimaryButton`, `StatusPill`, and `EmptyState` centralize repeated visual treatments through MUI/theme tokens.
+- [x] Main navigation supports simplified and standard modes.
+- [x] Pages are reachable through predictable labels.
+- [x] Critical actions honor extra confirmation.
+- [x] Navigation uses semantic landmarks, accessible names, and stable focus order.
+- [x] Gate check passes: `npm run build`.
 
 **Tests**: integration
 **Gate**: build
@@ -306,11 +324,11 @@ T11 -> T12 -> T13
 
 ### T11: Add Accessibility E2E Coverage
 
-**What**: Add Playwright tests for personalization, activity completion, Zustand preference persistence, ARIA premises, keyboard navigation, focus behavior, and reduced motion.
+**What**: Add Playwright tests for personalization, activity completion, Zustand preference persistence, ARIA premises, keyboard navigation, focus behavior, reduced motion, and Figma-driven responsive layouts.
 **Where**: `tests/e2e`
 **Depends on**: T10
 **Reuses**: App pages from T10.
-**Requirement**: SE-01, SE-04, SE-06, SE-11, SE-14, SE-15
+**Requirement**: SE-01, SE-04, SE-06, SE-11, SE-14, SE-15, SE-17, SE-18
 
 **Tools**:
 
@@ -319,12 +337,14 @@ T11 -> T12 -> T13
 
 **Done when**:
 
-- [ ] E2E test changes font size and verifies visible application.
-- [ ] E2E test creates and completes an activity.
-- [ ] E2E test reloads and verifies Zustand-persisted preferences.
-- [ ] E2E test checks keyboard access to primary flows.
-- [ ] E2E test checks ARIA roles/names, labels, dialog focus behavior, and live-region feedback.
-- [ ] Gate check passes: `npm run test:e2e`.
+- [x] E2E test changes font size and verifies visible application.
+- [x] E2E test creates and completes an activity.
+- [x] E2E test reloads and verifies Zustand-persisted preferences.
+- [x] E2E test checks keyboard access to primary flows.
+- [x] E2E test checks ARIA roles/names, labels, dialog focus behavior, and live-region feedback.
+- [x] E2E or browser verification covers desktop/tablet/mobile dashboard and activities layouts against the linked Figma frames.
+- [x] E2E or browser verification covers guided steps desktop/tablet layouts against the linked Figma frames.
+- [x] Gate check passes: `npm run test:e2e`.
 
 **Tests**: e2e
 **Gate**: e2e
@@ -346,14 +366,14 @@ T11 -> T12 -> T13
 
 **Done when**:
 
-- [ ] Workflow runs on push to `main`.
-- [ ] Workflow runs on pull request to `main`.
-- [ ] Workflow uses `actions/checkout` and `actions/setup-node`.
-- [ ] Workflow uses Node.js 20 or newer.
-- [ ] Workflow runs `npm install`.
-- [ ] Workflow runs `npm run lint || echo "Linting issues found"`.
-- [ ] Workflow runs `npm test -- --watchAll=false`.
-- [ ] Workflow runs `npm run build`.
+- [x] Workflow runs on push to `main`.
+- [x] Workflow runs on pull request to `main`.
+- [x] Workflow uses `actions/checkout` and `actions/setup-node`.
+- [x] Workflow uses Node.js 20 or newer.
+- [x] Workflow runs `npm install`.
+- [x] Workflow runs `npm run lint || echo "Linting issues found"`.
+- [x] Workflow runs `npm test -- --watchAll=false`.
+- [x] Workflow runs `npm run build`.
 
 **Tests**: none
 **Gate**: build
@@ -390,6 +410,147 @@ T11 -> T12 -> T13
 
 ---
 
+## Figma Layout Revision Tasks
+
+These tasks were added after the Figma screen layouts were supplied. They should be completed before treating the presentation layer as final, even if earlier foundation tasks remain marked complete.
+
+### F1: Extract and Reconcile Figma Design Tokens
+
+**What**: Inspect the supplied Figma frames and reconcile colors, typography, spacing, radii, elevation, and component states with `DESIGN.md` and the MUI theme token source.
+**Where**: `DESIGN.md`, `src/theme/designTokens.ts`, `src/theme/createSeniorEaseTheme.ts`
+**Depends on**: T6
+**Reuses**: Figma frame links from `spec.md`, existing theme factory.
+**Requirement**: SE-10, SE-11, SE-17, SE-18
+
+**Done when**:
+
+- [x] `DESIGN.md` reflects the SeniorEase Figma frames instead of unrelated or stale visual analysis.
+- [x] Repeated Figma values are represented as theme tokens or component variants.
+- [x] Theme tokens still respond to font size, contrast, spacing, and simplified-mode preferences.
+- [x] Any intentional Figma/theme mismatch is documented with rationale.
+- [x] Gate check passes: `npm test -- --watchAll=false src/theme`.
+
+**Tests**: unit
+**Gate**: unit
+
+---
+
+### F2: Build Shared Figma-Aligned Components
+
+**What**: Create reusable MUI components required by the Figma layouts: `AppShell`, `SideNavigation`, `PrimaryButton`, `StatusPill`, and `EmptyState`.
+**Where**: `src/presentation/shared/components`
+**Depends on**: F1, T10
+**Reuses**: MUI primitives, reconciled theme tokens, route metadata.
+**Requirement**: SE-10, SE-11, SE-17, SE-18
+
+**Done when**:
+
+- [x] `AppShell` renders responsive landmarks, skip link, and page content slots.
+- [x] `SideNavigation` supports active route, accessible names, keyboard focus, and responsive behavior from Figma.
+- [x] `PrimaryButton`, `StatusPill`, and `EmptyState` centralize repeated visual treatments and avoid duplicated hardcoded values.
+- [x] Component tests cover rendering, accessible names, active states, and disabled/focus states where applicable.
+- [x] Gate check passes: `npm test -- --watchAll=false src/presentation/shared`.
+
+**Tests**: integration
+**Gate**: unit
+
+---
+
+### F3: Align Dashboard, Profile, and Settings Pages to Figma
+
+**What**: Update dashboard, profile, and settings presentation to match the supplied Figma layouts and use the shared components from F2.
+**Where**: `src/pages/index.tsx`, `src/pages/perfil.tsx`, `src/pages/configuracoes.tsx`, `src/presentation/personalization`, `src/presentation/profile`
+**Depends on**: F2, T7, T9, T10
+**Reuses**: `AppShell`, `SideNavigation`, `PrimaryButton`, `StatusPill`, `EmptyState`, preference store, theme tokens.
+**Requirement**: SE-01, SE-06, SE-07, SE-10, SE-11, SE-14, SE-15, SE-17, SE-18
+
+**Done when**:
+
+- [x] Dashboard matches Figma nodes `703:5`, `703:305`, and `703:407` for desktop, tablet, and mobile.
+- [x] Profile matches Figma node `703:200` for desktop and adapts responsively through shared shell rules.
+- [x] Settings matches Figma node `703:250` for desktop and adapts responsively through shared shell rules.
+- [x] Preference controls remain labeled, keyboard-operable, and connected to helper/status text.
+- [x] Integration tests cover core dashboard/profile/settings interactions and responsive render assumptions.
+- [x] Gate check passes: `npm test -- --watchAll=false`.
+
+**Verification note**: Figma MCP inspection used duplicated NATGEO file `LJkhB7ZgDaJuxVi6CVP22Q` for nodes `703:5`, `703:305`, `703:407`, `703:200`, and `703:250`. Browser verification used a headless Playwright fallback because the in-app Browser Node runtime was blocked by the managed Windows sandbox; checked `/`, `/perfil`, and `/configuracoes` for visible headings/main landmarks and no horizontal overflow. `npm run test:e2e` passed after updating stale dashboard/shell selectors to the Figma-aligned copy.
+
+**Tests**: integration
+**Gate**: unit
+
+---
+
+### F4: Align Activities and Guided Steps Pages to Figma
+
+**What**: Update activity list, activity cards, status pills, empty state, and guided step flow to match the supplied Figma layouts.
+**Where**: `src/pages/atividades.tsx`, `src/presentation/activities`, `src/presentation/activities/components`
+**Depends on**: F2, T8, T10
+**Reuses**: `ActivityList`, `ActivityCard`, `StatusPill`, `PrimaryButton`, `EmptyState`, activity use cases and stores.
+**Requirement**: SE-04, SE-05, SE-10, SE-11, SE-13, SE-15, SE-17, SE-18
+
+**Done when**:
+
+- [x] Activities page matches Figma nodes `703:78`, `703:361`, and `703:463` for desktop, tablet, and mobile.
+- [x] Guided steps match Figma nodes `703:141` and `703:509` for desktop and tablet.
+- [x] `ActivityList` and `ActivityCard` expose clear list semantics, accessible action names, reminder text, and status text.
+- [x] Completing an activity announces polite live-region feedback and moves it to completed history.
+- [x] Component tests cover empty state, card status, guided-step progress, keyboard operation, and completion feedback.
+- [x] Gate check passes: `npm test -- --watchAll=false`.
+
+**Verification note**: Figma MCP inspection used duplicated NATGEO file `LJkhB7ZgDaJuxVi6CVP22Q` for nodes `703:78`, `703:361`, `703:463`, `703:141`, and `703:509`. Activity components were extracted into `ActivityList` and `ActivityCard`, guided steps were reconciled with Figma progress/current-step/live-region patterns, and `npm test -- --watchAll=false` passed with 15 suites and 60 tests.
+
+**Tests**: integration
+**Gate**: unit
+
+---
+
+### F5: Run Responsive Visual and Accessibility Verification
+
+**What**: Verify the Figma-aligned implementation across desktop, tablet, and mobile viewports with browser automation and accessibility checks.
+**Where**: `tests/e2e`, local browser verification notes, Playwright screenshots if appropriate.
+**Depends on**: F3, F4
+**Reuses**: E2E setup from T11, testing matrix from `.specs/codebase/TESTING.md`.
+**Requirement**: SE-01, SE-04, SE-06, SE-11, SE-15, SE-17, SE-18
+
+**Done when**:
+
+- [x] Dashboard, activities, and guided-step viewports render nonblank and without horizontal overflow.
+- [x] Desktop/tablet/mobile screenshots are compared against the linked Figma frames during handoff.
+- [x] Largest font size and increased spacing do not clip or overlap controls.
+- [x] Keyboard-only navigation reaches all primary flows with visible focus.
+- [x] Completion feedback is announced through a polite live region.
+- [x] Gate checks pass: `npm run lint`, `npm test -- --watchAll=false`, `npm run build`, and `npm run test:e2e` when Playwright is available.
+
+**Verification note**: F5 added Playwright screenshot artifacts for dashboard desktop/tablet/mobile, activities desktop/tablet/mobile, guided steps desktop/tablet, and a mobile largest-font/extra-spacing stress view. Browser checks use the linked Figma viewport dimensions and verify visible landmarks/content, no horizontal overflow, unclipped preference pills, in-viewport primary controls, keyboard-only access, dialog focus return, reduced motion, ARIA labels/descriptions, persistence, and polite live-region completion feedback. The generated screenshots include the Next.js dev indicator because Playwright runs against `next dev`; it is a dev-only overlay and not part of the SeniorEase UI. Gate checks passed on 2026-06-04: `npm run lint`, `npm test -- --watchAll=false` (15 suites, 60 tests), `npm run build`, and `npm run test:e2e` (13 tests).
+
+**Tests**: e2e
+**Gate**: full
+
+---
+
+### F6: Make Activities the Landing Page
+
+**What**: Redirect the root route to activities while preserving the personalization dashboard at `/painel` and keeping navigation labels and active-route semantics accurate.
+**Where**: `src/pages`, `src/presentation/shared`, `tests/e2e`
+**Depends on**: F5
+**Reuses**: Existing dashboard, activities page, shared navigation, and routing tests.
+**Requirement**: SE-01, SE-04, SE-11, SE-15
+
+**Done when**:
+
+- [x] Visiting `/` redirects to `/atividades` before rendering page content.
+- [x] The personalization dashboard remains reachable at `/painel`.
+- [x] The `Painel` navigation item points to `/painel` and current-page semantics remain correct.
+- [x] Integration and E2E tests cover the landing redirect and preserved dashboard route.
+- [ ] Gate checks pass: `npm run lint`, `npm test -- --watchAll=false`, `npm run build`, and `npm run test:e2e` when Playwright is available.
+
+**Tests**: integration/e2e
+**Gate**: full
+
+**Verification note**: On 2026-07-20, lint passed with 0 errors and 0 warnings, all 15 Jest suites passed with 61 tests, and the production build passed. The in-app browser was unavailable in the execution environment, so browser verification and `npm run test:e2e` could not be run.
+
+---
+
 ## Parallel Execution Map
 
 ```text
@@ -408,6 +569,16 @@ Phase 3:
 
 Phase 4:
   T11 -> T12 -> T13
+
+Phase 5:
+  T6 -> F1
+  F1,T10 -> F2
+  F2,T7,T9,T10 -> F3
+  F2,T8,T10 -> F4
+  F3,F4 -> F5
+
+Phase 6:
+  F5 -> F6
 ```
 
 ## Diagram-Definition Cross-Check
@@ -427,6 +598,12 @@ Phase 4:
 | T11 | T10 | T10 -> T11 | OK |
 | T12 | T11 | T11 -> T12 | OK |
 | T13 | T12 | T12 -> T13 | OK |
+| F1 | T6 | T6 -> F1 | OK |
+| F2 | F1, T10 | F1,T10 -> F2 | OK |
+| F3 | F2, T7, T9, T10 | F2,T7,T9,T10 -> F3 | OK |
+| F4 | F2, T8, T10 | F2,T8,T10 -> F4 | OK |
+| F5 | F3, F4 | F3,F4 -> F5 | OK |
+| F6 | F5 | F5 -> F6 | OK |
 
 ## Test Co-location Validation
 
@@ -445,3 +622,9 @@ Phase 4:
 | T11 | Accessibility critical flows | e2e | e2e | OK |
 | T12 | CI configuration | none | none | OK |
 | T13 | Documentation | none | none | OK |
+| F1 | Theme and design token source | unit | unit | OK |
+| F2 | Shared presentation components | unit/integration | integration | OK |
+| F3 | Pages and routing | integration | integration | OK |
+| F4 | Presentation components | unit/integration | integration | OK |
+| F5 | Accessibility critical flows and responsive visual checks | e2e | e2e | OK |
+| F6 | Pages, routing, and landing flow | integration/e2e | integration/e2e | OK |
