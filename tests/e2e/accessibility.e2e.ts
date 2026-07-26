@@ -268,6 +268,57 @@ test('creates and completes an activity with guided steps and history', async ({
   ).toBeVisible();
 });
 
+test('deletes an activity permanently with accessible confirmation', async ({
+  page,
+}) => {
+  const activityTitle = 'Excluir relatorio antigo';
+
+  await page.goto('/atividades');
+  await createActivity(page, activityTitle);
+
+  const deleteButton = page.getByRole('button', {
+    name: `Excluir tarefa ${activityTitle}`,
+  });
+
+  await expect(deleteButton).toBeVisible();
+  await expect(deleteButton).toHaveCSS('background-color', 'rgb(96, 0, 0)');
+  await deleteButton.click();
+
+  const confirmationDialog = page.getByRole('dialog', {
+    name: 'Confirmar Exclusão',
+  });
+  const cancelButton = confirmationDialog.getByRole('button', {
+    name: 'Cancelar',
+  });
+
+  await expect(confirmationDialog).toBeVisible();
+  await expect(cancelButton).toBeFocused();
+  await page.keyboard.press('Escape');
+  await expect(confirmationDialog).toBeHidden();
+  await expect(deleteButton).toBeFocused();
+
+  await deleteButton.click();
+  await confirmationDialog.getByRole('button', { name: 'Excluir' }).click();
+
+  await expect(page.getByText(activityTitle, { exact: true })).toHaveCount(0);
+  await expect(page.getByRole('status')).toContainText(
+    `A tarefa “${activityTitle}” foi excluída permanentemente.`,
+  );
+  await expect
+    .poll(() =>
+      page.evaluate(({ storageName, title }) => {
+        const snapshot = JSON.parse(
+          window.localStorage.getItem(storageName) ?? '{"activities":[]}',
+        ) as { activities: Array<{ title: string }> };
+
+        return snapshot.activities.some(
+          (activity) => activity.title === title,
+        );
+      }, { storageName: 'seniorease-activities:v1', title: activityTitle }),
+    )
+    .toBe(false);
+});
+
 test('filters history by status with keyboard-accessible pills', async ({
   page,
 }) => {

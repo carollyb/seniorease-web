@@ -22,6 +22,7 @@ export interface GuidedStepsProps {
   isLoading: boolean;
   onActivityComplete?(detail: ActivityOrganizerCompleteEventDetail): void;
   onCompleteActivity(activityId: string): Promise<Activity | void>;
+  onDeleteActivity(activityId: string): Promise<boolean>;
   onFeedbackMessageChange(message: string): void;
 }
 

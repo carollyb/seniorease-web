@@ -13,6 +13,10 @@ interface CompleteActivityExecutor {
   execute(activityId: string): Promise<Activity>
 }
 
+interface DeleteActivityExecutor {
+  execute(activityId: string): Promise<void>
+}
+
 interface ListActivitiesExecutor {
   execute(): Promise<Activity[]>
 }
@@ -20,6 +24,7 @@ interface ListActivitiesExecutor {
 export interface ActivityStoreUseCases {
   createActivity: CreateActivityExecutor
   completeActivity: CompleteActivityExecutor
+  deleteActivity: DeleteActivityExecutor
   listActivities: ListActivitiesExecutor
   listCompletedActivities: ListActivitiesExecutor
 }
@@ -33,6 +38,7 @@ export interface ActivityStoreState {
   loadActivities(): Promise<void>
   createActivity(input: CreateActivityInput): Promise<Activity>
   completeActivity(activityId: string): Promise<Activity>
+  deleteActivity(activityId: string): Promise<void>
   selectActivity(activityId: string | null): void
   clearError(): void
 }
@@ -103,6 +109,27 @@ export function createActivityStore(useCases: ActivityStoreUseCases) {
         await get().loadActivities()
 
         return activity
+      } catch (error) {
+        set({
+          isLoading: false,
+          errorMessage: getErrorMessage(error),
+        })
+        throw error
+      }
+    },
+    deleteActivity: async (activityId) => {
+      set({ isLoading: true, errorMessage: null })
+
+      try {
+        await useCases.deleteActivity.execute(activityId)
+
+        set((state) => ({
+          selectedActivityId:
+            state.selectedActivityId === activityId
+              ? null
+              : state.selectedActivityId,
+        }))
+        await get().loadActivities()
       } catch (error) {
         set({
           isLoading: false,

@@ -52,9 +52,10 @@ const inProgressActivity: Activity = {
 
 function renderOrganizer(
   props: Partial<React.ComponentProps<typeof ActivityOrganizer>> = {},
+  preferences = createDefaultPreferences(),
 ) {
   render(
-    <ThemeProvider theme={createSeniorEaseTheme()}>
+    <ThemeProvider theme={createSeniorEaseTheme(preferences)}>
       <ActivityOrganizer {...props} />
     </ThemeProvider>,
   );
@@ -368,6 +369,81 @@ describe('ActivityOrganizer', () => {
     expect(document.activeElement).toBe(firstStep);
     fireEvent.click(firstStep);
     expect(firstStep.checked).toBe(true);
+  });
+
+  it('shows an accessible red delete button beside the completion action', async () => {
+    storeActivities([pendingActivity]);
+    renderOrganizer();
+    const completeButton = await openPendingActivity();
+    const deleteButton = screen.getByRole('button', {
+      name: 'Excluir tarefa Enviar trabalho',
+    });
+
+    expect(deleteButton.parentElement).toBe(completeButton.parentElement);
+    expect(window.getComputedStyle(deleteButton).backgroundColor).toBe(
+      'rgb(96, 0, 0)',
+    );
+  });
+
+  it('keeps guided actions legible with the largest font and spacing preferences', async () => {
+    const preferences = createDefaultPreferences();
+    preferences.contrastLevel = 'maximum';
+    preferences.fontScale = 'extraLarge';
+    preferences.spacingLevel = 'extraWide';
+    usePreferenceStore.setState({ preferences });
+    storeActivities([pendingActivity]);
+    renderOrganizer({}, preferences);
+    await openPendingActivity();
+
+    const deleteButton = screen.getByRole('button', {
+      name: 'Excluir tarefa Enviar trabalho',
+    });
+    const deleteStyle = window.getComputedStyle(deleteButton);
+
+    expect(deleteStyle.backgroundColor).toBe('rgb(138, 0, 0)');
+    expect(deleteStyle.fontSize).toBe('22px');
+    expect(Number.parseFloat(deleteStyle.minHeight)).toBeGreaterThanOrEqual(64);
+  });
+
+  it('permanently deletes an activity after confirmation', async () => {
+    storeActivities([pendingActivity, completedActivity]);
+    renderOrganizer();
+    await openPendingActivity();
+
+    fireEvent.click(
+      screen.getByRole('button', {
+        name: 'Excluir tarefa Enviar trabalho',
+      }),
+    );
+
+    const modal = await screen.findByRole('dialog', {
+      name: 'Confirmar Exclusão',
+    });
+    expect(within(modal).getByText('Enviar trabalho')).not.toBeNull();
+    fireEvent.click(
+      within(modal).getByRole('button', {
+        name: 'Excluir',
+      }),
+    );
+
+    await waitFor(() => {
+      expect(screen.queryByText('Enviar trabalho')).toBeNull();
+    });
+    expect(
+      within(
+        screen.getByRole('list', {
+          name: 'Histórico de atividades concluidas',
+        }),
+      ).queryByText('Enviar trabalho'),
+    ).toBeNull();
+    expect(
+      JSON.parse(
+        window.localStorage.getItem(ACTIVITY_STORAGE_NAME) ?? '{}',
+      ).activities,
+    ).toEqual([completedActivity]);
+    expect(screen.getByRole('status').textContent).toContain(
+      'A tarefa “Enviar trabalho” foi excluída permanentemente.',
+    );
   });
 
   it('moves the activity to history after modal confirmation', async () => {

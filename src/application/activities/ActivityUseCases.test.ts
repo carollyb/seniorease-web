@@ -3,6 +3,7 @@ import type { ActivityRepository } from '../ports'
 import {
   CompleteActivityUseCase,
   CreateActivityUseCase,
+  DeleteActivityUseCase,
   ListActivitiesUseCase,
   ListCompletedActivitiesUseCase,
 } from './'
@@ -86,6 +87,14 @@ describe('Activity application use cases', () => {
       new CompleteActivityUseCase(repository).execute('missing-activity'),
     ).rejects.toThrow('Activity not found')
     expect(repository.saveActivity).not.toHaveBeenCalled()
+  })
+
+  it('deletes an activity through the repository port', async () => {
+    const repository = createActivityRepository()
+
+    await new DeleteActivityUseCase(repository).execute('activity-1')
+
+    expect(repository.deleteActivity).toHaveBeenCalledWith('activity-1')
   })
 
   it('lists completed activity history from the repository port', async () => {

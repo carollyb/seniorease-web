@@ -1,4 +1,5 @@
 export * from './CompleteActivityUseCase'
 export * from './CreateActivityUseCase'
+export * from './DeleteActivityUseCase'
 export * from './ListActivitiesUseCase'
 export * from './ListCompletedActivitiesUseCase'

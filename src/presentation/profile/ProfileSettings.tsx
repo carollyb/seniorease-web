@@ -340,34 +340,6 @@ function ReminderSettings({
 
         <Box>
           <SwitchSettingRow
-            checked={preferences.remindersEnabled}
-            helperText='As atividades mostram lembretes em linguagem simples.'
-            label='Usar lembretes em linguagem simples'
-            name='remindersEnabled'
-            onChange={(enabled) =>
-              onSave(
-                { remindersEnabled: enabled },
-                `Configuração salva: lembretes em linguagem simples ${
-                  enabled ? 'ativados' : 'desativados'
-                }.`,
-              )
-            }
-          />
-          <SwitchSettingRow
-            checked={showDashboardReminders}
-            helperText='Controla se os lembretes aparecem no painel.'
-            label='Mostrar lembretes no painel'
-            name='showDashboardReminders'
-            onChange={(enabled) => {
-              setShowDashboardReminders(enabled);
-              onLocalFeedback(
-                `Configuração salva: lembretes no painel ${
-                  enabled ? 'ativados' : 'desativados'
-                }.`,
-              );
-            }}
-          />
-          <SwitchSettingRow
             checked={preferences.extraConfirmation}
             helperText='O SeniorEase pergunta antes de excluir atividades.'
             label='Perguntar antes de excluir atividades'
