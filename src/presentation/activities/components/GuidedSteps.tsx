@@ -14,6 +14,7 @@ export function GuidedSteps({
   isLoading,
   onActivityComplete,
   onCompleteActivity,
+  onDeleteActivity,
   onFeedbackMessageChange,
 }: GuidedStepsProps) {
   const [checkedStepIds, setCheckedStepIds] = useState<Record<string, boolean>>(
@@ -220,7 +221,17 @@ export function GuidedSteps({
           </Typography>
         )}
 
-        <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1.5}>
+        <Box
+          sx={{
+            display: 'grid',
+            gap: 1.5,
+            gridTemplateColumns: {
+              xs: 'minmax(0, 1fr)',
+              sm: 'repeat(2, minmax(0, 1fr))',
+              lg: 'repeat(4, minmax(0, 1fr))',
+            },
+          }}
+        >
           <PrimaryButton
             disabled={isLoading || currentStepIndex === 0}
             onClick={handlePreviousStep}
@@ -245,7 +256,23 @@ export function GuidedSteps({
           >
             Concluir atividade
           </PrimaryButton>
-        </Stack>
+          <PrimaryButton
+            aria-label={`Excluir tarefa ${activity.title}`}
+            disabled={isLoading}
+            onClick={() => void onDeleteActivity(activity.id)}
+            sx={{
+              bgcolor: 'error.main',
+              color: 'error.contrastText',
+              minWidth: 0,
+              '&:hover': {
+                bgcolor: 'error.dark',
+              },
+            }}
+            type='button'
+          >
+            Excluir tarefa
+          </PrimaryButton>
+        </Box>
       </Stack>
     </Box>
   );

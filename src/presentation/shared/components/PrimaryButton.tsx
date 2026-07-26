@@ -11,7 +11,6 @@ export interface PrimaryButtonProps extends ButtonProps {
 
 const baseSx: SxProps<Theme> = {
   borderRadius: `${designTokens.components.button.borderRadius}px`,
-  minHeight: designTokens.components.button.minHeight,
   px: `${designTokens.components.button.paddingX}px`,
   py: `${designTokens.components.button.paddingY}px`,
 }

@@ -103,8 +103,9 @@ The following Figma frames are the source of truth for page layout, spacing, col
 4. WHEN the user completes an activity THEN the system SHALL show positive completion feedback and announce it through an appropriate live region.
 5. WHEN an activity is completed THEN the system SHALL move it to a simple completed history.
 6. WHEN there are no activities THEN the system SHALL show a clear empty state with one primary action.
+7. WHEN the user deletes an activity THEN the system SHALL permanently remove it from persisted storage, the active list, and completed history, with an accessible destructive action and reinforced feedback when enabled.
 
-**Independent Test**: Create one activity, follow its steps, complete it, and confirm it appears in history.
+**Independent Test**: Create activities, complete one, delete another, and confirm the deleted activity is absent from the screen, history, and persisted storage.
 
 ---
 

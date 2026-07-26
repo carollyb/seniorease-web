@@ -12,7 +12,7 @@ import { designTokens } from '../../../theme/designTokens';
 import { PrimaryButton } from '../../shared/components/PrimaryButton';
 
 export interface ConfirmationDialogProps {
-  type: 'create' | 'complete' | null;
+  type: 'create' | 'complete' | 'delete' | null;
   activity: Activity | null;
   isLoading: boolean;
   onCancel(): void;
@@ -29,6 +29,8 @@ export function ConfirmationDialog({
   onConfirm,
 }: ConfirmationDialogProps) {
   const cancelButtonRef = useRef<HTMLButtonElement>(null);
+  const isCreation = type === 'create';
+  const isDeletion = type === 'delete';
 
   const handleClose = () => {
     if (!isLoading) {
@@ -40,6 +42,7 @@ export function ConfirmationDialog({
     <Dialog
       aria-describedby='confirmation-description'
       aria-labelledby='confirmation-title'
+      closeAfterTransition={false}
       fullWidth
       maxWidth='xs'
       onClose={handleClose}
@@ -79,7 +82,11 @@ export function ConfirmationDialog({
           },
         }}
       >
-        {type === 'create' ? 'Confirmar Criação' : 'Confirmar Conclusão'}
+        {isCreation
+          ? 'Confirmar Criação'
+          : isDeletion
+            ? 'Confirmar Exclusão'
+            : 'Confirmar Conclusão'}
       </DialogTitle>
 
       <DialogContent
@@ -100,9 +107,11 @@ export function ConfirmationDialog({
             mb: `${spacing.lg}px`,
           }}
         >
-          {type === 'create'
+          {isCreation
             ? 'Deseja criar esta tarefa?'
-            : 'Deseja concluir esta tarefa e movê-la para o histórico?'}
+            : isDeletion
+              ? 'Deseja excluir esta tarefa permanentemente? Ela não aparecerá mais na tela nem no histórico.'
+              : 'Deseja concluir esta tarefa e movê-la para o histórico?'}
         </DialogContentText>
 
         {activity ? (
@@ -162,10 +171,21 @@ export function ConfirmationDialog({
         <PrimaryButton
           disabled={isLoading}
           onClick={onConfirm}
-          tone='completion'
+          sx={
+            isDeletion
+              ? {
+                  bgcolor: 'error.main',
+                  color: 'error.contrastText',
+                  '&:hover': {
+                    bgcolor: 'error.dark',
+                  },
+                }
+              : undefined
+          }
+          tone={isDeletion ? 'primary' : 'completion'}
           type='button'
         >
-          {type === 'create' ? 'Criar' : 'Concluir'}
+          {isCreation ? 'Criar' : isDeletion ? 'Excluir' : 'Concluir'}
         </PrimaryButton>
       </DialogActions>
     </Dialog>

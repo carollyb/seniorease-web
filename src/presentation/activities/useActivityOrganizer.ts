@@ -9,6 +9,7 @@ import {
 import {
   CompleteActivityUseCase,
   CreateActivityUseCase,
+  DeleteActivityUseCase,
   ListActivitiesUseCase,
   ListCompletedActivitiesUseCase,
 } from '../../application/activities';
@@ -23,6 +24,11 @@ interface PendingCompletion {
   resolve(completedActivity: Activity | void): void;
 }
 
+interface PendingDeletion {
+  activity: Activity;
+  resolve(deleted: boolean): void;
+}
+
 interface ActivityFeedback {
   subtitle: string;
   title: string;
@@ -33,6 +39,7 @@ const activityRepository = new LocalActivityRepository();
 const useActivityStore = createActivityStore({
   completeActivity: new CompleteActivityUseCase(activityRepository),
   createActivity: new CreateActivityUseCase(activityRepository),
+  deleteActivity: new DeleteActivityUseCase(activityRepository),
   listActivities: new ListActivitiesUseCase(activityRepository),
   listCompletedActivities: new ListCompletedActivitiesUseCase(
     activityRepository,
@@ -55,10 +62,13 @@ export function useActivityOrganizer({ mode }: UseActivityOrganizerOptions) {
   const [activityToCreate, setActivityToCreate] = useState<Activity | null>(
     null,
   );
-  const [modalType, setModalType] = useState<'create' | 'complete' | null>(
+  const [modalType, setModalType] = useState<
+    'create' | 'complete' | 'delete' | null
+  >(null);
+  const [activityToComplete, setActivityToComplete] = useState<Activity | null>(
     null,
   );
-  const [activityToComplete, setActivityToComplete] = useState<Activity | null>(
+  const [activityToDelete, setActivityToDelete] = useState<Activity | null>(
     null,
   );
   const extraConfirmation = usePreferenceStore(
@@ -68,6 +78,7 @@ export function useActivityOrganizer({ mode }: UseActivityOrganizerOptions) {
     (state) => state.preferences.reinforcedFeedback,
   );
   const completeActivity = useActivityStore((state) => state.completeActivity);
+  const deleteActivity = useActivityStore((state) => state.deleteActivity);
 
   const activities = useActivityStore((state) => state.activities);
   const completedActivities = useActivityStore(
@@ -135,6 +146,7 @@ export function useActivityOrganizer({ mode }: UseActivityOrganizerOptions) {
   };
 
   const pendingCompletionRef = useRef<PendingCompletion | null>(null);
+  const pendingDeletionRef = useRef<PendingDeletion | null>(null);
 
   const showFeedback = (title: string, subtitle: string) => {
     if (!reinforcedFeedback) {
@@ -286,12 +298,64 @@ export function useActivityOrganizer({ mode }: UseActivityOrganizerOptions) {
     pendingCompletion.resolve(completedActivity);
   };
 
+  const deleteActivityWithFeedback = async (activity: Activity) => {
+    await deleteActivity(activity.id);
+    showFeedback(
+      'Tarefa excluída',
+      `A tarefa “${activity.title}” foi excluída permanentemente.`,
+    );
+  };
+
+  const handleDeleteActivity = (activityId: string) => {
+    const activity = activities.find(({ id }) => id === activityId);
+
+    if (!activity) {
+      return Promise.resolve(false);
+    }
+
+    if (!extraConfirmation) {
+      return deleteActivityWithFeedback(activity).then(() => true);
+    }
+
+    return new Promise<boolean>((resolve) => {
+      pendingDeletionRef.current = { activity, resolve };
+      setActivityToDelete(activity);
+      setModalType('delete');
+    });
+  };
+
+  const handleCancelDeletion = () => {
+    const pendingDeletion = pendingDeletionRef.current;
+
+    pendingDeletionRef.current = null;
+    setActivityToDelete(null);
+    setModalType(null);
+    pendingDeletion?.resolve(false);
+  };
+
+  const handleConfirmDeletionModal = async () => {
+    const pendingDeletion = pendingDeletionRef.current;
+
+    if (!pendingDeletion) {
+      return;
+    }
+
+    await deleteActivityWithFeedback(pendingDeletion.activity);
+
+    pendingDeletionRef.current = null;
+    setActivityToDelete(null);
+    setModalType(null);
+    pendingDeletion.resolve(true);
+  };
+
   useEffect(() => {
     void loadActivities();
 
     return () => {
       pendingCompletionRef.current?.resolve(undefined);
       pendingCompletionRef.current = null;
+      pendingDeletionRef.current?.resolve(false);
+      pendingDeletionRef.current = null;
     };
   }, [loadActivities]);
 
@@ -336,5 +400,9 @@ export function useActivityOrganizer({ mode }: UseActivityOrganizerOptions) {
     handleCompleteActivity,
     handleCancelCompletion,
     activityToComplete,
+    activityToDelete,
+    handleCancelDeletion,
+    handleConfirmDeletionModal,
+    handleDeleteActivity,
   };
 }

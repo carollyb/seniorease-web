@@ -24,6 +24,7 @@ function createUseCases(): jest.Mocked<ActivityStoreUseCases> {
   return {
     createActivity: { execute: jest.fn() },
     completeActivity: { execute: jest.fn() },
+    deleteActivity: { execute: jest.fn() },
     listActivities: { execute: jest.fn() },
     listCompletedActivities: { execute: jest.fn() },
   }
@@ -87,6 +88,31 @@ describe('Activity Zustand store', () => {
     expect(store.getState()).toMatchObject({
       activities: [],
       completedActivities: [completedActivity],
+      selectedActivityId: null,
+      isLoading: false,
+      errorMessage: null,
+    })
+  })
+
+  it('deletes an activity, clears its selection, and refreshes both lists', async () => {
+    const useCases = createUseCases()
+    useCases.deleteActivity.execute.mockResolvedValue(undefined)
+    useCases.listActivities.execute.mockResolvedValue([])
+    useCases.listCompletedActivities.execute.mockResolvedValue([])
+    const store = createActivityStore(useCases)
+
+    store.setState({
+      activities: [pendingActivity],
+      completedActivities: [completedActivity],
+      selectedActivityId: 'activity-1',
+    })
+
+    await store.getState().deleteActivity('activity-1')
+
+    expect(useCases.deleteActivity.execute).toHaveBeenCalledWith('activity-1')
+    expect(store.getState()).toMatchObject({
+      activities: [],
+      completedActivities: [],
       selectedActivityId: null,
       isLoading: false,
       errorMessage: null,

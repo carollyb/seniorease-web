@@ -251,6 +251,7 @@ F3,F4 -> F5
 - [x] Activity list shows title, reminder, status, and primary action with meaningful roles and accessible names.
 - [x] Guided steps render in predictable order and are keyboard-operable.
 - [x] Completing an activity shows positive feedback, announces it through a live region, and moves it to history.
+- [x] Deleting an activity permanently removes it from persisted storage, the active list, and history through an accessible destructive action.
 - [x] Public contracts are ready for future extraction into an Activity Organizer Multi-Zone app.
 - [x] Component tests cover create, guided step view, complete, and history.
 - [x] Gate check passes: `npm test -- --watchAll=false`.

@@ -135,6 +135,10 @@ export function ActivityOrganizer({
     handleCompleteActivity,
     handleCancelCompletion,
     activityToComplete,
+    activityToDelete,
+    handleCancelDeletion,
+    handleConfirmDeletionModal,
+    handleDeleteActivity,
   } = useActivityOrganizer({ mode });
 
   return (
@@ -342,6 +346,7 @@ export function ActivityOrganizer({
               key={selectedActivity.id}
               onActivityComplete={handleConfirmCompletionModal}
               onCompleteActivity={handleCompleteActivity}
+              onDeleteActivity={handleDeleteActivity}
               onFeedbackMessageChange={handleFeedbackMessageChange}
             />
           ) : null}
@@ -460,16 +465,26 @@ export function ActivityOrganizer({
       <ConfirmationDialog
         type={modalType}
         activity={
-          modalType === 'create' ? activityToCreate : activityToComplete
+          modalType === 'create'
+            ? activityToCreate
+            : modalType === 'delete'
+              ? activityToDelete
+              : activityToComplete
         }
         isLoading={isLoading}
         onCancel={
-          modalType === 'create' ? handleCancelCreation : handleCancelCompletion
+          modalType === 'create'
+            ? handleCancelCreation
+            : modalType === 'delete'
+              ? handleCancelDeletion
+              : handleCancelCompletion
         }
         onConfirm={
           modalType === 'create'
             ? handleConfirmCreationModal
-            : handleConfirmCompletionModal
+            : modalType === 'delete'
+              ? handleConfirmDeletionModal
+              : handleConfirmCompletionModal
         }
       />
     </>
